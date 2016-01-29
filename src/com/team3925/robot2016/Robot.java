@@ -40,7 +40,11 @@ public class Robot extends IterativeRobot {
 	public static OI oi;
 	public static DriveTrain driveTrain;
 	public static Launcher launcher;
+	
+	public static double deltaTime = 0;
+	public static double lastTimestamp;
 
+	
 	public Robot() {
 		try {
 			//Alternatively:  I2C.Port.kMXP, SerialPort.Port.kMXP or SerialPort.Port.kUSB
@@ -72,7 +76,8 @@ public class Robot extends IterativeRobot {
 		launchBall = new LaunchBall();
 		manualDrive = new ManualDrive();
 		trajectoryFollow = new TrajectoryFollow();
-
+		
+		lastTimestamp = Timer.getFPGATimestamp();
 	}
 
 	/**
@@ -115,12 +120,17 @@ public class Robot extends IterativeRobot {
 	 */
 	public void teleopPeriodic() {
 		Scheduler.getInstance().run();
-
+		
+		double now = Timer.getFPGATimestamp();
+		deltaTime = now - lastTimestamp;
+		lastTimestamp = now;
+		
 		driveTrain.logData();
 		launcher.logData();
 		
 		
 		SmartDashboard.putNumber("Current_Robot_Time", Timer.getFPGATimestamp());
+		SmartDashboard.putNumber("Delta_Time", deltaTime);
 		
 		if (Constants.DO_LOG_AHRS_VALUES) {
 			if (navx != null) {
@@ -129,6 +139,7 @@ public class Robot extends IterativeRobot {
 				DriverStation.reportError("NavX cannot be logged while it is null!", false);
 			}
 		}
+		
 	}
 
 	/**

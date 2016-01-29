@@ -1,7 +1,8 @@
 package com.team3925.robot2016.commands;
 
-import edu.wpi.first.wpilibj.command.Command;
 import com.team3925.robot2016.Robot;
+
+import edu.wpi.first.wpilibj.command.Command;
 
 /**
  *

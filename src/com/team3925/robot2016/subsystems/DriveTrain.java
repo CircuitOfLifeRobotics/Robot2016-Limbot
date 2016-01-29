@@ -2,6 +2,7 @@ package com.team3925.robot2016.subsystems;
 
 import com.team3925.robot2016.RobotMap;
 import com.team3925.robot2016.util.DriveTrainSignal;
+import com.team3925.robot2016.util.MiscUtil;
 
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.SpeedController;
@@ -50,6 +51,49 @@ public class DriveTrain extends Subsystem {
     public DriveTrainSignal getEncoderRates() {
     	return new DriveTrainSignal(encoderLeft.getRate(), encoderRight.getRate());
     }
+    
+	public void arcadeDrive(double moveValue, double rotateValue, boolean squaredInputs) {
+		double leftMotorSpeed;
+		double rightMotorSpeed;
+
+		moveValue = MiscUtil.limit(moveValue);
+		rotateValue = MiscUtil.limit(rotateValue);
+
+		if (squaredInputs) {
+			// square the inputs (while preserving the sign) to increase fine control
+			// while permitting full power
+			if (moveValue >= 0.0) {
+				moveValue = (moveValue * moveValue);
+			} else {
+				moveValue = -(moveValue * moveValue);
+			}
+			if (rotateValue >= 0.0) {
+				rotateValue = (rotateValue * rotateValue);
+			} else {
+				rotateValue = -(rotateValue * rotateValue);
+			}
+		}
+
+		if (moveValue > 0.0) {
+			if (rotateValue > 0.0) {
+				leftMotorSpeed = moveValue - rotateValue;
+				rightMotorSpeed = Math.max(moveValue, rotateValue);
+			} else {
+				leftMotorSpeed = Math.max(moveValue, -rotateValue);
+				rightMotorSpeed = moveValue + rotateValue;
+			}
+		} else {
+			if (rotateValue > 0.0) {
+				leftMotorSpeed = -Math.max(-moveValue, rotateValue);
+				rightMotorSpeed = moveValue + rotateValue;
+			} else {
+				leftMotorSpeed = moveValue - rotateValue;
+				rightMotorSpeed = -Math.max(-moveValue, -rotateValue);
+			}
+		}
+		
+		setMotorSpeeds(new DriveTrainSignal(leftMotorSpeed, rightMotorSpeed));
+	}
     
     /**
      * Logs various data to SmartDashboard
