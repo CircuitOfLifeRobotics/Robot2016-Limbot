@@ -31,24 +31,22 @@ public class RobotMap {
 
     public static void init() {
     	
-//    	TODO ENTER REAL CHANNELS/PORTS FOR ALL THESE COMPONENTS
-    	
-        driveTrainMotorLeftA = new Talon(0);
+        driveTrainMotorLeftA = new Talon(3);
         LiveWindow.addActuator("DriveTrain", "MotorLeftA", (Talon) driveTrainMotorLeftA);
         
-        driveTrainMotorLeftB = new Talon(1);
+        driveTrainMotorLeftB = new Talon(4);
         LiveWindow.addActuator("DriveTrain", "MotorLeftB", (Talon) driveTrainMotorLeftB);
         
-        driveTrainMotorLeftC = new Talon(2);
+        driveTrainMotorLeftC = new Talon(5);
         LiveWindow.addActuator("DriveTrain", "MotorLeftC", (Talon) driveTrainMotorLeftC);
         
-        driveTrainMotorRightA = new Talon(3);
+        driveTrainMotorRightA = new Talon(0);
         LiveWindow.addActuator("DriveTrain", "MotorRightA", (Talon) driveTrainMotorRightA);
         
-        driveTrainMotorRightB = new Talon(4);
+        driveTrainMotorRightB = new Talon(1);
         LiveWindow.addActuator("DriveTrain", "MotorRightB", (Talon) driveTrainMotorRightB);
         
-        driveTrainMotorRightC = new Talon(5);
+        driveTrainMotorRightC = new Talon(2);
         LiveWindow.addActuator("DriveTrain", "MotorRightC", (Talon) driveTrainMotorRightC);
         
         driveTrainEncoderLeft = new Encoder(0, 1, false, EncodingType.k4X);

@@ -3,17 +3,17 @@ package com.team3925.robot2016.subsystems;
 import com.team3925.robot2016.RobotMap;
 import com.team3925.robot2016.util.DriveTrainSignal;
 import com.team3925.robot2016.util.MiscUtil;
+import com.team3925.robot2016.util.SmartdashBoardLoggable;
 
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.SpeedController;
 import edu.wpi.first.wpilibj.command.Subsystem;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 
 /**
  *
  */
-public class DriveTrain extends Subsystem {
+public class DriveTrain extends Subsystem implements SmartdashBoardLoggable {
 
     private final SpeedController motorLeftA = RobotMap.driveTrainMotorLeftA;
     private final SpeedController motorLeftB = RobotMap.driveTrainMotorLeftB;
@@ -24,7 +24,6 @@ public class DriveTrain extends Subsystem {
     
     private final Encoder encoderLeft = RobotMap.driveTrainEncoderLeft;
     private final Encoder encoderRight = RobotMap.driveTrainEncoderRight;
-    
     
     public void setMotorSpeeds(DriveTrainSignal input) {
     	setLeftMotorSpeeds(input.left);
@@ -95,26 +94,28 @@ public class DriveTrain extends Subsystem {
 		setMotorSpeeds(new DriveTrainSignal(leftMotorSpeed, rightMotorSpeed));
 	}
     
-    /**
-     * Logs various data to SmartDashboard
-     */
-    public void logData() {
-    	SmartDashboard.putNumber("DriveTrain_MotorLeftA", motorLeftA.get());
-    	SmartDashboard.putNumber("DriveTrain_MotorLeftB", motorLeftB.get());
-    	SmartDashboard.putNumber("DriveTrain_MotorLeftC", motorLeftC.get());
-    	
-    	SmartDashboard.putNumber("DriveTrain_MotorRightA", motorRightA.get());
-    	SmartDashboard.putNumber("DriveTrain_MotorRightB", motorRightB.get());
-    	SmartDashboard.putNumber("DriveTrain_MotorRightC", motorRightC.get());
-    	
-    	
-    	SmartDashboard.putNumber("DriveTrain_EncoderLeftRate", encoderLeft.getRate());
-    	SmartDashboard.putNumber("DriveTrain_EncoderRightRate", encoderRight.getRate());
-    }
-    
+	public String getFormattedName() {
+		return "DriveTrain_";
+	}
+	
+	@Override
+	public void logData() {
+		putNumberSD("MotorLeftA", motorLeftA.get());
+		putNumberSD("MotorLeftB", motorLeftB.get());
+		putNumberSD("MotorLeftC", motorLeftC.get());
+		
+		putNumberSD("MotorRightA", motorRightA.get());
+		putNumberSD("MotorRightB", motorRightB.get());
+		putNumberSD("MotorRightC", motorRightC.get());
+		
+		putNumberSD("EncoderLeftRate", encoderLeft.getRate());
+		putNumberSD("EncoderRightRate", encoderRight.getRate());
+	}
+	
     public void initDefaultCommand() {
         // Set the default command for a subsystem here.
         // setDefaultCommand(new MySpecialCommand());
     }
+
 }
 
