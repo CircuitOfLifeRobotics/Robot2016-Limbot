@@ -9,7 +9,7 @@ import com.team3925.robot2016.commands.ManualDrive;
 import com.team3925.robot2016.commands.TrajectoryFollow;
 import com.team3925.robot2016.subsystems.DriveTrain;
 import com.team3925.robot2016.subsystems.Launcher;
-import com.team3925.robot2016.util.ControllersHelper;
+import com.team3925.robot2016.util.XboxHelper;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.IterativeRobot;
@@ -68,7 +68,7 @@ public class Robot extends IterativeRobot {
 		// constructed yet. Thus, their requires() statements may grab null
 		// pointers. Bad news. Don't move it.
 		oi = new OI();
-		ControllersHelper.init();
+		XboxHelper.init();
 
 		//	Switch for current start position.
 		autoCommandGroup = Constants.AUTO_START_IN_CENTER ? new AutoRoutineCenter() : new AutoRoutineCourtyard();

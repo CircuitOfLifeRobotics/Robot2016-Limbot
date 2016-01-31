@@ -45,13 +45,11 @@ public class OI {
 
     public Joystick xboxDriver;
     public Joystick xboxShooter;
-    public Joystick launchPad;
 
     public OI() {
 
     	xboxDriver = new Joystick(0);
     	xboxShooter = new Joystick(1);
-        launchPad = new Joystick(2);
         
         // SmartDashboard Buttons
         SmartDashboard.putData("ManualDrive", new ManualDrive());

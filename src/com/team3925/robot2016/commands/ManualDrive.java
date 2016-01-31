@@ -1,13 +1,12 @@
 package com.team3925.robot2016.commands;
 
-import static com.team3925.robot2016.util.ControllersHelper.AXIS_LEFT_Y;
-import static com.team3925.robot2016.util.ControllersHelper.AXIS_RIGHT_X;
+import static com.team3925.robot2016.util.XboxHelper.AXIS_LEFT_Y;
+import static com.team3925.robot2016.util.XboxHelper.AXIS_RIGHT_X;
 
 import com.team3925.robot2016.Robot;
 import com.team3925.robot2016.subsystems.DriveTrain;
-import com.team3925.robot2016.util.ControllersHelper;
-import com.team3925.robot2016.util.ControllersHelper.CurrentController;
 import com.team3925.robot2016.util.DriveTrainSignal;
+import com.team3925.robot2016.util.XboxHelper;
 
 import edu.wpi.first.wpilibj.command.Command;
 
@@ -27,8 +26,8 @@ public class ManualDrive extends Command {
 
 	// Called repeatedly when this Command is scheduled to run
 	protected void execute() {
-		driveTrain. arcadeDrive(-ControllersHelper.getAxis(CurrentController.DRIVER, AXIS_LEFT_Y), 
-						ControllersHelper.getAxis(CurrentController.DRIVER, AXIS_RIGHT_X), true);
+		driveTrain.arcadeDrive(-XboxHelper.getDriverAxis(AXIS_LEFT_Y), 
+						XboxHelper.getDriverAxis(AXIS_RIGHT_X), true);
 	}
 
 	// Make this return true when this Command no longer needs to run execute()
