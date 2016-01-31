@@ -9,7 +9,8 @@ import edu.wpi.first.wpilibj.command.Command;
  * @author Bryan
  */
 public class TrajectoryFollow extends Command {
-
+//	private TrajectoryFollower m_follower;
+	
     public TrajectoryFollow() {
         requires(Robot.driveTrain);
     }
@@ -24,6 +25,7 @@ public class TrajectoryFollow extends Command {
 
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() {
+//    	m_follower.isFinishedTrajectory();
         return false;
     }
 

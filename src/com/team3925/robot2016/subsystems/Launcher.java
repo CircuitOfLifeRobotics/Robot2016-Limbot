@@ -1,16 +1,16 @@
 package com.team3925.robot2016.subsystems;
 
 import com.team3925.robot2016.RobotMap;
+import com.team3925.robot2016.util.SmartdashBoardLoggable;
 
 import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.command.Subsystem;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 
 /**
  *
  */
-public class Launcher extends Subsystem {
+public class Launcher extends Subsystem implements SmartdashBoardLoggable {
 
     private final CANTalon motorLeft = RobotMap.launcherMotorLeft;
     private final CANTalon motorRight = RobotMap.launcherMotorRight;
@@ -22,16 +22,18 @@ public class Launcher extends Subsystem {
 //    	^ This should already be handled by the FOLLOWER Talon Control Mode
     }
     
-    /**
-     * Logs various data to SmartDashboard
-     */
+    @Override
     public void logData() {
-    	SmartDashboard.putNumber("Launcher_MotorLeft", motorLeft.get());
-    	SmartDashboard.putNumber("Launcher_MotorRight", motorRight.get());
+    	putNumberSD("MotorLeft", motorLeft.get());
+    	putNumberSD("MotorRight", motorRight.get());
+    }
+    
+    @Override
+    public String getFormattedName() {
+    	return "Launcher_";
     }
     
     public void initDefaultCommand() {
-
         // Set the default command for a subsystem here.
         // setDefaultCommand(new MySpecialCommand());
     }
