@@ -3,12 +3,15 @@ package com.team3925.robot2016;
 import com.kauailabs.navx.frc.AHRS;
 import com.team3925.robot2016.commands.AutoRoutineCenter;
 import com.team3925.robot2016.commands.AutoRoutineCourtyard;
+import com.team3925.robot2016.commands.AutoRoutineDoNothing;
 import com.team3925.robot2016.commands.CollectBall;
-import com.team3925.robot2016.commands.LaunchBall;
+import com.team3925.robot2016.commands.LaunchBallHigh;
 import com.team3925.robot2016.commands.ManualDrive;
 import com.team3925.robot2016.commands.TrajectoryFollow;
 import com.team3925.robot2016.subsystems.DriveTrain;
 import com.team3925.robot2016.subsystems.Launcher;
+import com.team3925.robot2016.util.DriveTrainSignal;
+import com.team3925.robot2016.util.SmartdashBoardLoggable;
 import com.team3925.robot2016.util.XboxHelper;
 
 import edu.wpi.first.wpilibj.DriverStation;
@@ -27,7 +30,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  * creating this project, you must also update the manifest file in the resource
  * directory.
  */
-public class Robot extends IterativeRobot {
+public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 
 	public static AHRS navx = null;
 
@@ -42,7 +45,7 @@ public class Robot extends IterativeRobot {
 	public static Launcher launcher;
 	
 	public static double deltaTime = 0;
-	public static double lastTimestamp;
+	private static double lastTimestamp;
 
 	
 	public Robot() {
@@ -60,6 +63,7 @@ public class Robot extends IterativeRobot {
 	 */
 	public void robotInit() {
 		RobotMap.init();
+		
 		driveTrain = new DriveTrain();
 		launcher = new Launcher();
 
@@ -71,9 +75,25 @@ public class Robot extends IterativeRobot {
 		XboxHelper.init();
 
 		//	Switch for current start position.
-		autoCommandGroup = Constants.AUTO_START_IN_CENTER ? new AutoRoutineCenter() : new AutoRoutineCourtyard();
+		switch (Constants.AUTO_START_LOCATION) {
+		case CENTER:
+			autoCommandGroup = new AutoRoutineCenter();
+			break;
+		case COURTYARD:
+			autoCommandGroup = new AutoRoutineCourtyard();
+			break;
+		case DO_NOTHING:
+			autoCommandGroup = new AutoRoutineDoNothing();
+			break;
+
+		default:
+			DriverStation.reportError("Was unable to select Auto Routine!", false);
+			autoCommandGroup = new AutoRoutineDoNothing();
+			break;
+		}
+		
 		collectBall = new CollectBall();
-		launchBall = new LaunchBall();
+		launchBall = new LaunchBallHigh();
 		manualDrive = new ManualDrive();
 		trajectoryFollow = new TrajectoryFollow();
 		
@@ -85,11 +105,14 @@ public class Robot extends IterativeRobot {
 	 * You can use it to reset subsystems before shutting down.
 	 */
 	public void disabledInit(){
-
+		driveTrain.setMotorSpeeds(DriveTrainSignal.NEUTRAL);
+		launcher.setIntakeSpeeds(0);
 	}
 
 	public void disabledPeriodic() {
 		Scheduler.getInstance().run();
+		driveTrain.setMotorSpeeds(DriveTrainSignal.NEUTRAL);
+		launcher.setIntakeSpeeds(0);
 	}
 
 	public void autonomousInit() {
@@ -102,7 +125,7 @@ public class Robot extends IterativeRobot {
 	 */
 	public void autonomousPeriodic() {
 		Scheduler.getInstance().run();
-		if (Constants.DO_LOG_AHRS_VALUES) {	logNavXData();	}
+		logData();
 	}
 
 	public void teleopInit() {
@@ -121,24 +144,26 @@ public class Robot extends IterativeRobot {
 	public void teleopPeriodic() {
 		Scheduler.getInstance().run();
 		
-		double now = Timer.getFPGATimestamp();
-		deltaTime = now - lastTimestamp;
-		lastTimestamp = now;
-		
 		driveTrain.logData();
 		launcher.logData();
+		logData();
 		
-		
-		SmartDashboard.putNumber("Current_Robot_Time", Timer.getFPGATimestamp());
-		SmartDashboard.putNumber("Delta_Time", deltaTime);
-		
-		if (Constants.DO_LOG_AHRS_VALUES) {
-			if (navx != null) {
-				logNavXData();
+
+//		Probably going to be moved to command manager or something
+		/*
+		if (XboxHelper.getShooterButton(XboxHelper.Y)) {
+			if (launcher.hasBall()) {
+				launchBall = new LaunchBallHigh();
 			} else {
-				DriverStation.reportError("NavX cannot be logged while it is null!", false);
+				DriverStation.reportError("Cannot run LaunchBall without a ball!", false);
 			}
-		}
+		} else if (XboxHelper.getShooterButton(XboxHelper.X)) {
+			if (launcher.hasBall()) {
+				launchBall = new LaunchBallLow();
+			} else {
+				DriverStation.reportError("Cannot run LaunchBall without a ball!", false);
+			}
+		} */
 		
 	}
 
@@ -148,7 +173,30 @@ public class Robot extends IterativeRobot {
 	public void testPeriodic() {
 		LiveWindow.run();
 	}
+	
+	@Override
+	public void logData() {
+		double now = Timer.getFPGATimestamp();
+		deltaTime = now - lastTimestamp;
+		lastTimestamp = now;
+		
+		putNumberSD("CurrentTime", Timer.getFPGATimestamp());
+		putNumberSD("DeltaTime", deltaTime);
+		
+		if (Constants.DO_LOG_AHRS_VALUES) {
+			if (navx != null) {
+				logNavXData();
+			} else {
+				putStringSD("NavXLogger", "Cannot log NavX values while null!");
+			}
+		}
+	}
 
+	@Override
+	public String getFormattedName() {
+		return "Robot_";
+	}
+	
 	private void logNavXData() {
 		//	Copied from navXMXP Data Monitor Project
 
@@ -230,4 +278,5 @@ public class Robot extends IterativeRobot {
 		SmartDashboard.putNumber(   "IMU_Byte_Count",       navx.getByteCount());
 		SmartDashboard.putNumber(   "IMU_Update_Count",     navx.getUpdateCount());
 	}
+
 }

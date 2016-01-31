@@ -5,8 +5,12 @@ package com.team3925.robot2016;
  */
 public class Constants {
 	private Constants() {};
+	
+	public static enum AutoStartPos {
+		COURTYARD, CENTER, DO_NOTHING;
+	}
 
-	public static final boolean AUTO_START_IN_CENTER = true;
+	public static final AutoStartPos AUTO_START_LOCATION = AutoStartPos.CENTER;
 	public static final boolean DO_LOG_AHRS_VALUES = false;
 
 

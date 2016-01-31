@@ -5,11 +5,11 @@ import com.team3925.robot2016.Robot;
 import edu.wpi.first.wpilibj.command.Command;
 
 /**
- *
+ * Shoots ball into low goal
  */
-public class LaunchBall extends Command {
+public class LaunchBallLow extends Command {
 
-    public LaunchBall() {
+    public LaunchBallLow() {
         requires(Robot.launcher);
     }
 

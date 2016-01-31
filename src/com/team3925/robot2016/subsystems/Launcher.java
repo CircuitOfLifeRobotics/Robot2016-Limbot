@@ -14,12 +14,22 @@ public class Launcher extends Subsystem implements SmartdashBoardLoggable {
 
     private final CANTalon motorLeft = RobotMap.launcherMotorLeft;
     private final CANTalon motorRight = RobotMap.launcherMotorRight;
+//    Sensor for ball goes here
+    
+    private boolean hasBall = false;
 
     public void setIntakeSpeeds(double speed) {
-//    	
     	motorLeft.set(speed);
 //    	motorRight.set(speed);
 //    	^ This should already be handled by the FOLLOWER Talon Control Mode
+    }
+    
+    public void update() {
+    	hasBall = false; //TODO add sensor for ball
+    }
+    
+    public boolean hasBall() {
+    	return hasBall;
     }
     
     @Override

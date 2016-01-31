@@ -1,8 +1,11 @@
 package com.team3925.robot2016.subsystems;
 
+import com.kauailabs.navx.frc.AHRS;
+import com.team3925.robot2016.Robot;
 import com.team3925.robot2016.RobotMap;
 import com.team3925.robot2016.util.DriveTrainSignal;
 import com.team3925.robot2016.util.MiscUtil;
+import com.team3925.robot2016.util.Pose;
 import com.team3925.robot2016.util.SmartdashBoardLoggable;
 
 import edu.wpi.first.wpilibj.Encoder;
@@ -15,15 +18,18 @@ import edu.wpi.first.wpilibj.command.Subsystem;
  */
 public class DriveTrain extends Subsystem implements SmartdashBoardLoggable {
 
+	private final AHRS navx = Robot.navx;
     private final SpeedController motorLeftA = RobotMap.driveTrainMotorLeftA;
     private final SpeedController motorLeftB = RobotMap.driveTrainMotorLeftB;
     private final SpeedController motorLeftC = RobotMap.driveTrainMotorLeftC;
     private final SpeedController motorRightA = RobotMap.driveTrainMotorRightA;
     private final SpeedController motorRightB = RobotMap.driveTrainMotorRightB;
     private final SpeedController motorRightC = RobotMap.driveTrainMotorRightC;
-    
     private final Encoder encoderLeft = RobotMap.driveTrainEncoderLeft;
     private final Encoder encoderRight = RobotMap.driveTrainEncoderRight;
+    
+    private Pose cached_pose = new Pose(0, 0, 0, 0, 0, 0);
+    
     
     public void setMotorSpeeds(DriveTrainSignal input) {
     	setLeftMotorSpeeds(input.left);
@@ -49,6 +55,13 @@ public class DriveTrain extends Subsystem implements SmartdashBoardLoggable {
     
     public DriveTrainSignal getEncoderRates() {
     	return new DriveTrainSignal(encoderLeft.getRate(), encoderRight.getRate());
+    }
+    
+    public Pose getPhysicalPose() {
+    	cached_pose.reset(encoderLeft.getDistance(), encoderRight.getDistance(),
+    			encoderLeft.getRate(), encoderRight.getRate(),
+    			Math.toRadians(navx.getYaw()), 0); //get and check navx heading values
+    	return cached_pose;
     }
     
 	public void arcadeDrive(double moveValue, double rotateValue, boolean squaredInputs) {
