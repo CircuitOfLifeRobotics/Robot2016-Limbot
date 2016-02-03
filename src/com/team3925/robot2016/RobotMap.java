@@ -1,6 +1,7 @@
 package com.team3925.robot2016;
 
 import edu.wpi.first.wpilibj.CANTalon;
+import edu.wpi.first.wpilibj.CANTalon.FeedbackDevice;
 import edu.wpi.first.wpilibj.CANTalon.TalonControlMode;
 import edu.wpi.first.wpilibj.CounterBase.EncodingType;
 import edu.wpi.first.wpilibj.Encoder;
@@ -25,6 +26,7 @@ public class RobotMap {
     public static Encoder driveTrainEncoderLeft;
     public static Encoder driveTrainEncoderRight;
     
+    public static CANTalon launcherMotorAim;
     public static CANTalon launcherMotorLeft;
     public static CANTalon launcherMotorRight;
 
@@ -60,14 +62,19 @@ public class RobotMap {
         driveTrainEncoderRight.setPIDSourceType(PIDSourceType.kRate);
         
         
+        launcherMotorAim = new CANTalon(0);
+        LiveWindow.addActuator("Launcher", "AimMotor", launcherMotorAim);
+        launcherMotorAim.setFeedbackDevice(FeedbackDevice.PulseWidth);
+        launcherMotorAim.changeControlMode(TalonControlMode.PercentVbus); //TODO change to position and do code to make it work
+        
         launcherMotorLeft = new CANTalon(0);
         LiveWindow.addActuator("Launcher", "MotorLeft", launcherMotorLeft);
-        launcherMotorLeft.changeControlMode(TalonControlMode.Speed); //TODO check if we want to use speed
-        
+        launcherMotorLeft.setFeedbackDevice(FeedbackDevice.QuadEncoder);
+        launcherMotorLeft.changeControlMode(TalonControlMode.PercentVbus); //TODO check if we want to use speed
         
         launcherMotorRight = new CANTalon(1);
         LiveWindow.addActuator("Launcher", "MotorRight", launcherMotorRight);
-        
+        launcherMotorRight.setFeedbackDevice(FeedbackDevice.QuadEncoder);
         launcherMotorRight.changeControlMode(TalonControlMode.Follower);
         launcherMotorRight.set(launcherMotorLeft.getDeviceID());
         launcherMotorRight.setInverted(true);

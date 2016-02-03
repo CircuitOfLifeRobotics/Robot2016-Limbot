@@ -60,7 +60,7 @@ public class DriveTrain extends Subsystem implements SmartdashBoardLoggable {
     public Pose getPhysicalPose() {
     	cached_pose.reset(encoderLeft.getDistance(), encoderRight.getDistance(),
     			encoderLeft.getRate(), encoderRight.getRate(),
-    			Math.toRadians(navx.getYaw()), 0); //get and check navx heading values
+    			Math.toRadians(navx.getFusedHeading()), 0); //get and check navx heading values
     	return cached_pose;
     }
     

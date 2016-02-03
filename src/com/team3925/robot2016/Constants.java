@@ -13,8 +13,39 @@ public class Constants {
 	public static final AutoStartPos AUTO_START_LOCATION = AutoStartPos.CENTER;
 	public static final boolean DO_LOG_AHRS_VALUES = false;
 
-
 	public static final double XBOX_AXIS_TOLERANCE = 0.1;
+
+	public static final double GLOBAL_MAX_SHOOTER_PWR = 1;
+	public static final double LAUNCHER_AIM_MOTOR_SPEED_MULTIPLIED = 0.05;
+	
+	
+	
+//	DRIVETRAIN CONSTANTS
+	public static final double GLOBAL_MAX_DRIVE_TRAIN_PWR = 1;
+	
+//	Straight Gyro Drive PID Constants
+	//TODO: tune gyro straight drive pid
+	public static final double GYRO_DRIVE_KP = 1;
+	public static final double GYRO_DRIVE_KI = 0;
+	public static final double GYRO_DRIVE_KD = 0;
+	
+//	Launcher PID Constants
+	//TODO: tune shooter pid
+	public static final double LAUNCHER_KP = 1;
+	public static final double LAUNCHER_KI = 0;
+	public static final double LAUNCHER_KD = 0;
+	public static final double LAUNCHER_KF = 0;
+	public static final double LAUNCHER_RAMP_RATE = 1;//ramp rate is maximum acceleration in voltage/second
+	public static final int LAUNCHER_IZONE = 0; // izone eliminates
+	public static final int LAUNCHER_PROFILE = 0;
+	
+//	Drivetrain PID Constants
+	//TODO: tune drivetrain pid
+	public static final double DRIVE_TRAIN_KP = 1;
+	public static final double DRIVE_TRAIN_KI = 0;
+	public static final double DRIVE_TRAIN_KD = 0;
+	
+	
 	
 //	Trajectory Follow Constants
 	public static final double TRAJECTORY_FOLLOWER_KP = 1;

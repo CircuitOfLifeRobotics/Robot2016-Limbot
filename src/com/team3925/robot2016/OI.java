@@ -4,10 +4,14 @@ import com.team3925.robot2016.commands.AutoRoutineCenter;
 import com.team3925.robot2016.commands.AutoRoutineCourtyard;
 import com.team3925.robot2016.commands.CollectBall;
 import com.team3925.robot2016.commands.LaunchBallHigh;
+import com.team3925.robot2016.commands.LaunchBallLow;
 import com.team3925.robot2016.commands.ManualDrive;
 import com.team3925.robot2016.commands.TrajectoryFollow;
+import com.team3925.robot2016.util.XboxHelper;
 
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.buttons.Button;
+import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 
@@ -45,12 +49,25 @@ public class OI {
 
     public Joystick xboxDriver;
     public Joystick xboxShooter;
+    public Button startCollectBall;
+    public Button startLaunchBallLow;
+    public Button startLaunchBallHigh;
 
     public OI() {
 
     	xboxDriver = new Joystick(0);
     	xboxShooter = new Joystick(1);
-        
+    	
+    	startCollectBall = new JoystickButton(xboxShooter, XboxHelper.A);
+    	startCollectBall.whenPressed(new CollectBall());
+		
+    	startLaunchBallLow = new JoystickButton(xboxShooter, XboxHelper.B);
+    	startLaunchBallLow.whenPressed(new LaunchBallLow());
+    	
+    	startLaunchBallHigh = new JoystickButton(xboxShooter, XboxHelper.Y);
+    	startLaunchBallHigh.whenPressed(new LaunchBallHigh());
+    	
+    	
         // SmartDashboard Buttons
         SmartDashboard.putData("ManualDrive", new ManualDrive());
         SmartDashboard.putData("TrajectoryFollow", new TrajectoryFollow());

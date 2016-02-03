@@ -1,5 +1,7 @@
 package com.team3925.robot2016;
 
+import static com.team3925.robot2016.Constants.DO_LOG_AHRS_VALUES;
+
 import com.kauailabs.navx.frc.AHRS;
 import com.team3925.robot2016.commands.AutoRoutineCenter;
 import com.team3925.robot2016.commands.AutoRoutineCourtyard;
@@ -136,34 +138,32 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 		if (autoCommandGroup != null) autoCommandGroup.cancel();
 
 		manualDrive.start();
+		System.out.println("Robot has init! (Said through System.out.println)");
 	}
 
 	/**
 	 * This function is called periodically during operator control
 	 */
+	@SuppressWarnings("deprecation")
 	public void teleopPeriodic() {
 		Scheduler.getInstance().run();
 		
 		driveTrain.logData();
 		launcher.logData();
 		logData();
+		launcher.update();
 		
-
-//		Probably going to be moved to command manager or something
-		/*
-		if (XboxHelper.getShooterButton(XboxHelper.Y)) {
-			if (launcher.hasBall()) {
-				launchBall = new LaunchBallHigh();
-			} else {
-				DriverStation.reportError("Cannot run LaunchBall without a ball!", false);
-			}
-		} else if (XboxHelper.getShooterButton(XboxHelper.X)) {
-			if (launcher.hasBall()) {
-				launchBall = new LaunchBallLow();
-			} else {
-				DriverStation.reportError("Cannot run LaunchBall without a ball!", false);
-			}
-		} */
+		boolean leftTrigger = XboxHelper.getShooterButton(XboxHelper.TRIGGER_RT);
+		boolean rightTrigger = XboxHelper.getShooterButton(XboxHelper.TRIGGER_LT);
+		if (leftTrigger) {
+			launcher.setAimMotorSpeed(1);
+		} else if (rightTrigger) {
+			launcher.setAimMotorSpeed(-1);
+		} else if (rightTrigger == leftTrigger) {
+			launcher.setAimMotorSpeed(0);
+		} else {
+			launcher.setAimMotorSpeed(0); //it should never get here but just in case
+		}
 		
 	}
 
@@ -183,7 +183,7 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 		putNumberSD("CurrentTime", Timer.getFPGATimestamp());
 		putNumberSD("DeltaTime", deltaTime);
 		
-		if (Constants.DO_LOG_AHRS_VALUES) {
+		if (DO_LOG_AHRS_VALUES) {
 			if (navx != null) {
 				logNavXData();
 			} else {
