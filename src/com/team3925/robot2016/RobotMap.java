@@ -35,21 +35,27 @@ public class RobotMap {
     	
         driveTrainMotorLeftA = new Talon(3);
         LiveWindow.addActuator("DriveTrain", "MotorLeftA", (Talon) driveTrainMotorLeftA);
+        driveTrainMotorLeftA.setInverted(false);
         
         driveTrainMotorLeftB = new Talon(4);
         LiveWindow.addActuator("DriveTrain", "MotorLeftB", (Talon) driveTrainMotorLeftB);
+        driveTrainMotorLeftB.setInverted(false);
         
         driveTrainMotorLeftC = new Talon(5);
         LiveWindow.addActuator("DriveTrain", "MotorLeftC", (Talon) driveTrainMotorLeftC);
+        driveTrainMotorLeftC.setInverted(false);
         
         driveTrainMotorRightA = new Talon(0);
         LiveWindow.addActuator("DriveTrain", "MotorRightA", (Talon) driveTrainMotorRightA);
+        driveTrainMotorRightA.setInverted(false);
         
         driveTrainMotorRightB = new Talon(1);
         LiveWindow.addActuator("DriveTrain", "MotorRightB", (Talon) driveTrainMotorRightB);
+        driveTrainMotorRightB.setInverted(false);
         
         driveTrainMotorRightC = new Talon(2);
         LiveWindow.addActuator("DriveTrain", "MotorRightC", (Talon) driveTrainMotorRightC);
+        driveTrainMotorRightB.setInverted(false);
         
         driveTrainEncoderLeft = new Encoder(0, 1, false, EncodingType.k4X);
         LiveWindow.addSensor("DriveTrain", "EncoderLeft", driveTrainEncoderLeft);
@@ -62,7 +68,7 @@ public class RobotMap {
         driveTrainEncoderRight.setPIDSourceType(PIDSourceType.kRate);
         
         
-        launcherMotorAim = new CANTalon(0);
+        launcherMotorAim = new CANTalon(2);
         LiveWindow.addActuator("Launcher", "AimMotor", launcherMotorAim);
         launcherMotorAim.setFeedbackDevice(FeedbackDevice.PulseWidth);
         launcherMotorAim.changeControlMode(TalonControlMode.PercentVbus); //TODO change to position and do code to make it work

@@ -3,10 +3,9 @@ package com.team3925.robot2016.commands;
 import edu.wpi.first.wpilibj.command.CommandGroup;
 
 /**
- *
+ * Auto routine that starts in the courtyard, and shoots a goal
  */
 public class AutoRoutineCourtyard extends CommandGroup {
-
 
     public AutoRoutineCourtyard() {
         // Add Commands here:

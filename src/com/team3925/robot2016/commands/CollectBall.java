@@ -22,7 +22,7 @@ public class CollectBall extends Command {
 
 	// Called repeatedly when this Command is scheduled to run
 	protected void execute() {
-		launcher.setIntakeSpeeds(1);
+		launcher.setIntakeSpeeds(-.3);
 	}
 
 	// Make this return true when this Command no longer needs to run execute()

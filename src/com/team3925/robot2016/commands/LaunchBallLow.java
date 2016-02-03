@@ -22,7 +22,7 @@ public class LaunchBallLow extends Command {
 
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
-    	launcher.setIntakeSpeeds(XboxHelper.getShooterAxis(XboxHelper.AXIS_RIGHT_Y));
+    	launcher.setIntakeSpeeds(.3);
     }
 
     // Make this return true when this Command no longer needs to run execute()

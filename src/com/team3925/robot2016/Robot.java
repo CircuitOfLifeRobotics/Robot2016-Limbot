@@ -128,6 +128,7 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 	public void autonomousPeriodic() {
 		Scheduler.getInstance().run();
 		logData();
+		driveTrain.setMotorSpeeds(new DriveTrainSignal(.2, .2));
 	}
 
 	public void teleopInit() {

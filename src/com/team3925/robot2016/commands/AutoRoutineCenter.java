@@ -3,13 +3,14 @@ package com.team3925.robot2016.commands;
 import edu.wpi.first.wpilibj.command.CommandGroup;
 
 /**
- *	Auto Routine that does nothing
+ *	Drives the robot from the center of the arena, over a defense,
+ *	and shoots the preloaded ball at the high goal
  */
 public class AutoRoutineCenter extends CommandGroup {
 
 
 	public AutoRoutineCenter() {
-
+		
 		// Add Commands here:
 		// e.g. addSequential(new Command1());
 		//      addSequential(new Command2());
