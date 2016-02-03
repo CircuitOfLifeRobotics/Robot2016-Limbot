@@ -17,6 +17,18 @@ import edu.wpi.first.wpilibj.command.Subsystem;
  *
  */
 public class DriveTrain extends Subsystem implements SmartdashBoardLoggable {
+	
+    /**
+     * Interface for the drivetrain controllers (straight drive, turn in place, etc)
+     */
+    public interface DriveController {
+        DriveTrainSignal update(Pose pose);
+
+        Pose getCurrentSetpoint();
+
+        public boolean onTarget();
+
+    }
 
 	private final AHRS navx = Robot.navx;
     private final SpeedController motorLeftA = RobotMap.driveTrainMotorLeftA;
@@ -28,6 +40,7 @@ public class DriveTrain extends Subsystem implements SmartdashBoardLoggable {
     private final Encoder encoderLeft = RobotMap.driveTrainEncoderLeft;
     private final Encoder encoderRight = RobotMap.driveTrainEncoderRight;
     
+//    private Controller controller = null;
     private Pose cached_pose = new Pose(0, 0, 0, 0, 0, 0);
     
     

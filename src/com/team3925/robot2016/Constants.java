@@ -6,6 +6,11 @@ package com.team3925.robot2016;
 public class Constants {
 	private Constants() {};
 	
+	
+//	Loop time of the program
+	public static final double DELTA_TIME = 0.020; // 20 ms
+	
+	
 	public static enum AutoStartPos {
 		COURTYARD, CENTER, DO_NOTHING;
 	}
@@ -24,4 +29,29 @@ public class Constants {
 	public static final double TRAJECTORY_FOLLOWER_KA = 0;
 	public static final double TRAJECTORY_FOLLOWER_ERROR = 1;
 	
+	
+	// Temporary values for controllers
+    // DriveStraightController gains
+    public static double kDriveMaxSpeedInchesPerSec = 120.0;
+    public static double kDriveMaxAccelInchesPerSec2 = 107.0;
+    public static double kDrivePositionKp = 0.7;
+    public static double kDrivePositionKi = 0;
+    public static double kDrivePositionKd = 0;
+    public static double kDriveStraightKp = 3.0;
+    public static double kDriveStraightKi = 0;
+    public static double kDriveStraightKd = 0;
+    public static double kDrivePositionKv = 0.008;
+    public static double kDrivePositionKa = 0.0017;
+    public static double kDriveOnTargetError = 0.75;
+    public static double kDrivePathHeadingFollowKp = 0.01;
+    // TurnInPlaceController gains
+    public static double kTurnMaxSpeedRadsPerSec = 5.25;
+    public static double kTurnMaxAccelRadsPerSec2 = 5.25;
+    public static double kTurnKp = 3.0;
+    public static double kTurnKi = 0.18;
+    public static double kTurnKd = 0.23;
+    public static double kTurnKv = 0.085;
+    public static double kTurnKa = 0.075;
+    public static double kTurnOnTargetError = 0.0225;
+    
 }
