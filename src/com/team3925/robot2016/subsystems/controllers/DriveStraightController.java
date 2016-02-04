@@ -1,14 +1,14 @@
 package com.team3925.robot2016.subsystems.controllers;
 
 import com.team3925.robot2016.Constants;
-import com.team3925.robot2016.subsystems.DriveTrain.DriveController;
+import com.team3925.robot2016.subsystems.DriveTrain.DriveTrainController;
 import com.team3925.robot2016.trajectory.TrajectoryFollower;
 import com.team3925.robot2016.trajectory.TrajectoryFollower.TrajectorySetpoint;
 import com.team3925.robot2016.util.DriveTrainSignal;
 import com.team3925.robot2016.util.Pose;
 import com.team3925.robot2016.util.SynchronousPID;
 
-public class DriveStraightController implements DriveController {
+public class DriveStraightController implements DriveTrainController {
 
     private TrajectoryFollowingPositionController mDistanceController;
     private SynchronousPID mTurnPid;

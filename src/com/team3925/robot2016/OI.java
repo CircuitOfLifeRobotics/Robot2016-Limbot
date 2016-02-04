@@ -5,7 +5,6 @@ import com.team3925.robot2016.commands.AutoRoutineCourtyard;
 import com.team3925.robot2016.commands.CollectBall;
 import com.team3925.robot2016.commands.LaunchBallHigh;
 import com.team3925.robot2016.commands.ManualDrive;
-import com.team3925.robot2016.commands.TrajectoryFollow;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -53,7 +52,7 @@ public class OI {
         
         // SmartDashboard Buttons
         SmartDashboard.putData("ManualDrive", new ManualDrive());
-        SmartDashboard.putData("TrajectoryFollow", new TrajectoryFollow());
+//        SmartDashboard.putData("TrajectoryFollow", new TrajectoryFollow());
         SmartDashboard.putData("LaunchBall", new LaunchBallHigh());
         SmartDashboard.putData("CollectBall", new CollectBall());
         SmartDashboard.putData("AutoRoutineCenter", new AutoRoutineCenter());

@@ -9,7 +9,7 @@ public class TrajectoryFollowingPositionController extends Controller {
     double m_error;
     double m_on_target_delta;
     double m_result = 0;
-
+    
     public TrajectoryFollowingPositionController(double kp, double ki,
                                                  double kd, double kv, double ka, double on_target_delta,
                                                  TrajectoryFollower.TrajectoryConfig config) {
@@ -65,5 +65,5 @@ public class TrajectoryFollowingPositionController extends Controller {
         return m_follower.isFinishedTrajectory()
                 && Math.abs(m_error) < m_on_target_delta;
     }
-
+    
 }

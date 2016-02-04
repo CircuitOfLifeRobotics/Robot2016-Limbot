@@ -1,8 +1,13 @@
 package com.team3925.robot2016.subsystems;
 
 import com.kauailabs.navx.frc.AHRS;
+import com.team3925.robot2016.Constants;
 import com.team3925.robot2016.Robot;
 import com.team3925.robot2016.RobotMap;
+import com.team3925.robot2016.subsystems.controllers.DrivePathController;
+import com.team3925.robot2016.subsystems.controllers.DriveStraightController;
+import com.team3925.robot2016.subsystems.controllers.TurnInPlaceController;
+import com.team3925.robot2016.trajectory.Path;
 import com.team3925.robot2016.util.DriveTrainSignal;
 import com.team3925.robot2016.util.MiscUtil;
 import com.team3925.robot2016.util.Pose;
@@ -21,13 +26,12 @@ public class DriveTrain extends Subsystem implements SmartdashBoardLoggable {
     /**
      * Interface for the drivetrain controllers (straight drive, turn in place, etc)
      */
-    public interface DriveController {
+    public interface DriveTrainController {
         DriveTrainSignal update(Pose pose);
 
         Pose getCurrentSetpoint();
 
         public boolean onTarget();
-
     }
 
 	private final AHRS navx = Robot.navx;
@@ -40,11 +44,21 @@ public class DriveTrain extends Subsystem implements SmartdashBoardLoggable {
     private final Encoder encoderLeft = RobotMap.driveTrainEncoderLeft;
     private final Encoder encoderRight = RobotMap.driveTrainEncoderRight;
     
-//    private Controller controller = null;
+    private DriveTrainController controller = null;
     private Pose cached_pose = new Pose(0, 0, 0, 0, 0, 0);
     
     
-    public void setMotorSpeeds(DriveTrainSignal input) {
+    /**
+     * This method disables the current controller then passes the raw input to the motors.
+     * 
+     * @param input Left and right motor speeds to pass to motors
+     */
+    public void setOpenLoopSpeeds(DriveTrainSignal input) {
+    	controller = null;
+    	setMotorSpeeds(input);
+    }
+    
+    private void setMotorSpeeds(DriveTrainSignal input) {
     	setLeftMotorSpeeds(input.left);
     	setRightMotorSpeeds(input.right);
     }
@@ -66,16 +80,78 @@ public class DriveTrain extends Subsystem implements SmartdashBoardLoggable {
     	encoderRight.reset();
     }
     
-    public DriveTrainSignal getEncoderRates() {
-    	return new DriveTrainSignal(encoderLeft.getRate(), encoderRight.getRate());
+    
+    
+    
+    
+    
+    public void setDistanceSetpoint(double distance) {
+        setDistanceSetpoint(distance, Constants.kDriveMaxSpeedInchesPerSec);
+    }
+
+    public void setDistanceSetpoint(double distance, double velocity) {
+        // 0 < vel < max_vel
+        double vel_to_use = Math.min(Constants.kDriveMaxSpeedInchesPerSec, Math.max(velocity, 0));
+        controller = new DriveStraightController(
+                getPoseToContinueFrom(false),
+                distance,
+                vel_to_use);
+    }
+
+    public void setTurnSetPoint(double heading) {
+        setTurnSetPoint(heading, Constants.kTurnMaxSpeedRadsPerSec);
+    }
+
+    public void setTurnSetPoint(double heading, double velocity) {
+        velocity = Math.min(Constants.kTurnMaxSpeedRadsPerSec, Math.max(velocity, 0));
+        controller = new TurnInPlaceController(getPoseToContinueFrom(true), heading, velocity);
     }
     
+    public void setPathSetpoint(Path path) {
+        resetEncoders();
+        controller = new DrivePathController(path);
+    }
+    
+    public void createDriveTrainController(DriveTrainController controller) {
+    	this.controller = controller;
+    }
+    
+    /**
+     * @return The pose according to the current sensor state
+     */
     public Pose getPhysicalPose() {
     	cached_pose.reset(encoderLeft.getDistance(), encoderRight.getDistance(),
     			encoderLeft.getRate(), encoderRight.getRate(),
-    			Math.toRadians(navx.getYaw()), 0); //get and check navx heading values
+    			Math.toRadians(navx.getFusedHeading()), 0); //get and check navx heading values
     	return cached_pose;
     }
+    
+    private Pose getPoseToContinueFrom(boolean for_turn_controller) {
+        if (!for_turn_controller && controller instanceof TurnInPlaceController) {
+            Pose pose_to_use = getPhysicalPose();
+            pose_to_use.m_heading = ((TurnInPlaceController) controller).getHeadingGoal();
+            pose_to_use.m_heading_velocity = 0;
+            return pose_to_use;
+        } else if (controller == null || (controller instanceof DriveStraightController && for_turn_controller)) {
+            return getPhysicalPose();
+//        } else if (controller instanceof DriveFinishLineController) {
+//            return getPhysicalPose();
+        } else if (controller.onTarget()) {
+            return controller.getCurrentSetpoint();
+        } else {
+            return getPhysicalPose();
+        }
+    }
+    
+    public DriveTrainController getController() {
+        return controller;
+    }
+    
+    public boolean controllerOnTarget() {
+        return controller != null && controller.onTarget();
+    }
+    
+    
     
 	public void arcadeDrive(double moveValue, double rotateValue, boolean squaredInputs) {
 		double leftMotorSpeed;

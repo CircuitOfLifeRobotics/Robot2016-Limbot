@@ -1,7 +1,7 @@
 package com.team3925.robot2016.subsystems.controllers;
 
 import com.team3925.robot2016.Constants;
-import com.team3925.robot2016.subsystems.DriveTrain.DriveController;
+import com.team3925.robot2016.subsystems.DriveTrain.DriveTrainController;
 import com.team3925.robot2016.trajectory.LegacyTrajectoryFollower;
 import com.team3925.robot2016.trajectory.Path;
 import com.team3925.robot2016.trajectory.Trajectory;
@@ -15,7 +15,7 @@ import com.team3925.robot2016.util.Pose;
  *
  * @author Tom Bottiglieri
  */
-public class DrivePathController implements DriveController {
+public class DrivePathController implements DriveTrainController {
 
     public DrivePathController(Path path) {
         init();
@@ -29,6 +29,7 @@ public class DrivePathController implements DriveController {
     double heading;
     double kTurn = -Constants.kDrivePathHeadingFollowKp;
 
+    
     public boolean onTarget() {
         return followerLeft.isFinishedTrajectory();
     }
@@ -105,4 +106,5 @@ public class DrivePathController implements DriveController {
     public Pose getCurrentSetpoint() {
         return new Pose(followerLeft.getCurrentSegment().pos, 0, 0, 0, -followerLeft.getHeading(), 0);
     }
+
 }

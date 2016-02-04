@@ -7,7 +7,6 @@ import com.team3925.robot2016.commands.AutoRoutineDoNothing;
 import com.team3925.robot2016.commands.CollectBall;
 import com.team3925.robot2016.commands.LaunchBallHigh;
 import com.team3925.robot2016.commands.ManualDrive;
-import com.team3925.robot2016.commands.TrajectoryFollow;
 import com.team3925.robot2016.subsystems.DriveTrain;
 import com.team3925.robot2016.subsystems.Launcher;
 import com.team3925.robot2016.util.DriveTrainSignal;
@@ -95,7 +94,7 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 		collectBall = new CollectBall();
 		launchBall = new LaunchBallHigh();
 		manualDrive = new ManualDrive();
-		trajectoryFollow = new TrajectoryFollow();
+//		trajectoryFollow = new TrajectoryFollow();
 		
 		lastTimestamp = Timer.getFPGATimestamp();
 	}
@@ -105,13 +104,13 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 	 * You can use it to reset subsystems before shutting down.
 	 */
 	public void disabledInit(){
-		driveTrain.setMotorSpeeds(DriveTrainSignal.NEUTRAL);
+		driveTrain.setOpenLoopSpeeds(DriveTrainSignal.NEUTRAL);
 		launcher.setIntakeSpeeds(0);
 	}
 
 	public void disabledPeriodic() {
 		Scheduler.getInstance().run();
-		driveTrain.setMotorSpeeds(DriveTrainSignal.NEUTRAL);
+		driveTrain.setOpenLoopSpeeds(DriveTrainSignal.NEUTRAL);
 		launcher.setIntakeSpeeds(0);
 	}
 
@@ -147,23 +146,6 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 		driveTrain.logData();
 		launcher.logData();
 		logData();
-		
-
-//		Probably going to be moved to command manager or something
-		/*
-		if (XboxHelper.getShooterButton(XboxHelper.Y)) {
-			if (launcher.hasBall()) {
-				launchBall = new LaunchBallHigh();
-			} else {
-				DriverStation.reportError("Cannot run LaunchBall without a ball!", false);
-			}
-		} else if (XboxHelper.getShooterButton(XboxHelper.X)) {
-			if (launcher.hasBall()) {
-				launchBall = new LaunchBallLow();
-			} else {
-				DriverStation.reportError("Cannot run LaunchBall without a ball!", false);
-			}
-		} */
 		
 	}
 

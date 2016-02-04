@@ -1,7 +1,7 @@
 package com.team3925.robot2016.subsystems.controllers;
 
 import com.team3925.robot2016.Constants;
-import com.team3925.robot2016.subsystems.DriveTrain.DriveController;
+import com.team3925.robot2016.subsystems.DriveTrain.DriveTrainController;
 import com.team3925.robot2016.trajectory.TrajectoryFollower;
 import com.team3925.robot2016.util.DriveTrainSignal;
 import com.team3925.robot2016.util.Pose;
@@ -9,7 +9,7 @@ import com.team3925.robot2016.util.Pose;
 /**
  * Controls the robot to turn in place
  */
-public class TurnInPlaceController implements DriveController {
+public class TurnInPlaceController implements DriveTrainController {
     private final TrajectoryFollowingPositionController mController;
     private final Pose mSetpointRelativePose;
 
@@ -62,5 +62,6 @@ public class TurnInPlaceController implements DriveController {
     public double getHeadingGoal() {
         return mController.getGoal();
     }
+    
 }
 

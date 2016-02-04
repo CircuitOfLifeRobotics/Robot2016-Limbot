@@ -60,13 +60,13 @@ public class TrajectoryFollowSimple extends Command implements SmartdashBoardLog
 
     // Called once after isFinished returns true
     protected void end() {
-    	driveTrain.setMotorSpeeds(DriveTrainSignal.NEUTRAL);
+    	driveTrain.setOpenLoopSpeeds(DriveTrainSignal.NEUTRAL);
     }
 
     // Called when another command which requires one or more of the same
     // subsystems is scheduled to run
     protected void interrupted() {
-    	driveTrain.setMotorSpeeds(DriveTrainSignal.NEUTRAL);
+    	driveTrain.setOpenLoopSpeeds(DriveTrainSignal.NEUTRAL);
     }
 
 	@Override
