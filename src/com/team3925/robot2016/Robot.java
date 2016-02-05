@@ -182,11 +182,9 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 		
 		logData();
 
-		boolean leftTrigger = XboxHelper.getShooterButton(XboxHelper.TRIGGER_RT);
-		boolean rightTrigger = XboxHelper.getShooterButton(XboxHelper.TRIGGER_LT);
-		if (leftTrigger) {
+		if (XboxHelper.getShooterButton(XboxHelper.TRIGGER_RT)) {
 			launcher.setAimMotorSpeed(1);
-		} else if (rightTrigger) {
+		} else if (XboxHelper.getShooterButton(XboxHelper.TRIGGER_RT)) {
 			launcher.setAimMotorSpeed(-1);
 		}
 	}
