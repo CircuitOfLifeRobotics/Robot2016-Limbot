@@ -123,13 +123,13 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 	public void autonomousInit() {
 		// schedule the autonomous command (example)
 		if (autoCommandGroup != null) autoCommandGroup.start();
-		double setpoint = 10;
-		driveTrain.setDistanceSetpoint(setpoint, Constants.kDriveMaxSpeedInchesPerSec/4);
-		putNumberSD("DriveStraightControllerSetpoint", setpoint);
 		navx.reset();
 		navx.resetDisplacement();
 		maxAccel = 0;
 		maxVel = 0;
+		double setpoint = 10;
+		driveTrain.setDistanceSetpoint(setpoint, Constants.kDriveMaxSpeedInchesPerSec/4);
+		putNumberSD("DriveStraightControllerSetpoint", setpoint);
 	}
 
 	/**

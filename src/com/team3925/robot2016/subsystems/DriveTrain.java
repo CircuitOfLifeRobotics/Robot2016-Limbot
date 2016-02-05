@@ -145,7 +145,8 @@ public class DriveTrain extends Subsystem implements SmartdashBoardLoggable {
     public Pose getPhysicalPose() {
     	cached_pose.reset(encoderLeft.getDistance(), encoderRight.getDistance(),
     			encoderLeft.getRate(), encoderRight.getRate(),
-    			Math.toRadians(navx.getFusedHeading()), 0); //get and check navx heading values
+    			Math.toRadians(navx.getFusedHeading()),
+    			Math.toRadians(navx.getRate())); //get and check navx heading values
     	return cached_pose;
     }
     
@@ -237,6 +238,10 @@ public class DriveTrain extends Subsystem implements SmartdashBoardLoggable {
 		putNumberSD("EncoderRightRate", encoderRight.getRate());
 		
 		putBooleanSD("HighGear", isHighGear());
+		
+		MiscUtil.putPoseSD(getFormattedName() + "ControllerSetpoint_", controller.getCurrentSetpoint());
+		MiscUtil.putPoseSD(getFormattedName() + "PhysicalState_", getPhysicalPose());
+		
 	}
 	
     public void initDefaultCommand() {
