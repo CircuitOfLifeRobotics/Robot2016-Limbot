@@ -26,8 +26,18 @@ public class ManualDrive extends Command {
 
 	// Called repeatedly when this Command is scheduled to run
 	protected void execute() {
-		driveTrain.arcadeDrive(-XboxHelper.getDriverAxis(AXIS_LEFT_Y), 
-						XboxHelper.getDriverAxis(AXIS_RIGHT_X), true);
+		driveTrain.arcadeDrive( 
+						XboxHelper.getDriverAxis(AXIS_LEFT_Y),
+						XboxHelper.getDriverAxis(AXIS_RIGHT_X),
+								true);
+		boolean left = XboxHelper.getDriverButton(XboxHelper.TRIGGER_LT);
+		boolean right = XboxHelper.getDriverButton(XboxHelper.TRIGGER_RT);
+		if (right || left) {
+			driveTrain.setHighGear(true);
+		} else {
+			driveTrain.setHighGear(false);
+		}
+		
 	}
 
 	// Make this return true when this Command no longer needs to run execute()

@@ -13,6 +13,8 @@ import com.team3925.robot2016.util.MiscUtil;
 import com.team3925.robot2016.util.Pose;
 import com.team3925.robot2016.util.SmartdashBoardLoggable;
 
+import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.SpeedController;
 import edu.wpi.first.wpilibj.command.Subsystem;
@@ -43,6 +45,8 @@ public class DriveTrain extends Subsystem implements SmartdashBoardLoggable {
     private final SpeedController motorRightC = RobotMap.driveTrainMotorRightC;
     private final Encoder encoderLeft = RobotMap.driveTrainEncoderLeft;
     private final Encoder encoderRight = RobotMap.driveTrainEncoderRight;
+    private final DoubleSolenoid shifterSolenoidLeft = RobotMap.driveTrainShifterSolenoidLeft;
+    private final DoubleSolenoid shifterSolenoidRight = RobotMap.driveTrainShifterSolenoidRight;
     
     private DriveTrainController controller = null;
     private Pose cached_pose = new Pose(0, 0, 0, 0, 0, 0);
@@ -63,6 +67,16 @@ public class DriveTrain extends Subsystem implements SmartdashBoardLoggable {
     	setRightMotorSpeeds(input.right);
     }
     
+    public void setHighGear(boolean highGear) {
+    	if (highGear) {
+    		shifterSolenoidLeft.set(Value.kForward);
+    		shifterSolenoidRight.set(Value.kForward);
+		} else {
+			shifterSolenoidLeft.set(Value.kReverse);
+			shifterSolenoidRight.set(Value.kReverse);
+		}
+    }
+    
     private void setLeftMotorSpeeds(double speed) {
     	motorLeftA.set(speed);
     	motorLeftB.set(speed);
@@ -80,10 +94,19 @@ public class DriveTrain extends Subsystem implements SmartdashBoardLoggable {
     	encoderRight.reset();
     }
     
+    public boolean isHighGear() {
+    	return shifterSolenoidLeft.get() == Value.kForward;
+    }
     
     
     
     
+    public void update() {
+        if (controller == null) {
+            return;
+        }
+        setMotorSpeeds(controller.update(getPhysicalPose()));
+    }
     
     public void setDistanceSetpoint(double distance) {
         setDistanceSetpoint(distance, Constants.kDriveMaxSpeedInchesPerSec);
@@ -212,6 +235,8 @@ public class DriveTrain extends Subsystem implements SmartdashBoardLoggable {
 		
 		putNumberSD("EncoderLeftRate", encoderLeft.getRate());
 		putNumberSD("EncoderRightRate", encoderRight.getRate());
+		
+		putBooleanSD("HighGear", isHighGear());
 	}
 	
     public void initDefaultCommand() {
