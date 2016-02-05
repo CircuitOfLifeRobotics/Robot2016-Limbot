@@ -18,6 +18,8 @@ public class Constants {
 	public static final double GLOBAL_MAX_SHOOTER_PWR = 1;
 	public static final double LAUNCHER_AIM_MOTOR_SPEED_MULTIPLIED = 0.05;
 	
+	public static final double MAX_ACCEL_M_SEC2 = 0.923;
+	public static final double MAX_VEL_M_SEC = 1.973;
 	
 	
 //	DRIVETRAIN CONSTANTS

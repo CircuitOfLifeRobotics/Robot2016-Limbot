@@ -26,7 +26,8 @@ public class DriveTrain extends Subsystem implements SmartdashBoardLoggable {
     private final SpeedController motorRightC = RobotMap.driveTrainMotorRightC;
     private final Encoder encoderLeft = RobotMap.driveTrainEncoderLeft;
     private final Encoder encoderRight = RobotMap.driveTrainEncoderRight;
-    private final DoubleSolenoid shifterSolenoid = RobotMap.driveTrainShifterSolenoid;
+    private final DoubleSolenoid shifterSolenoidLeft = RobotMap.driveTrainShifterSolenoidLeft;
+    private final DoubleSolenoid shifterSolenoidRight = RobotMap.driveTrainShifterSolenoidRight;
     
     private Pose cached_pose = new Pose(0, 0, 0, 0, 0, 0);
     
@@ -37,7 +38,13 @@ public class DriveTrain extends Subsystem implements SmartdashBoardLoggable {
     }
     
     public void setHighGear(boolean highGear) {
-    	shifterSolenoid.set(highGear ? Value.kForward : Value.kReverse);
+    	if (highGear) {
+    		shifterSolenoidLeft.set(Value.kForward);
+    		shifterSolenoidRight.set(Value.kForward);
+		} else {
+			shifterSolenoidLeft.set(Value.kReverse);
+			shifterSolenoidRight.set(Value.kReverse);
+		}
     }
     
     private void setLeftMotorSpeeds(double speed) {
@@ -58,7 +65,7 @@ public class DriveTrain extends Subsystem implements SmartdashBoardLoggable {
     }
     
     public boolean isHighGear() {
-    	return shifterSolenoid.get() == Value.kForward;
+    	return shifterSolenoidLeft.get() == Value.kForward;
     }
     
     public DriveTrainSignal getEncoderRates() {

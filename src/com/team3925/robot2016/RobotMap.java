@@ -30,7 +30,8 @@ public class RobotMap {
     public static SpeedController driveTrainMotorRightC;
     public static Encoder driveTrainEncoderLeft;
     public static Encoder driveTrainEncoderRight;
-    public static DoubleSolenoid driveTrainShifterSolenoid;
+    public static DoubleSolenoid driveTrainShifterSolenoidLeft;
+    public static DoubleSolenoid driveTrainShifterSolenoidRight;
 
     
     public static CANTalon launcherMotorAim;
@@ -80,8 +81,11 @@ public class RobotMap {
         driveTrainEncoderRight.setDistancePerPulse(1.0);
         driveTrainEncoderRight.setPIDSourceType(PIDSourceType.kRate);
         
-        driveTrainShifterSolenoid = new DoubleSolenoid(0, 1);
-        LiveWindow.addActuator("DriveTrain", "ShifterSolenoid", driveTrainShifterSolenoid);
+        driveTrainShifterSolenoidLeft = new DoubleSolenoid(0, 1);
+        LiveWindow.addActuator("DriveTrain", "ShifterSolenoidLeft", driveTrainShifterSolenoidLeft);
+        
+        driveTrainShifterSolenoidRight = new DoubleSolenoid(2, 3);
+        LiveWindow.addActuator("DriveTrain", "ShifterSolenoidRight", driveTrainShifterSolenoidRight);
         
         
         launcherMotorAim = new CANTalon(2);

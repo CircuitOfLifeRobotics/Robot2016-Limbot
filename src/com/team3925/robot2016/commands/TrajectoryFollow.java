@@ -5,11 +5,10 @@ import com.team3925.robot2016.Robot;
 import edu.wpi.first.wpilibj.command.Command;
 
 /**
- * TODO: Everything
  * @author Bryan
  */
 public class TrajectoryFollow extends Command {
-//	private TrajectoryFollower m_follower;
+//	private final DriveTrain driveTrain = Robot.driveTrain;
 	
     public TrajectoryFollow() {
         requires(Robot.driveTrain);

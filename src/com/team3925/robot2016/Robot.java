@@ -45,13 +45,13 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 	public static OI oi;
 	public static DriveTrain driveTrain;
 	public static Launcher launcher;
-	
+
 	public static double deltaTime = 0;
 	private static double lastTimestamp;
 	private static double maxAccel = 0;
 	private static double maxVel = 0;
 
-	
+
 	public Robot() {
 		try {
 			//Alternatively:  I2C.Port.kMXP, SerialPort.Port.kMXP or SerialPort.Port.kUSB
@@ -67,7 +67,7 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 	 */
 	public void robotInit() {
 		RobotMap.init();
-		
+
 		driveTrain = new DriveTrain();
 		launcher = new Launcher();
 
@@ -95,15 +95,17 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 			autoCommandGroup = new AutoRoutineDoNothing();
 			break;
 		}
-		
+
 		collectBall = new CollectBall();
 		launchBall = new LaunchBallHigh();
 		manualDrive = new ManualDrive();
 		trajectoryFollow = new TrajectoryFollow();
-		
+
 		lastTimestamp = Timer.getFPGATimestamp();
 		navx.reset();
 		navx.resetDisplacement();
+		maxAccel = 0;
+		maxVel = 0;
 	}
 
 	/**
@@ -113,7 +115,10 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 	public void disabledInit(){
 		driveTrain.setMotorSpeeds(DriveTrainSignal.NEUTRAL);
 		launcher.setIntakeSpeeds(0);
-//		RobotMap.compressor.stop();
+		navx.reset();
+		navx.resetDisplacement();
+		maxAccel = 0;
+		maxVel = 0;
 	}
 
 	public void disabledPeriodic() {
@@ -125,6 +130,10 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 	public void autonomousInit() {
 		// schedule the autonomous command (example)
 		if (autoCommandGroup != null) autoCommandGroup.start();
+		navx.reset();
+		navx.resetDisplacement();
+		maxAccel = 0;
+		maxVel = 0;
 	}
 
 	/**
@@ -145,6 +154,10 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 
 		manualDrive.start();
 		System.out.println("Robot has init! (Said through System.out.println)");
+		navx.reset();
+		navx.resetDisplacement();
+		maxAccel = 0;
+		maxVel = 0;
 	}
 
 	/**
@@ -153,14 +166,12 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 	@SuppressWarnings("deprecation")
 	public void teleopPeriodic() {
 		Scheduler.getInstance().run();
-		
+
 		driveTrain.logData();
 		launcher.logData();
 		logData();
 		launcher.update();
-		
-		putBooleanSD("NavxConnected", navx.isConnected());
-		
+
 		boolean leftTrigger = XboxHelper.getShooterButton(XboxHelper.TRIGGER_RT);
 		boolean rightTrigger = XboxHelper.getShooterButton(XboxHelper.TRIGGER_LT);
 		if (leftTrigger) {
@@ -172,7 +183,7 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 		} else {
 			launcher.setAimMotorSpeed(0); //it should never get here but just in case
 		}
-		
+
 	}
 
 	/**
@@ -181,26 +192,22 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 	public void testPeriodic() {
 		LiveWindow.run();
 	}
-	
+
 	@Override
 	public void logData() {
 		double now = Timer.getFPGATimestamp();
 		deltaTime = now - lastTimestamp;
 		lastTimestamp = now;
-		
-		if (navx != null) {
-			Math.max(maxAccel, navx.getWorldLinearAccelY());
-			Math.max(maxVel, navx.getVelocityY());
-		} else {
-			putStringSD("NavXLogger", "Cannot log NavX values while null!");
-		}
-		
+
+		maxAccel = Math.max(maxAccel, navx.getWorldLinearAccelX());
+		maxVel = Math.max(maxVel, navx.getVelocityX());
+
 		putNumberSD("MaxAcceleration", maxAccel);
 		putNumberSD("MaxVelocity", maxVel);
-		
+
 		putNumberSD("CurrentTime", Timer.getFPGATimestamp());
 		putNumberSD("DeltaTime", deltaTime);
-		
+
 		if (DO_LOG_AHRS_VALUES) {
 			if (navx != null) {
 				logNavXData();
@@ -214,7 +221,7 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 	public String getFormattedName() {
 		return "Robot_";
 	}
-	
+
 	private void logNavXData() {
 		//	Copied from navXMXP Data Monitor Project
 

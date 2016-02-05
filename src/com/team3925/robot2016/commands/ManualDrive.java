@@ -32,13 +32,12 @@ public class ManualDrive extends Command {
 								true);
 		boolean left = XboxHelper.getDriverButton(XboxHelper.TRIGGER_LT);
 		boolean right = XboxHelper.getDriverButton(XboxHelper.TRIGGER_RT);
-		if (right) {
+		if (right || left) {
 			driveTrain.setHighGear(true);
-		} else if (left) {
-			driveTrain.setHighGear(false);
-		} else if (right == left) {
+		} else {
 			driveTrain.setHighGear(false);
 		}
+		
 	}
 
 	// Make this return true when this Command no longer needs to run execute()
