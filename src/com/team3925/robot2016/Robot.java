@@ -48,6 +48,8 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 	
 	public static double deltaTime = 0;
 	private static double lastTimestamp;
+	private static double maxAccel = 0;
+	private static double maxVel = 0;
 
 	
 	public Robot() {
@@ -109,6 +111,7 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 	public void disabledInit(){
 		driveTrain.setMotorSpeeds(DriveTrainSignal.NEUTRAL);
 		launcher.setIntakeSpeeds(0);
+//		RobotMap.compressor.stop();
 	}
 
 	public void disabledPeriodic() {
@@ -154,6 +157,8 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 		logData();
 		launcher.update();
 		
+		putBooleanSD("NavxConnected", navx.isConnected());
+		
 		boolean leftTrigger = XboxHelper.getShooterButton(XboxHelper.TRIGGER_RT);
 		boolean rightTrigger = XboxHelper.getShooterButton(XboxHelper.TRIGGER_LT);
 		if (leftTrigger) {
@@ -180,6 +185,16 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 		double now = Timer.getFPGATimestamp();
 		deltaTime = now - lastTimestamp;
 		lastTimestamp = now;
+		
+		if (navx != null) {
+			Math.max(maxAccel, navx.getWorldLinearAccelY());
+			Math.max(maxVel, navx.getVelocityY());
+		} else {
+			putStringSD("NavXLogger", "Cannot log NavX values while null!");
+		}
+		
+		putNumberSD("MaxAcceleration", maxAccel);
+		putNumberSD("MaxVelocity", maxVel);
 		
 		putNumberSD("CurrentTime", Timer.getFPGATimestamp());
 		putNumberSD("DeltaTime", deltaTime);

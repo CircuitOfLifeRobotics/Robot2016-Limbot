@@ -8,14 +8,13 @@ import com.team3925.robot2016.util.MiscUtil;
 import com.team3925.robot2016.util.Pose;
 import com.team3925.robot2016.util.SmartdashBoardLoggable;
 
+import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.SpeedController;
 import edu.wpi.first.wpilibj.command.Subsystem;
 
 
-/**
- *
- */
 public class DriveTrain extends Subsystem implements SmartdashBoardLoggable {
 
 	private final AHRS navx = Robot.navx;
@@ -27,6 +26,7 @@ public class DriveTrain extends Subsystem implements SmartdashBoardLoggable {
     private final SpeedController motorRightC = RobotMap.driveTrainMotorRightC;
     private final Encoder encoderLeft = RobotMap.driveTrainEncoderLeft;
     private final Encoder encoderRight = RobotMap.driveTrainEncoderRight;
+    private final DoubleSolenoid shifterSolenoid = RobotMap.driveTrainShifterSolenoid;
     
     private Pose cached_pose = new Pose(0, 0, 0, 0, 0, 0);
     
@@ -34,6 +34,10 @@ public class DriveTrain extends Subsystem implements SmartdashBoardLoggable {
     public void setMotorSpeeds(DriveTrainSignal input) {
     	setLeftMotorSpeeds(input.left);
     	setRightMotorSpeeds(input.right);
+    }
+    
+    public void setHighGear(boolean highGear) {
+    	shifterSolenoid.set(highGear ? Value.kForward : Value.kReverse);
     }
     
     private void setLeftMotorSpeeds(double speed) {
@@ -51,6 +55,10 @@ public class DriveTrain extends Subsystem implements SmartdashBoardLoggable {
     public void resetEncoders() {
     	encoderLeft.reset();
     	encoderRight.reset();
+    }
+    
+    public boolean isHighGear() {
+    	return shifterSolenoid.get() == Value.kForward;
     }
     
     public DriveTrainSignal getEncoderRates() {
@@ -123,6 +131,8 @@ public class DriveTrain extends Subsystem implements SmartdashBoardLoggable {
 		
 		putNumberSD("EncoderLeftRate", encoderLeft.getRate());
 		putNumberSD("EncoderRightRate", encoderRight.getRate());
+		
+		putBooleanSD("HighGear", isHighGear());
 	}
 	
     public void initDefaultCommand() {
