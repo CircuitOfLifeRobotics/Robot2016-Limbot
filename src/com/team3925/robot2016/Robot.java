@@ -102,6 +102,8 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 		trajectoryFollow = new TrajectoryFollow();
 		
 		lastTimestamp = Timer.getFPGATimestamp();
+		navx.reset();
+		navx.resetDisplacement();
 	}
 
 	/**
