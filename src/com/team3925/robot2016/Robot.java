@@ -5,6 +5,7 @@ import com.team3925.robot2016.commands.AutoRoutineCenter;
 import com.team3925.robot2016.commands.AutoRoutineCourtyard;
 import com.team3925.robot2016.commands.AutoRoutineDoNothing;
 import com.team3925.robot2016.commands.CollectBall;
+import com.team3925.robot2016.commands.DriveStraightDistance;
 import com.team3925.robot2016.commands.LaunchBallHigh;
 import com.team3925.robot2016.commands.ManualDrive;
 import com.team3925.robot2016.subsystems.DriveTrain;
@@ -38,15 +39,21 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 	Command launchBall;
 	Command manualDrive;
 	Command trajectoryFollow;
+	Command driveStraightDistance;
+	Command turnInPlace;
 
 	public static OI oi;
 	public static DriveTrain driveTrain;
 	public static Launcher launcher;
 	
 	public static double deltaTime = 0;
-	private static double lastTimestamp;
+	private static double lastTimestamp = 0;
+	private static double lastRotationStamp = 0;
+	private static double deltaRotation = 0;
 	private static double maxAccel = 0;
 	private static double maxVel = 0;
+	private static double maxRotationVel = 0;
+	private static double maxRotationAccel = 0;
 
 	
 	public Robot() {
@@ -96,15 +103,24 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 		collectBall = new CollectBall();
 		launchBall = new LaunchBallHigh();
 		manualDrive = new ManualDrive();
-//		trajectoryFollow = new TrajectoryFollow();
 		
+		reset();
+	}
+
+	/**
+	 * Resets lastTimestamp, the IMU and max unit testers
+	 */
+	private void reset() {
 		lastTimestamp = Timer.getFPGATimestamp();
+		lastRotationStamp = navx.getRate();
 		navx.reset();
 		navx.resetDisplacement();
 		maxAccel = 0;
 		maxVel = 0;
+		maxRotationVel = 0;
+		maxRotationAccel = 0;
 	}
-
+	
 	/**
 	 * This function is called when the disabled button is hit.
 	 * You can use it to reset subsystems before shutting down.
@@ -112,6 +128,8 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 	public void disabledInit(){
 		driveTrain.setOpenLoopSpeeds(DriveTrainSignal.NEUTRAL);
 		launcher.setIntakeSpeeds(0);
+		reset();
+		navx.free();
 	}
 
 	public void disabledPeriodic() {
@@ -123,13 +141,15 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 	public void autonomousInit() {
 		// schedule the autonomous command (example)
 		if (autoCommandGroup != null) autoCommandGroup.start();
-		navx.reset();
-		navx.resetDisplacement();
-		maxAccel = 0;
-		maxVel = 0;
+		
+		reset();
+		
 		double setpoint = 10;
-		driveTrain.setDistanceSetpoint(setpoint, Constants.kDriveMaxSpeedInchesPerSec/4);
-		putNumberSD("DriveStraightControllerSetpoint", setpoint);
+		double maxVelocity = Constants.kDriveMaxSpeedInchesPerSec / 4;
+		driveStraightDistance = new DriveStraightDistance(setpoint, maxVelocity);
+
+		putNumberSD("DriveStraightController_Setpoint", setpoint);
+		putNumberSD("DriveStraightController_MaxVelocity", maxVelocity);
 	}
 
 	/**
@@ -138,7 +158,6 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 	public void autonomousPeriodic() {
 		Scheduler.getInstance().run();
 		logData();
-		driveTrain.update();
 	}
 
 	public void teleopInit() {
@@ -147,13 +166,11 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 		// continue until interrupted by another command, remove
 		// this line or comment it out.
 		if (autoCommandGroup != null) autoCommandGroup.cancel();
+		
+		reset();
 
 		manualDrive.start();
 		System.out.println("Robot has init! (Said through System.out.println)");
-		navx.reset();
-		navx.resetDisplacement();
-		maxAccel = 0;
-		maxVel = 0;
 	}
 
 	/**
@@ -163,10 +180,7 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 	public void teleopPeriodic() {
 		Scheduler.getInstance().run();
 		
-		driveTrain.logData();
-		launcher.logData();
 		logData();
-		launcher.update();
 
 		boolean leftTrigger = XboxHelper.getShooterButton(XboxHelper.TRIGGER_RT);
 		boolean rightTrigger = XboxHelper.getShooterButton(XboxHelper.TRIGGER_LT);
@@ -174,10 +188,6 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 			launcher.setAimMotorSpeed(1);
 		} else if (rightTrigger) {
 			launcher.setAimMotorSpeed(-1);
-		} else if (rightTrigger == leftTrigger) {
-			launcher.setAimMotorSpeed(0);
-		} else {
-			launcher.setAimMotorSpeed(0); //it should never get here but just in case
 		}
 	}
 
@@ -190,15 +200,30 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 	
 	@Override
 	public void logData() {
+		driveTrain.logData();
+		launcher.logData();
+		
 		double now = Timer.getFPGATimestamp();
 		deltaTime = now - lastTimestamp;
 		lastTimestamp = now;
+		
+		double curVel = Math.toRadians(navx.getRate());
+		deltaRotation = curVel - lastRotationStamp;
+		lastRotationStamp = curVel;
 
+		
 		maxAccel = Math.max(maxAccel, navx.getWorldLinearAccelX());
 		maxVel = Math.max(maxVel, navx.getVelocityX());
-
+		
+		maxRotationVel = Math.max(maxRotationVel, Math.toRadians(navx.getRate()));
+		maxRotationAccel = Math.max(maxRotationAccel, deltaRotation / deltaTime );
+		
+		
 		putNumberSD("MaxAcceleration", maxAccel);
 		putNumberSD("MaxVelocity", maxVel);
+		
+		putNumberSD("MaxRotationVelocity", maxRotationVel);
+		putNumberSD("MaxRotationAccel", maxRotationAccel);
 
 		putNumberSD("CurrentTime", Timer.getFPGATimestamp());
 		putNumberSD("DeltaTime", deltaTime);

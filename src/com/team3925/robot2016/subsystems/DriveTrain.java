@@ -4,6 +4,7 @@ import com.kauailabs.navx.frc.AHRS;
 import com.team3925.robot2016.Constants;
 import com.team3925.robot2016.Robot;
 import com.team3925.robot2016.RobotMap;
+import com.team3925.robot2016.commands.ManualDrive;
 import com.team3925.robot2016.subsystems.controllers.DrivePathController;
 import com.team3925.robot2016.subsystems.controllers.DriveStraightController;
 import com.team3925.robot2016.subsystems.controllers.TurnInPlaceController;
@@ -146,7 +147,7 @@ public class DriveTrain extends Subsystem implements SmartdashBoardLoggable {
     	cached_pose.reset(encoderLeft.getDistance(), encoderRight.getDistance(),
     			encoderLeft.getRate(), encoderRight.getRate(),
     			Math.toRadians(navx.getFusedHeading()),
-    			Math.toRadians(navx.getRate())); //get and check navx heading values
+    			Math.toRadians(navx.getRate()));
     	return cached_pose;
     }
     
@@ -239,14 +240,15 @@ public class DriveTrain extends Subsystem implements SmartdashBoardLoggable {
 		
 		putBooleanSD("HighGear", isHighGear());
 		
+		putStringSD("CurrentController", controller.toString());
+		
 		MiscUtil.putPoseSD(getFormattedName() + "ControllerSetpoint_", controller.getCurrentSetpoint());
 		MiscUtil.putPoseSD(getFormattedName() + "PhysicalState_", getPhysicalPose());
 		
 	}
 	
     public void initDefaultCommand() {
-        // Set the default command for a subsystem here.
-        // setDefaultCommand(new MySpecialCommand());
+    	setDefaultCommand(new ManualDrive());
     }
 
 }
