@@ -12,12 +12,12 @@ public class Constants {
 
 	public static final AutoStartPos AUTO_START_LOCATION = AutoStartPos.CENTER;
 	public static final boolean DO_LOG_AHRS_VALUES = true;
-	public static final boolean DO_LOG_PDP_VALUES = true;
+	public static final boolean DO_LOG_PDP_VALUES = false;
 
 	public static final double XBOX_AXIS_TOLERANCE = 0.1;
 
 	public static final double GLOBAL_MAX_SHOOTER_PWR = 1;
-	public static final double LAUNCHER_AIM_MOTOR_SPEED_MULTIPLIED = 0.05;
+	public static final double LAUNCHER_AIM_MOTOR_SPEED_MULTIPLIED = 0.45;
 	
 	public static final double MAX_ACCEL_M_SEC2 = 0.923;
 	public static final double MAX_VEL_M_SEC = 1.973;

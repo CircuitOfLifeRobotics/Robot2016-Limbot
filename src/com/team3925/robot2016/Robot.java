@@ -43,11 +43,11 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 	Command launchBall;
 	Command manualDrive;
 	Command trajectoryFollow;
-	PowerDistributionPanel pdp;
 
 	public static OI oi;
 	public static DriveTrain driveTrain;
 	public static Launcher launcher;
+	PowerDistributionPanel pdp;
 
 	public static double deltaTime = 0;
 	private static double lastTimestamp;
