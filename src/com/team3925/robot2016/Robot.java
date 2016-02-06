@@ -9,6 +9,7 @@ import com.team3925.robot2016.commands.AutoRoutineCourtyard;
 import com.team3925.robot2016.commands.AutoRoutineDoNothing;
 import com.team3925.robot2016.commands.CollectBall;
 import com.team3925.robot2016.commands.LaunchBallHigh;
+import com.team3925.robot2016.commands.LauncherPID;
 import com.team3925.robot2016.commands.ManualDrive;
 import com.team3925.robot2016.commands.TrajectoryFollow;
 import com.team3925.robot2016.subsystems.DriveTrain;
@@ -43,6 +44,7 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 	Command launchBall;
 	Command manualDrive;
 	Command trajectoryFollow;
+	Command launcherPID;
 
 	public static OI oi;
 	public static DriveTrain driveTrain;
@@ -103,6 +105,7 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 		launchBall = new LaunchBallHigh();
 		manualDrive = new ManualDrive();
 		trajectoryFollow = new TrajectoryFollow();
+		launcherPID = new LauncherPID();
 		
 		pdp = RobotMap.pdp;
 		
@@ -156,7 +159,9 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 		// continue until interrupted by another command, remove
 		// this line or comment it out.
 		if (autoCommandGroup != null) autoCommandGroup.cancel();
-
+		
+		launcherPID.start();
+		
 		manualDrive.start();
 		System.out.println("Robot has init! (Said through System.out.println)");
 		navx.reset();
@@ -171,24 +176,30 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 	@SuppressWarnings("deprecation")
 	public void teleopPeriodic() {
 		Scheduler.getInstance().run();
-
+		
 		driveTrain.logData();
 		launcher.logData();
 		logData();
 		launcher.update();
-
-		boolean leftTrigger = XboxHelper.getShooterButton(XboxHelper.TRIGGER_RT);
-		boolean rightTrigger = XboxHelper.getShooterButton(XboxHelper.TRIGGER_LT);
-		if (leftTrigger) {
-			launcher.setAimMotorSpeed(1);
-		} else if (rightTrigger) {
-			launcher.setAimMotorSpeed(-1);
-		} else if (rightTrigger == leftTrigger) {
-			launcher.setAimMotorSpeed(0);
-		} else {
-			launcher.setAimMotorSpeed(0); //it should never get here but just in case
-		}
-
+		
+//		boolean leftTrigger = XboxHelper.getShooterButton(XboxHelper.TRIGGER_RT);
+//		boolean rightTrigger = XboxHelper.getShooterButton(XboxHelper.TRIGGER_LT);
+//		if (leftTrigger) {
+//			launcher.setAimMotorSpeed(1);
+//		} else if (rightTrigger) {
+//			launcher.setAimMotorSpeed(-1);
+//		} else if (rightTrigger == leftTrigger) {
+//			launcher.setAimMotorSpeed(0);
+//		} else {
+//			launcher.setAimMotorSpeed(0); //it should never get here but just in case
+//		}
+		
+		boolean isPunch = XboxHelper.getShooterButton(XboxHelper.STICK_RIGHT);
+		if (isPunch)
+			launcher.setPuncher(true);
+		else
+			launcher.setPuncher(false);
+		
 	}
 
 	/**

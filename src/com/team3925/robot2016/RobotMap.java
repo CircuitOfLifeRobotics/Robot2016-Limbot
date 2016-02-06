@@ -100,13 +100,13 @@ public class RobotMap {
         LiveWindow.addActuator("Launcher", "MotorLeft", launcherMotorLeft);
         launcherMotorLeft.setFeedbackDevice(FeedbackDevice.QuadEncoder);
         launcherMotorLeft.changeControlMode(TalonControlMode.PercentVbus); //TODO check if we want to use speed
+        launcherMotorLeft.setInverted(true);
         
         launcherMotorRight = new CANTalon(1);
         LiveWindow.addActuator("Launcher", "MotorRight", launcherMotorRight);
         launcherMotorRight.setFeedbackDevice(FeedbackDevice.QuadEncoder);
-        launcherMotorRight.changeControlMode(TalonControlMode.Follower);
-        launcherMotorRight.set(launcherMotorLeft.getDeviceID());
-        launcherMotorRight.setInverted(true);
+        launcherMotorRight.changeControlMode(TalonControlMode.PercentVbus);
+//        launcherMotorRight.setInverted(true);
 //        TODO check if this the correct motor to invert
 //        TODO add PID to CANTalons
         

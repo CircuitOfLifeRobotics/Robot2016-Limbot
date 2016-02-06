@@ -22,7 +22,7 @@ public class LaunchBallLow extends Command {
 
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
-    	launcher.setIntakeSpeeds(.3);
+    	launcher.setIntakeSpeeds(.6);
     }
 
     // Make this return true when this Command no longer needs to run execute()
