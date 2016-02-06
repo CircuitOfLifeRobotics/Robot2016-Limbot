@@ -72,7 +72,7 @@ public class DriveTrain extends Subsystem implements SmartdashBoardLoggable {
     }
     
     public void setHighGear(boolean highGear) {
-    	shifterSolenoid.set(highGear ? Value.kForward : Value.kReverse);
+    	shifterSolenoid.set(highGear ? Value.kReverse : Value.kForward);
     }
     
     public void resetEncoders() {
@@ -81,7 +81,7 @@ public class DriveTrain extends Subsystem implements SmartdashBoardLoggable {
     }
     
     public boolean isHighGear() {
-    	return shifterSolenoid.get() == Value.kForward;
+    	return shifterSolenoid.get() == Value.kReverse;
     }
     
     public void update() {
@@ -216,9 +216,11 @@ public class DriveTrain extends Subsystem implements SmartdashBoardLoggable {
 		
 		putBooleanSD("HighGear", isHighGear());
 		
-		putStringSD("CurrentController", controller.toString());
-		
-		MiscUtil.putPoseSD(getFormattedName() + "ControllerSetpoint_", controller.getCurrentSetpoint());
+		try {
+			MiscUtil.putPoseSD(getFormattedName() + "ControllerSetpoint_", controller.getCurrentSetpoint());
+		} catch (NullPointerException e) {
+//			DriverStation.reportError("Null Controller!\n" + e.getMessage(), false);
+		}
 		MiscUtil.putPoseSD(getFormattedName() + "PhysicalState_", getPhysicalPose());
 		
 	}

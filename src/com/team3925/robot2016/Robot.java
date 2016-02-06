@@ -169,8 +169,8 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 				new Trajectory(pathLeft),
 				new Trajectory(pathRight) ));
 
-		double setpoint = 10;
-		double maxVelocity = kDriveMaxSpeedInchesPerSec / 4;
+		double setpoint = 2;
+		double maxVelocity = kDriveMaxSpeedInchesPerSec * 0.05;
 		driveStraightDistance = new DriveStraightDistance(setpoint, maxVelocity);
 
 

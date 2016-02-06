@@ -58,14 +58,17 @@ public class Constants {
 	// DRIVETRAIN CONSTANTS
 	
 	public static final double DRIVETRAIN_ENCODER_FACTOR = 2 * Math.PI * WHEEL_DIAMETER / 256; // TODO Get Encoder Pulses per Revolution
+	private static final double MAX_VALUE_MULTIPLIER = 0.8;
 	
-	public static final double MAX_ACCEL_M_SEC2 = 0.923;
-	public static final double MAX_VEL_M_SEC = 1.973;
+	public static final double MAX_DRIVETRAIN_VEL_M_PER_SEC = 2.6 * MAX_VALUE_MULTIPLIER;
+	public static final double MAX_DRIVETRAIN_ACCEL_M_PER_SEC2 = 2.5 * MAX_VALUE_MULTIPLIER;
+	public static final double MAX_ROTATION_VELOCITY_RADS_PER_SEC = 6.3 * MAX_VALUE_MULTIPLIER;
+	public static final double MAX_ROTATION_ACCEL_RADS_PER_SEC2 = 570 * MAX_VALUE_MULTIPLIER;
 	
 	// Temporary values for controllers
     // DriveStraightController gains
-    public static double kDriveMaxSpeedInchesPerSec = 77.677;
-    public static double kDriveMaxAccelInchesPerSec2 = 36.34;
+    public static double kDriveMaxSpeedInchesPerSec = 82;
+    public static double kDriveMaxAccelInchesPerSec2 = 79;
     public static double kDrivePositionKp = 0.7;
     public static double kDrivePositionKi = 0;
     public static double kDrivePositionKd = 0;
@@ -77,8 +80,8 @@ public class Constants {
     public static double kDriveOnTargetError = 0.75;
     public static double kDrivePathHeadingFollowKp = 0.01;
     // TurnInPlaceController gains
-    public static double kTurnMaxSpeedRadsPerSec = 5.25;
-    public static double kTurnMaxAccelRadsPerSec2 = 5.25;
+    public static double kTurnMaxSpeedRadsPerSec = MAX_ROTATION_VELOCITY_RADS_PER_SEC;
+    public static double kTurnMaxAccelRadsPerSec2 = MAX_ROTATION_ACCEL_RADS_PER_SEC2;
     public static double kTurnKp = 3.0;
     public static double kTurnKi = 0.18;
     public static double kTurnKd = 0.23;
