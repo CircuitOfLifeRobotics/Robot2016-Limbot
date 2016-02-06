@@ -1,6 +1,7 @@
 package com.team3925.robot2016;
 
 import static com.team3925.robot2016.Constants.DO_LOG_AHRS_VALUES;
+import static com.team3925.robot2016.Constants.DO_LOG_PDP_VALUES;
 
 import com.kauailabs.navx.frc.AHRS;
 import com.team3925.robot2016.commands.AutoRoutineCenter;
@@ -18,6 +19,7 @@ import com.team3925.robot2016.util.XboxHelper;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.IterativeRobot;
+import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Command;
@@ -35,12 +37,13 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 
 	public static AHRS navx = null;
-
+	
 	Command autoCommandGroup;
 	Command collectBall;
 	Command launchBall;
 	Command manualDrive;
 	Command trajectoryFollow;
+	PowerDistributionPanel pdp;
 
 	public static OI oi;
 	public static DriveTrain driveTrain;
@@ -100,7 +103,9 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 		launchBall = new LaunchBallHigh();
 		manualDrive = new ManualDrive();
 		trajectoryFollow = new TrajectoryFollow();
-
+		
+		pdp = RobotMap.pdp;
+		
 		lastTimestamp = Timer.getFPGATimestamp();
 		navx.reset();
 		navx.resetDisplacement();
@@ -215,6 +220,14 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 				putStringSD("NavXLogger", "Cannot log NavX values while null!");
 			}
 		}
+		
+		if (DO_LOG_PDP_VALUES) {
+			if (pdp != null) {
+				logPDPData();
+			} else {
+				putStringSD("PDPLogger", "Cannot log PDP values while null!");
+			}
+		}
 	}
 
 	@Override
@@ -303,5 +316,13 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 		SmartDashboard.putNumber(   "IMU_Byte_Count",       navx.getByteCount());
 		SmartDashboard.putNumber(   "IMU_Update_Count",     navx.getUpdateCount());
 	}
-
+	
+	private void logPDPData() {
+		SmartDashboard.putNumber("PDP_Temperature", pdp.getTemperature());
+		SmartDashboard.putNumber("PDP_Total_Current", pdp.getTotalCurrent());
+		SmartDashboard.putNumber("PDP_Total_Energy", pdp.getTotalEnergy());
+		SmartDashboard.putNumber("PDP_Total_Power", pdp.getTotalPower());
+		SmartDashboard.putNumber("PDP_Voltage", pdp.getVoltage());
+	}
+	
 }

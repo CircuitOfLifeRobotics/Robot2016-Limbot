@@ -12,6 +12,7 @@ public class Constants {
 
 	public static final AutoStartPos AUTO_START_LOCATION = AutoStartPos.CENTER;
 	public static final boolean DO_LOG_AHRS_VALUES = true;
+	public static final boolean DO_LOG_PDP_VALUES = true;
 
 	public static final double XBOX_AXIS_TOLERANCE = 0.1;
 
