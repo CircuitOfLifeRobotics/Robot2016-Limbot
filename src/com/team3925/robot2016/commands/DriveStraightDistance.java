@@ -12,12 +12,12 @@ public class DriveStraightDistance extends Command {
 	
     public DriveStraightDistance(double distance) {
         requires(Robot.driveTrain);
-        driveTrain.setDistanceSetpoint(distance);;
+        driveTrain.setDistanceSetpoint(distance);
     }
     
     public DriveStraightDistance(double distance, double maxVelocity) {
     	requires(Robot.driveTrain);
-    	driveTrain.setDistanceSetpoint(distance, maxVelocity);;
+    	driveTrain.setDistanceSetpoint(distance, maxVelocity);
     }
 
     // Called just before this Command runs the first time

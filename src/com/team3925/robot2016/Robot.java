@@ -143,8 +143,6 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 		driveTrain.setOpenLoopSpeeds(DriveTrainSignal.NEUTRAL);
 		launcher.setIntakeSpeeds(0);
 		reset();
-		// navx.free();
-		RobotMap.launcherMotorAim.stopLiveWindowMode();
 	}
 
 	public void disabledPeriodic() {
@@ -190,6 +188,7 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 	public void autonomousPeriodic() {
 		Scheduler.getInstance().run();
 		logData();
+		driveTrain.update();
 	}
 
 	public void teleopInit() {
@@ -226,7 +225,6 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 	 */
 	public void testPeriodic() {
 		LiveWindow.run();
-		RobotMap.launcherMotorAim.startLiveWindowMode();
 	}
 
 	@Override
@@ -260,7 +258,11 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 		putNumberSD("DeltaTime", deltaTime);
 
 		if (DO_LOG_AHRS_VALUES) {
-			logNavXData();
+			if (navx != null) {
+				logNavXData();
+			} else {
+				putStringSD("NavXLogger", "Cannot log navx values while null!");
+			}
 		}
 		
 		if (DO_LOG_PDP_VALUES) {
