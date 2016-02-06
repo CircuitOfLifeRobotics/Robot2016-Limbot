@@ -86,7 +86,7 @@ public class RobotMap {
         driveTrainShifterSolenoidLeft = new DoubleSolenoid(0, 1);
         LiveWindow.addActuator("DriveTrain", "ShifterSolenoidLeft", driveTrainShifterSolenoidLeft);
         
-        driveTrainShifterSolenoidRight = new DoubleSolenoid(2, 3);
+        driveTrainShifterSolenoidRight = new DoubleSolenoid(3, 2);
         LiveWindow.addActuator("DriveTrain", "ShifterSolenoidRight", driveTrainShifterSolenoidRight);
         
         
