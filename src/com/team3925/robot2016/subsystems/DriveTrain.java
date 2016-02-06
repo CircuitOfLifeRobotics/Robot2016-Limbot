@@ -20,6 +20,8 @@ import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.SpeedController;
 import edu.wpi.first.wpilibj.command.Subsystem;
 
+import static com.team3925.robot2016.Constants.*;
+
 
 /**
  *
@@ -63,12 +65,12 @@ public class DriveTrain extends Subsystem implements SmartdashBoardLoggable {
     }
     
     private void setMotorSpeeds(DriveTrainSignal input) {
-    	motorLeftA.set(input.left);
-    	motorLeftB.set(input.left);
-    	motorLeftC.set(input.left);
-    	motorRightA.set(input.right);
-    	motorRightB.set(input.right);
-    	motorRightC.set(input.right);
+    	motorLeftA.set(input.left * GLOBAL_MAX_DRIVE_TRAIN_PWR);
+    	motorLeftB.set(input.left * GLOBAL_MAX_DRIVE_TRAIN_PWR);
+    	motorLeftC.set(input.left * GLOBAL_MAX_DRIVE_TRAIN_PWR);
+    	motorRightA.set(input.right * GLOBAL_MAX_DRIVE_TRAIN_PWR);
+    	motorRightB.set(input.right * GLOBAL_MAX_DRIVE_TRAIN_PWR);
+    	motorRightC.set(input.right * GLOBAL_MAX_DRIVE_TRAIN_PWR);
     }
     
     public void setHighGear(boolean highGear) {
@@ -216,11 +218,13 @@ public class DriveTrain extends Subsystem implements SmartdashBoardLoggable {
 		
 		putBooleanSD("HighGear", isHighGear());
 		
-		try {
+		if (controller != null) {
+			putStringSD("CurrentController", controller.toString());
 			MiscUtil.putPoseSD(getFormattedName() + "ControllerSetpoint_", controller.getCurrentSetpoint());
-		} catch (NullPointerException e) {
-//			DriverStation.reportError("Null Controller!\n" + e.getMessage(), false);
+		} else {
+			putStringSD("CurrentController", "Controller is null");
 		}
+		
 		MiscUtil.putPoseSD(getFormattedName() + "PhysicalState_", getPhysicalPose());
 		
 	}

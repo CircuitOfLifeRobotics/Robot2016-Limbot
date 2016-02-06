@@ -22,6 +22,7 @@ import com.team3925.robot2016.trajectory.Trajectory.Pair;
 import com.team3925.robot2016.trajectory.Trajectory.Segment;
 import com.team3925.robot2016.util.DriveTrainSignal;
 import com.team3925.robot2016.util.SmartdashBoardLoggable;
+import com.team3925.robot2016.util.TimeoutAction;
 import com.team3925.robot2016.util.XboxHelper;
 
 import edu.wpi.first.wpilibj.DriverStation;
@@ -68,6 +69,8 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 	private static double maxRotationAccel = 0;
 
 	private static Path testPath;
+	
+	private static TimeoutAction autoWait = new TimeoutAction();
 
 
 	public Robot() {
@@ -122,9 +125,10 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 	}
 
 	/**
-	 * Resets lastTimestamp, the IMU and max unit testers
+	 * Resets lastTimestamp, the IMU, max unit testers and encoders
 	 */
 	private void reset() {
+		driveTrain.resetEncoders();
 		lastTimestamp = Timer.getFPGATimestamp();
 		lastRotationStamp = navx.getRate();
 		navx.reset();
@@ -168,7 +172,7 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 		testPath = new Path("TestPath", new Pair(
 				new Trajectory(pathLeft),
 				new Trajectory(pathRight) ));
-
+		
 		double setpoint = 2;
 		double maxVelocity = kDriveMaxSpeedInchesPerSec * 0.05;
 		driveStraightDistance = new DriveStraightDistance(setpoint, maxVelocity);
@@ -180,6 +184,7 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 		putStringSD("TestPathDebugLeft", testPath.getLeftWheelTrajectory().toString());
 		putStringSD("TestPathDebugRight", testPath.getRightWheelTrajectory().toString());
 		putNumberSD("TestPathEndHeading", testPath.getEndHeading());
+		autoWait.config(1);
 	}
 
 	/**
@@ -188,7 +193,9 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 	public void autonomousPeriodic() {
 		Scheduler.getInstance().run();
 		logData();
-		driveTrain.update();
+		if (autoWait.isFinished()) {
+			driveTrain.update();
+		}
 	}
 
 	public void teleopInit() {

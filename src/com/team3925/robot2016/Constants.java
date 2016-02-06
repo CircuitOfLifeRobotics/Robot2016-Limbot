@@ -22,7 +22,7 @@ public class Constants {
 	public static final double XBOX_AXIS_TOLERANCE = 0.1;
 
 	public static final double GLOBAL_MAX_SHOOTER_PWR = 1;
-	public static final double GLOBAL_MAX_DRIVE_TRAIN_PWR = 1;
+	public static final double GLOBAL_MAX_DRIVE_TRAIN_PWR = .20;
 	public static final double LAUNCHER_AIM_MOTOR_SPEED_MULTIPLIED = 0.05;
 	
 	

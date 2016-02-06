@@ -3,7 +3,7 @@ package com.team3925.robot2016.trajectory;
 import edu.wpi.first.wpilibj.Timer;
 
 /**
- * PID + Feedforward controller for following a Trajectory.
+ * PID + Feedforward + Trapezoidal Motion controller for following a Trajectory.
  *
  * @author Jared341
  */
