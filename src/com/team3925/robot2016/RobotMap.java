@@ -1,17 +1,32 @@
 package com.team3925.robot2016;
 
+import static com.team3925.robot2016.Constants.DRIVETRAIN_ENCODER_FACTOR;
+import static com.team3925.robot2016.Constants.LAUNCHER_AIM_IZONE;
+import static com.team3925.robot2016.Constants.LAUNCHER_AIM_KD;
+import static com.team3925.robot2016.Constants.LAUNCHER_AIM_KF;
+import static com.team3925.robot2016.Constants.LAUNCHER_AIM_KI;
+import static com.team3925.robot2016.Constants.LAUNCHER_AIM_KP;
+import static com.team3925.robot2016.Constants.LAUNCHER_AIM_PROFILE;
+import static com.team3925.robot2016.Constants.LAUNCHER_AIM_RAMP_RATE;
+import static com.team3925.robot2016.Constants.LAUNCHER_SHOOTER_IZONE;
+import static com.team3925.robot2016.Constants.LAUNCHER_SHOOTER_KF;
+import static com.team3925.robot2016.Constants.LAUNCHER_SHOOTER_KI;
+import static com.team3925.robot2016.Constants.LAUNCHER_SHOOTER_KP;
+import static com.team3925.robot2016.Constants.LAUNCHER_SHOOTER_PROFILE;
+import static com.team3925.robot2016.Constants.LAUNCHER_SHOOTER_RAMP_RATE;
+
 import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.CANTalon.FeedbackDevice;
 import edu.wpi.first.wpilibj.CANTalon.TalonControlMode;
+import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.CounterBase.EncodingType;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.PIDSourceType;
+import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.SpeedController;
 import edu.wpi.first.wpilibj.Talon;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
-import static com.team3925.robot2016.Constants.DRIVETRAIN_ENCODER_FACTOR;
-import static com.team3925.robot2016.Constants.*;
 
 /**
  * The RobotMap is a mapping from the ports sensors and actuators are wired into
@@ -20,6 +35,9 @@ import static com.team3925.robot2016.Constants.*;
  * floating around.
  */
 public class RobotMap {
+	
+	public static Compressor compressor;
+	
     public static SpeedController driveTrainMotorLeftA;
     public static SpeedController driveTrainMotorLeftB;
     public static SpeedController driveTrainMotorLeftC;
@@ -28,13 +46,14 @@ public class RobotMap {
     public static SpeedController driveTrainMotorRightC;
     public static Encoder driveTrainEncoderLeft;
     public static Encoder driveTrainEncoderRight;
-    public static DoubleSolenoid driveTrainShifterSolenoidLeft;
-    public static DoubleSolenoid driveTrainShifterSolenoidRight;
+    public static DoubleSolenoid driveTrainShifterSolenoid;
 
     public static CANTalon launcherMotorAim;
     public static CANTalon launcherMotorLeft;
     public static CANTalon launcherMotorRight;
-
+    public static DoubleSolenoid launcherPuncherSolenoid;
+    
+    public static PowerDistributionPanel pdp;
 
     public static void init() {
     	
@@ -78,12 +97,13 @@ public class RobotMap {
         driveTrainEncoderRight.setDistancePerPulse(DRIVETRAIN_ENCODER_FACTOR);
         driveTrainEncoderRight.setPIDSourceType(PIDSourceType.kRate);
         
-        driveTrainShifterSolenoidLeft = new DoubleSolenoid(0, 1);
-        LiveWindow.addActuator("DriveTrain", "ShifterSolenoidLeft", driveTrainShifterSolenoidLeft);
+        driveTrainShifterSolenoid = new DoubleSolenoid(0, 1);
+        LiveWindow.addActuator("DriveTrain", "ShifterSolenoid", driveTrainShifterSolenoid);
         
-        driveTrainShifterSolenoidRight = new DoubleSolenoid(2, 3);
-        LiveWindow.addActuator("DriveTrain", "ShifterSolenoidRight", driveTrainShifterSolenoidRight);
         
+        
+        launcherPuncherSolenoid = new DoubleSolenoid(3, 2);
+        LiveWindow.addActuator("Launcher", "PuncherSolenoid", launcherPuncherSolenoid);
         
         
         launcherMotorAim = new CANTalon(2);
