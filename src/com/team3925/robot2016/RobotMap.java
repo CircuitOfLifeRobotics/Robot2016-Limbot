@@ -10,6 +10,8 @@ import edu.wpi.first.wpilibj.PIDSourceType;
 import edu.wpi.first.wpilibj.SpeedController;
 import edu.wpi.first.wpilibj.Talon;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
+import static com.team3925.robot2016.Constants.DRIVETRAIN_ENCODER_FACTOR;
+import static com.team3925.robot2016.Constants.*;
 
 /**
  * The RobotMap is a mapping from the ports sensors and actuators are wired into
@@ -29,7 +31,6 @@ public class RobotMap {
     public static DoubleSolenoid driveTrainShifterSolenoidLeft;
     public static DoubleSolenoid driveTrainShifterSolenoidRight;
 
-    
     public static CANTalon launcherMotorAim;
     public static CANTalon launcherMotorLeft;
     public static CANTalon launcherMotorRight;
@@ -69,12 +70,12 @@ public class RobotMap {
         
         driveTrainEncoderLeft = new Encoder(0, 1, false, EncodingType.k4X);
         LiveWindow.addSensor("DriveTrain", "EncoderLeft", driveTrainEncoderLeft);
-        driveTrainEncoderLeft.setDistancePerPulse(1.0);
+        driveTrainEncoderLeft.setDistancePerPulse(DRIVETRAIN_ENCODER_FACTOR);
         driveTrainEncoderLeft.setPIDSourceType(PIDSourceType.kRate);
         
         driveTrainEncoderRight = new Encoder(2, 3, false, EncodingType.k4X);
         LiveWindow.addSensor("DriveTrain", "EncoderRight", driveTrainEncoderRight);
-        driveTrainEncoderRight.setDistancePerPulse(1.0);
+        driveTrainEncoderRight.setDistancePerPulse(DRIVETRAIN_ENCODER_FACTOR);
         driveTrainEncoderRight.setPIDSourceType(PIDSourceType.kRate);
         
         driveTrainShifterSolenoidLeft = new DoubleSolenoid(0, 1);
@@ -84,23 +85,34 @@ public class RobotMap {
         LiveWindow.addActuator("DriveTrain", "ShifterSolenoidRight", driveTrainShifterSolenoidRight);
         
         
+        
         launcherMotorAim = new CANTalon(2);
         LiveWindow.addActuator("Launcher", "AimMotor", launcherMotorAim);
         launcherMotorAim.setFeedbackDevice(FeedbackDevice.PulseWidth);
-        launcherMotorAim.changeControlMode(TalonControlMode.PercentVbus); //TODO change to position and do code to make it work
+        launcherMotorAim.changeControlMode(TalonControlMode.Position);
+        launcherMotorAim.enableBrakeMode(true);
+        launcherMotorAim.setPIDSourceType(PIDSourceType.kDisplacement);
+        launcherMotorAim.setPID(LAUNCHER_AIM_KP, LAUNCHER_AIM_KI, LAUNCHER_AIM_KD,
+        		LAUNCHER_AIM_KF, LAUNCHER_AIM_IZONE, LAUNCHER_AIM_RAMP_RATE, LAUNCHER_AIM_PROFILE);
+        
         
         launcherMotorLeft = new CANTalon(0);
         LiveWindow.addActuator("Launcher", "MotorLeft", launcherMotorLeft);
         launcherMotorLeft.setFeedbackDevice(FeedbackDevice.QuadEncoder);
-        launcherMotorLeft.changeControlMode(TalonControlMode.PercentVbus); //TODO check if we want to use speed
+        launcherMotorLeft.changeControlMode(TalonControlMode.Speed); //TODO check if we want to use speed
+        launcherMotorLeft.setPIDSourceType(PIDSourceType.kRate);
+        launcherMotorLeft.setPID(LAUNCHER_SHOOTER_KP, LAUNCHER_SHOOTER_KI, LAUNCHER_AIM_KD,
+        		LAUNCHER_SHOOTER_KF, LAUNCHER_SHOOTER_IZONE, LAUNCHER_SHOOTER_RAMP_RATE, LAUNCHER_SHOOTER_PROFILE);
         
         launcherMotorRight = new CANTalon(1);
         LiveWindow.addActuator("Launcher", "MotorRight", launcherMotorRight);
         launcherMotorRight.setFeedbackDevice(FeedbackDevice.QuadEncoder);
         launcherMotorRight.changeControlMode(TalonControlMode.Follower);
         launcherMotorRight.set(launcherMotorLeft.getDeviceID());
-        launcherMotorRight.setInverted(true);
-//        TODO check if this the correct motor to invert
-//        TODO add PID to CANTalons
+        launcherMotorRight.reverseOutput(true);
+//        launcherMotorRight.setPIDSourceType(launcherMotorLeft.getPIDSourceType());
+//        launcherMotorRight.setPID(LAUNCHER_SHOOTER_KP, LAUNCHER_SHOOTER_KI, LAUNCHER_AIM_KD,
+//        		LAUNCHER_SHOOTER_KF, LAUNCHER_SHOOTER_IZONE, LAUNCHER_SHOOTER_RAMP_RATE, LAUNCHER_SHOOTER_PROFILE);
+        
     }
 }

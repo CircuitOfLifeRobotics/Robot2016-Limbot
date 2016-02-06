@@ -64,8 +64,12 @@ public class DriveTrain extends Subsystem implements SmartdashBoardLoggable {
     }
     
     private void setMotorSpeeds(DriveTrainSignal input) {
-    	setLeftMotorSpeeds(input.left);
-    	setRightMotorSpeeds(input.right);
+    	motorLeftA.set(input.left);
+    	motorLeftB.set(input.left);
+    	motorLeftC.set(input.left);
+    	motorRightA.set(input.right);
+    	motorRightB.set(input.right);
+    	motorRightC.set(input.right);
     }
     
     public void setHighGear(boolean highGear) {
@@ -78,18 +82,6 @@ public class DriveTrain extends Subsystem implements SmartdashBoardLoggable {
 		}
     }
     
-    private void setLeftMotorSpeeds(double speed) {
-    	motorLeftA.set(speed);
-    	motorLeftB.set(speed);
-    	motorLeftC.set(speed);
-    }
-    
-    private void setRightMotorSpeeds(double speed) {
-    	motorRightA.set(speed);
-    	motorRightB.set(speed);
-    	motorRightC.set(speed);
-    }
-    
     public void resetEncoders() {
     	encoderLeft.reset();
     	encoderRight.reset();
@@ -98,9 +90,6 @@ public class DriveTrain extends Subsystem implements SmartdashBoardLoggable {
     public boolean isHighGear() {
     	return shifterSolenoidLeft.get() == Value.kForward;
     }
-    
-    
-    
     
     public void update() {
         if (controller == null) {
@@ -175,8 +164,6 @@ public class DriveTrain extends Subsystem implements SmartdashBoardLoggable {
     public boolean controllerOnTarget() {
         return controller != null && controller.onTarget();
     }
-    
-    
     
 	public void arcadeDrive(double moveValue, double rotateValue, boolean squaredInputs) {
 		double leftMotorSpeed;
