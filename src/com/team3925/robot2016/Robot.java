@@ -320,7 +320,7 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 	private void logPDPData() {
 		SmartDashboard.putNumber("PDP_Temperature", pdp.getTemperature());
 		SmartDashboard.putNumber("PDP_Total_Current", pdp.getTotalCurrent());
-		SmartDashboard.putNumber("PDP_Total_Energy", pdp.getTotalEnergy());
+		SmartDashboard.putNumber("PDP_Total_Energy", pdp.getTotalEnergy()); // in milliJoules
 		SmartDashboard.putNumber("PDP_Total_Power", pdp.getTotalPower());
 		SmartDashboard.putNumber("PDP_Voltage", pdp.getVoltage());
 	}
