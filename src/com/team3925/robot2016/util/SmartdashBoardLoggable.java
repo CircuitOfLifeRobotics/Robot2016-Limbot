@@ -1,5 +1,6 @@
 package com.team3925.robot2016.util;
 
+import edu.wpi.first.wpilibj.Sendable;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
@@ -23,6 +24,10 @@ public interface SmartdashBoardLoggable {
 	
 	default void putStringSD(String key, String value) {
 		SmartDashboard.putString(getFormattedName() + key, value);
+	}
+	
+	default void putDataSD(String key, Sendable data) {
+		SmartDashboard.putData(getFormattedName() + key, data);
 	}
 	
 }

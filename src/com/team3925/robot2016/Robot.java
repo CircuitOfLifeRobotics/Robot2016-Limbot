@@ -11,7 +11,6 @@ import com.team3925.robot2016.commands.CollectBall;
 import com.team3925.robot2016.commands.LaunchBallHigh;
 import com.team3925.robot2016.commands.LauncherPID;
 import com.team3925.robot2016.commands.ManualDrive;
-import com.team3925.robot2016.commands.TrajectoryFollow;
 import com.team3925.robot2016.subsystems.DriveTrain;
 import com.team3925.robot2016.subsystems.Launcher;
 import com.team3925.robot2016.util.DriveTrainSignal;
@@ -43,7 +42,6 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 	Command collectBall;
 	Command launchBall;
 	Command manualDrive;
-	Command trajectoryFollow;
 	Command launcherPID;
 
 	public static OI oi;
@@ -104,7 +102,6 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 		collectBall = new CollectBall();
 		launchBall = new LaunchBallHigh();
 		manualDrive = new ManualDrive();
-		trajectoryFollow = new TrajectoryFollow();
 		launcherPID = new LauncherPID();
 		
 		pdp = RobotMap.pdp;
@@ -173,7 +170,6 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 	/**
 	 * This function is called periodically during operator control
 	 */
-	@SuppressWarnings("deprecation")
 	public void teleopPeriodic() {
 		Scheduler.getInstance().run();
 		

@@ -56,14 +56,4 @@ public class Constants {
 	public static final double DRIVE_TRAIN_KI = 0;
 	public static final double DRIVE_TRAIN_KD = 0;
 	
-	
-	
-//	Trajectory Follow Constants
-	public static final double TRAJECTORY_FOLLOWER_KP = 1;
-	public static final double TRAJECTORY_FOLLOWER_KI = 0;
-	public static final double TRAJECTORY_FOLLOWER_KD = 0;
-	public static final double TRAJECTORY_FOLLOWER_KV = 0;
-	public static final double TRAJECTORY_FOLLOWER_KA = 0;
-	public static final double TRAJECTORY_FOLLOWER_ERROR = 1;
-	
 }

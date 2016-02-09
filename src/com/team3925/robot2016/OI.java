@@ -6,7 +6,6 @@ import com.team3925.robot2016.commands.CollectBall;
 import com.team3925.robot2016.commands.LaunchBallHigh;
 import com.team3925.robot2016.commands.LaunchBallLow;
 import com.team3925.robot2016.commands.ManualDrive;
-import com.team3925.robot2016.commands.TrajectoryFollow;
 import com.team3925.robot2016.util.XboxHelper;
 
 import edu.wpi.first.wpilibj.Joystick;
@@ -70,7 +69,6 @@ public class OI {
     	
         // SmartDashboard Buttons
         SmartDashboard.putData("ManualDrive", new ManualDrive());
-        SmartDashboard.putData("TrajectoryFollow", new TrajectoryFollow());
         SmartDashboard.putData("LaunchBall", new LaunchBallHigh());
         SmartDashboard.putData("CollectBall", new CollectBall());
         SmartDashboard.putData("AutoRoutineCenter", new AutoRoutineCenter());
