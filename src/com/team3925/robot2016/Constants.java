@@ -6,6 +6,9 @@ package com.team3925.robot2016;
 public class Constants {
 	private Constants() {};
 	
+	// Loop time of the program
+	public static final double DELTA_TIME = 0.020; // 20 ms
+	
 	public static enum AutoStartPos {
 		COURTYARD, CENTER, DO_NOTHING;
 	}
@@ -21,6 +24,11 @@ public class Constants {
 	
 	public static final double MAX_ACCEL_M_SEC2 = 0.923;
 	public static final double MAX_VEL_M_SEC = 1.973;
+	
+	
+	// MECHANICAL CONSTANTS
+	public static final double WHEEL_DIAMETER = 6.0; // inches (inflated)
+	
 	
 	
 //	DRIVETRAIN CONSTANTS
@@ -50,10 +58,35 @@ public class Constants {
 	public static final int LAUNCHER_WHEELS_IZONE = 0; // izone eliminates
 	public static final int LAUNCHER_WHEELS_PROFILE = 0;
 	
+	public static final double MAX_LAUNCHER_HEIGHT = 700;
+	
+	
+	
 //	Drivetrain PID Constants
-	//TODO: tune drivetrain pid
-	public static final double DRIVE_TRAIN_KP = 1;
-	public static final double DRIVE_TRAIN_KI = 0;
-	public static final double DRIVE_TRAIN_KD = 0;
+	// DRIVETRAIN CONSTANTS
+	
+	private static final int DRIVETRAIN_ENCODER_TICKS = 128 * 4;
+	public static final double DRIVETRAIN_ENCODER_FACTOR = Math.PI * WHEEL_DIAMETER / DRIVETRAIN_ENCODER_TICKS * (97d/77d);
+	private static final double MAX_VALUE_MULTIPLIER = 0.8;
+	
+	public static final double MAX_DRIVETRAIN_VEL_M_PER_SEC = 2.6 * MAX_VALUE_MULTIPLIER;
+	public static final double MAX_DRIVETRAIN_ACCEL_M_PER_SEC2 = 2.5 * MAX_VALUE_MULTIPLIER;
+	public static final double MAX_ROTATION_VELOCITY_RADS_PER_SEC = 6.3 * MAX_VALUE_MULTIPLIER;
+	public static final double MAX_ROTATION_ACCEL_RADS_PER_SEC2 = 570 * MAX_VALUE_MULTIPLIER;
+	
+    public static double kDriveMaxSpeedInchesPerSec = 82;
+    public static double kDriveMaxAccelInchesPerSec2 = 79;
+	
+    // Left PID constants
+	public static final double DRIVETRAIN_LEFT_KP = .35;
+	public static final double DRIVETRAIN_LEFT_KI = .005;
+	public static final double DRIVETRAIN_LEFT_KD = 0;
+	
+	// Right PID Constants
+	public static final double DRIVETRAIN_RIGHT_KP = .35;
+	public static final double DRIVETRAIN_RIGHT_KI = 0.005;
+	public static final double DRIVETRAIN_RIGHT_KD = 0;
+    
+    public static final double DRIVETRAIN_ON_TARGET_ERROR = .05;
 	
 }

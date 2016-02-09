@@ -7,13 +7,13 @@ import com.team3925.robot2016.util.SmartdashBoardLoggable;
 import com.team3925.robot2016.util.XboxHelper;
 
 import edu.wpi.first.wpilibj.command.PIDCommand;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class LauncherPID extends PIDCommand implements SmartdashBoardLoggable {
 	
-	Launcher launcher = Robot.launcher;
+	private final Launcher launcher = Robot.launcher;
 	
-	double setPoint;
+	private double setPoint;
+	
 	
 	public LauncherPID() {
 		super(Constants.LAUNCHER_AIM_KP, Constants.LAUNCHER_AIM_KI, Constants.LAUNCHER_AIM_KD);
@@ -63,7 +63,11 @@ public class LauncherPID extends PIDCommand implements SmartdashBoardLoggable {
 
 	@Override
 	public void logData() {
-		SmartDashboard.putNumber("Setpoint", setPoint);
+		putNumberSD("Setpoint", setPoint);
+		putDataSD("PIDController", getPIDController());
+		putNumberSD("Setpoint2", getSetpoint());
+		putNumberSD("Error", getPIDController().getError());
+		putBooleanSD("Enabled", getPIDController().isEnabled());
 	}
 
 	@Override

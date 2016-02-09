@@ -1,8 +1,11 @@
 package com.team3925.robot2016.subsystems;
 
+import static com.team3925.robot2016.Constants.GLOBAL_MAX_DRIVE_TRAIN_PWR;
+
 import com.kauailabs.navx.frc.AHRS;
 import com.team3925.robot2016.Robot;
 import com.team3925.robot2016.RobotMap;
+import com.team3925.robot2016.util.CheesySpeedController;
 import com.team3925.robot2016.util.DriveTrainSignal;
 import com.team3925.robot2016.util.MiscUtil;
 import com.team3925.robot2016.util.Pose;
@@ -11,49 +14,36 @@ import com.team3925.robot2016.util.SmartdashBoardLoggable;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.Encoder;
-import edu.wpi.first.wpilibj.SpeedController;
+import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.command.Subsystem;
 
 
 public class DriveTrain extends Subsystem implements SmartdashBoardLoggable {
 
 	private final AHRS navx = Robot.navx;
-    private final SpeedController motorLeftA = RobotMap.driveTrainMotorLeftA;
-    private final SpeedController motorLeftB = RobotMap.driveTrainMotorLeftB;
-    private final SpeedController motorLeftC = RobotMap.driveTrainMotorLeftC;
-    private final SpeedController motorRightA = RobotMap.driveTrainMotorRightA;
-    private final SpeedController motorRightB = RobotMap.driveTrainMotorRightB;
-    private final SpeedController motorRightC = RobotMap.driveTrainMotorRightC;
+	private final CheesySpeedController motorsLeft = RobotMap.driveTrainMotorsLeft;
+	private final CheesySpeedController motorsRight = RobotMap.driveTrainMotorsRight;
     private final Encoder encoderLeft = RobotMap.driveTrainEncoderLeft;
     private final Encoder encoderRight = RobotMap.driveTrainEncoderRight;
-    private final DoubleSolenoid shifterSolenoidLeft = RobotMap.driveTrainShifterSolenoid;
+    private final DoubleSolenoid shifterSolenoid = RobotMap.driveTrainShifterSolenoid;
+    private final PIDController pidLeft = RobotMap.driveTrainPIDLeft;
+    private final PIDController pidRight = RobotMap.driveTrainPIDRight;
     
     private Pose cached_pose = new Pose(0, 0, 0, 0, 0, 0);
     
     
     public void setMotorSpeeds(DriveTrainSignal input) {
-    	setLeftMotorSpeeds(input.left);
-    	setRightMotorSpeeds(input.right);
+    	motorsLeft.set(MiscUtil.limit(input.left * GLOBAL_MAX_DRIVE_TRAIN_PWR));
+    	motorsRight.set(MiscUtil.limit(input.right * GLOBAL_MAX_DRIVE_TRAIN_PWR));
+    }
+    
+    public void setSetpoint(DriveTrainSignal setpoints) {
+    	pidLeft.setSetpoint(setpoints.left);
+    	pidRight.setSetpoint(setpoints.right);
     }
     
     public void setHighGear(boolean highGear) {
-    	if (highGear) {
-    		shifterSolenoidLeft.set(Value.kForward);
-		} else {
-			shifterSolenoidLeft.set(Value.kReverse);
-		}
-    }
-    
-    private void setLeftMotorSpeeds(double speed) {
-    	motorLeftA.set(speed);
-    	motorLeftB.set(speed);
-    	motorLeftC.set(speed);
-    }
-    
-    private void setRightMotorSpeeds(double speed) {
-    	motorRightA.set(speed);
-    	motorRightB.set(speed);
-    	motorRightC.set(speed);
+    	shifterSolenoid.set(highGear ? Value.kReverse : Value.kForward);
     }
     
     public void resetEncoders() {
@@ -62,17 +52,39 @@ public class DriveTrain extends Subsystem implements SmartdashBoardLoggable {
     }
     
     public boolean isHighGear() {
-    	return shifterSolenoidLeft.get() == Value.kForward;
+    	return shifterSolenoid.get() == Value.kReverse;
     }
+    
+    public void setPIDEnabled(boolean enabled) {
+    	if (enabled) {
+			pidLeft.enable();
+			pidRight.enable();
+		} else {
+			pidLeft.disable();
+			pidRight.disable();
+		}
+    }
+    
+    public boolean getPIDEnabled() {
+    	return pidLeft.isEnabled() == pidRight.isEnabled() == true;
+    }
+    
+	public boolean onTarget() {
+		return pidLeft.onTarget() && pidRight.onTarget();
+	}
     
     public DriveTrainSignal getEncoderRates() {
     	return new DriveTrainSignal(encoderLeft.getRate(), encoderRight.getRate());
     }
     
+    /**
+     * @return The pose according to the current sensor state
+     */
     public Pose getPhysicalPose() {
     	cached_pose.reset(encoderLeft.getDistance(), encoderRight.getDistance(),
     			encoderLeft.getRate(), encoderRight.getRate(),
-    			Math.toRadians(navx.getFusedHeading()), 0); //get and check navx heading values
+    			Math.toRadians(navx.getFusedHeading()),
+    			Math.toRadians(navx.getRate()));
     	return cached_pose;
     }
     
@@ -125,18 +137,25 @@ public class DriveTrain extends Subsystem implements SmartdashBoardLoggable {
 	
 	@Override
 	public void logData() {
-		putNumberSD("MotorLeftA", motorLeftA.get());
-		putNumberSD("MotorLeftB", motorLeftB.get());
-		putNumberSD("MotorLeftC", motorLeftC.get());
+		putNumberSD("MotorsLeft_Speed", motorsLeft.get());
+		putNumberSD("MotorsRight_Speed", motorsRight.get());
 		
-		putNumberSD("MotorRightA", motorRightA.get());
-		putNumberSD("MotorRightB", motorRightB.get());
-		putNumberSD("MotorRightC", motorRightC.get());
+		putNumberSD("PIDLeftSetpoint", pidLeft.get());
+		putNumberSD("PIDRightSetpoint", pidRight.get());
+		putBooleanSD("PIDEnabled", getPIDEnabled());
 		
-		putNumberSD("EncoderLeftRate", encoderLeft.getRate());
-		putNumberSD("EncoderRightRate", encoderRight.getRate());
+//		maxCurLeftAbs = Math.max( Math.abs(motorsLeft.getCurrent()), maxCurLeftAbs );
+//		maxCurRightAbs = Math.max( Math.abs(motorsRight.getCurrent()), maxCurRightAbs );
+//		
+//		putNumberSD("LeftMotors_SignedCurent", motorsLeft.getSignedCurrent());
+//		putNumberSD("RightMotors_SignedCurent", motorsRight.getSignedCurrent());
+//		putNumberSD("LeftMotors_MaxAbsCurrent", maxCurLeftAbs);
+//		putNumberSD("RightMotors_MaxAbxCurrent", maxCurRightAbs);
 		
 		putBooleanSD("HighGear", isHighGear());
+		
+		MiscUtil.putPoseSD(getFormattedName() + "PhysicalState_", getPhysicalPose());
+		
 	}
 	
     public void initDefaultCommand() {

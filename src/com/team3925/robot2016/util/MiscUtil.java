@@ -1,5 +1,7 @@
 package com.team3925.robot2016.util;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 public class MiscUtil {
 	
 	/**
@@ -15,6 +17,22 @@ public class MiscUtil {
 		} else {
 			return input;
 		}
+	}
+	
+    /**
+     * Limits the given input to the given magnitude.
+     */
+    public static double limit(double v, double limit) {
+        return (Math.abs(v) < limit) ? v : limit * (v < 0 ? -1 : 1);
+    }
+	
+	public static void putPoseSD(String prefix, Pose pose) {
+		SmartDashboard.putNumber(prefix + "LeftDistance", pose.getLeftDistance());
+		SmartDashboard.putNumber(prefix + "RightDistance", pose.getRightDistance());
+		SmartDashboard.putNumber(prefix + "LeftVelocity", pose.getLeftVelocity());
+		SmartDashboard.putNumber(prefix + "RightVelocity", pose.getRightVelocity());
+		SmartDashboard.putNumber(prefix + "Heading", pose.getHeading());
+		SmartDashboard.putNumber(prefix + "HeadingVelocity", pose.getHeadingVelocity());
 	}
 	
 }

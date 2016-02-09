@@ -1,5 +1,6 @@
 package com.team3925.robot2016;
 
+import static com.team3925.robot2016.Constants.AUTO_START_LOCATION;
 import static com.team3925.robot2016.Constants.DO_LOG_AHRS_VALUES;
 import static com.team3925.robot2016.Constants.DO_LOG_PDP_VALUES;
 
@@ -11,10 +12,12 @@ import com.team3925.robot2016.commands.CollectBall;
 import com.team3925.robot2016.commands.LaunchBallHigh;
 import com.team3925.robot2016.commands.LauncherPID;
 import com.team3925.robot2016.commands.ManualDrive;
+import com.team3925.robot2016.commands.TrapzoidalMotionTest;
 import com.team3925.robot2016.subsystems.DriveTrain;
 import com.team3925.robot2016.subsystems.Launcher;
 import com.team3925.robot2016.util.DriveTrainSignal;
 import com.team3925.robot2016.util.SmartdashBoardLoggable;
+import com.team3925.robot2016.util.TimeoutAction;
 import com.team3925.robot2016.util.XboxHelper;
 
 import edu.wpi.first.wpilibj.DriverStation;
@@ -43,6 +46,7 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 	Command launchBall;
 	Command manualDrive;
 	Command launcherPID;
+	Command trapMotionTest;
 
 	public static OI oi;
 	public static DriveTrain driveTrain;
@@ -50,10 +54,16 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 	PowerDistributionPanel pdp;
 
 	public static double deltaTime = 0;
-	private static double lastTimestamp;
+	private static double lastTimestamp = 0;
+	private static double lastRotationStamp = 0;
+	private static double deltaRotation = 0;
 	private static double maxAccel = 0;
 	private static double maxVel = 0;
-
+	private static double maxRotationVel = 0;
+	private static double maxRotationAccel = 0;
+	
+	private static TimeoutAction autoWait = new TimeoutAction();
+	
 
 	public Robot() {
 		try {
@@ -80,9 +90,10 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 		// pointers. Bad news. Don't move it.
 		oi = new OI();
 		XboxHelper.init();
+		reset();
 
 		//	Switch for current start position.
-		switch (Constants.AUTO_START_LOCATION) {
+		switch (AUTO_START_LOCATION) {
 		case CENTER:
 			autoCommandGroup = new AutoRoutineCenter();
 			break;
@@ -94,7 +105,7 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 			break;
 
 		default:
-			DriverStation.reportError("Was unable to select Auto Routine!", false);
+			DriverStation.reportError("Was unable to select Auto Routine! \nDefault routine selected.", false);
 			autoCommandGroup = new AutoRoutineDoNothing();
 			break;
 		}
@@ -103,14 +114,25 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 		launchBall = new LaunchBallHigh();
 		manualDrive = new ManualDrive();
 		launcherPID = new LauncherPID();
+		trapMotionTest = new TrapzoidalMotionTest();
 		
 		pdp = RobotMap.pdp;
-		
+
+	}
+	
+	/**
+	 * Resets lastTimestamp, the IMU, max unit testers and encoders
+	 */
+	private void reset() {
+		driveTrain.resetEncoders();
 		lastTimestamp = Timer.getFPGATimestamp();
+		lastRotationStamp = navx.getRate();
 		navx.reset();
 		navx.resetDisplacement();
 		maxAccel = 0;
 		maxVel = 0;
+		maxRotationVel = 0;
+		maxRotationAccel = 0;
 	}
 
 	/**
@@ -120,10 +142,7 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 	public void disabledInit(){
 		driveTrain.setMotorSpeeds(DriveTrainSignal.NEUTRAL);
 		launcher.setIntakeSpeeds(0);
-		navx.reset();
-		navx.resetDisplacement();
-		maxAccel = 0;
-		maxVel = 0;
+		reset();
 	}
 
 	public void disabledPeriodic() {
@@ -135,19 +154,23 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 	public void autonomousInit() {
 		// schedule the autonomous command (example)
 		if (autoCommandGroup != null) autoCommandGroup.start();
-		navx.reset();
-		navx.resetDisplacement();
-		maxAccel = 0;
-		maxVel = 0;
-	}
 
+		reset();
+		autoWait.config(1);
+	}
+	
 	/**
 	 * This function is called periodically during autonomous
 	 */
 	public void autonomousPeriodic() {
 		Scheduler.getInstance().run();
 		logData();
-		driveTrain.setMotorSpeeds(new DriveTrainSignal(.2, .2));
+		
+		driveTrain.setHighGear(false);
+		if (autoWait.isFinished()) {
+			trapMotionTest.start();
+		}
+
 	}
 
 	public void teleopInit() {
@@ -159,12 +182,11 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 		
 		launcherPID.start();
 		
+		reset();
+
 		manualDrive.start();
 		System.out.println("Robot has init! (Said through System.out.println)");
-		navx.reset();
-		navx.resetDisplacement();
-		maxAccel = 0;
-		maxVel = 0;
+		driveTrain.setPIDEnabled(false);
 	}
 
 	/**
@@ -173,8 +195,6 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 	public void teleopPeriodic() {
 		Scheduler.getInstance().run();
 		
-		driveTrain.logData();
-		launcher.logData();
 		logData();
 		launcher.update();
 		
@@ -207,15 +227,31 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 
 	@Override
 	public void logData() {
+		driveTrain.logData();
+		launcher.logData();
+
 		double now = Timer.getFPGATimestamp();
 		deltaTime = now - lastTimestamp;
 		lastTimestamp = now;
 
+
+		double curVel = Math.toRadians(navx.getRate());
+		deltaRotation = curVel - lastRotationStamp;
+		lastRotationStamp = curVel;
+
+
 		maxAccel = Math.max(maxAccel, navx.getWorldLinearAccelX());
 		maxVel = Math.max(maxVel, navx.getVelocityX());
 
+		maxRotationVel = Math.max(maxRotationVel, Math.toRadians(navx.getRate()));
+		maxRotationAccel = Math.max(maxRotationAccel, deltaRotation / deltaTime );
+
+
 		putNumberSD("MaxAcceleration", maxAccel);
 		putNumberSD("MaxVelocity", maxVel);
+
+		putNumberSD("MaxRotationVelocity", maxRotationVel);
+		putNumberSD("MaxRotationAccel", maxRotationAccel);
 
 		putNumberSD("CurrentTime", Timer.getFPGATimestamp());
 		putNumberSD("DeltaTime", deltaTime);

@@ -7,9 +7,9 @@ public class DriveTrainSignal {
 	public double left;
 	public double right;
 	
-	public DriveTrainSignal(double leftSpeed, double rightSpeed) {
-		left = leftSpeed;
-		right = rightSpeed;
+	public DriveTrainSignal(double left, double right) {
+		this.left = left;
+		this.right = right;
 	}
 	
 	/**

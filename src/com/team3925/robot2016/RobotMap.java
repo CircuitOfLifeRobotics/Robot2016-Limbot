@@ -1,12 +1,24 @@
 package com.team3925.robot2016;
 
+import static com.team3925.robot2016.Constants.DELTA_TIME;
+import static com.team3925.robot2016.Constants.DRIVETRAIN_ENCODER_FACTOR;
+import static com.team3925.robot2016.Constants.DRIVETRAIN_LEFT_KD;
+import static com.team3925.robot2016.Constants.DRIVETRAIN_LEFT_KI;
+import static com.team3925.robot2016.Constants.DRIVETRAIN_LEFT_KP;
+import static com.team3925.robot2016.Constants.DRIVETRAIN_ON_TARGET_ERROR;
+import static com.team3925.robot2016.Constants.DRIVETRAIN_RIGHT_KD;
+import static com.team3925.robot2016.Constants.DRIVETRAIN_RIGHT_KI;
+import static com.team3925.robot2016.Constants.DRIVETRAIN_RIGHT_KP;
+
+import com.team3925.robot2016.util.CheesySpeedController;
+
 import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.CANTalon.FeedbackDevice;
 import edu.wpi.first.wpilibj.CANTalon.TalonControlMode;
-import edu.wpi.first.wpilibj.Compressor;
-import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.CounterBase.EncodingType;
+import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.PIDSourceType;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.SpeedController;
@@ -21,19 +33,20 @@ import edu.wpi.first.wpilibj.livewindow.LiveWindow;
  */
 public class RobotMap {
 	
-	public static Compressor compressor;
-	
-    public static SpeedController driveTrainMotorLeftA;
-    public static SpeedController driveTrainMotorLeftB;
-    public static SpeedController driveTrainMotorLeftC;
-    public static SpeedController driveTrainMotorRightA;
-    public static SpeedController driveTrainMotorRightB;
-    public static SpeedController driveTrainMotorRightC;
+    private static SpeedController driveTrainMotorLeftA;
+    private static SpeedController driveTrainMotorLeftB;
+    private static SpeedController driveTrainMotorLeftC;
+    private static SpeedController driveTrainMotorRightA;
+    private static SpeedController driveTrainMotorRightB;
+    private static SpeedController driveTrainMotorRightC;
+	public static CheesySpeedController driveTrainMotorsLeft;
+	public static CheesySpeedController driveTrainMotorsRight;
     public static Encoder driveTrainEncoderLeft;
     public static Encoder driveTrainEncoderRight;
     public static DoubleSolenoid driveTrainShifterSolenoid;
+    public static PIDController driveTrainPIDLeft;
+    public static PIDController driveTrainPIDRight;
 
-    
     public static CANTalon launcherMotorAim;
     public static CANTalon launcherMotorLeft;
     public static CANTalon launcherMotorRight;
@@ -42,9 +55,6 @@ public class RobotMap {
     public static PowerDistributionPanel pdp;
 
     public static void init() {
-    	
-//    	compressor = new Compressor();
-//    	compressor.start();
     	
     	boolean invertLeft = true;
     	boolean invertRight = false;
@@ -72,19 +82,37 @@ public class RobotMap {
         driveTrainMotorRightC = new Talon(2);
         LiveWindow.addActuator("DriveTrain", "MotorRightC", (Talon) driveTrainMotorRightC);
         driveTrainMotorRightB.setInverted(invertRight);
+       
+    	int[] pdpLeft = { 1, 2, 3 };
+    	int[] pdpRight = { 4, 5, 6 };
+        SpeedController[] leftMotors = { driveTrainMotorLeftA, driveTrainMotorLeftB, driveTrainMotorLeftC };
+        SpeedController[] rightMotors = { driveTrainMotorRightA, driveTrainMotorRightB, driveTrainMotorRightC };
         
+    	driveTrainMotorsLeft = new CheesySpeedController(leftMotors, pdpLeft);
+    	driveTrainMotorsRight = new CheesySpeedController(rightMotors, pdpRight);
+    	
         driveTrainEncoderLeft = new Encoder(0, 1, false, EncodingType.k4X);
         LiveWindow.addSensor("DriveTrain", "EncoderLeft", driveTrainEncoderLeft);
-        driveTrainEncoderLeft.setDistancePerPulse(1.0);
+        driveTrainEncoderLeft.setDistancePerPulse(DRIVETRAIN_ENCODER_FACTOR);
         driveTrainEncoderLeft.setPIDSourceType(PIDSourceType.kRate);
         
-        driveTrainEncoderRight = new Encoder(2, 3, false, EncodingType.k4X);
+        driveTrainEncoderRight = new Encoder(2, 3, true, EncodingType.k4X);
         LiveWindow.addSensor("DriveTrain", "EncoderRight", driveTrainEncoderRight);
-        driveTrainEncoderRight.setDistancePerPulse(1.0);
+        driveTrainEncoderRight.setDistancePerPulse(DRIVETRAIN_ENCODER_FACTOR);
         driveTrainEncoderRight.setPIDSourceType(PIDSourceType.kRate);
         
         driveTrainShifterSolenoid = new DoubleSolenoid(0, 1);
         LiveWindow.addActuator("DriveTrain", "ShifterSolenoid", driveTrainShifterSolenoid);
+        
+        driveTrainPIDLeft = new PIDController(DRIVETRAIN_LEFT_KP, DRIVETRAIN_LEFT_KI,
+        		DRIVETRAIN_LEFT_KD, driveTrainEncoderLeft, driveTrainMotorsLeft, DELTA_TIME / 4);
+        LiveWindow.addActuator("DriveTrain", "PIDLeft", driveTrainPIDLeft);
+        driveTrainPIDLeft.setAbsoluteTolerance(DRIVETRAIN_ON_TARGET_ERROR);
+        
+        driveTrainPIDRight = new PIDController(DRIVETRAIN_RIGHT_KP, DRIVETRAIN_RIGHT_KI,
+        		DRIVETRAIN_RIGHT_KD, driveTrainEncoderRight, driveTrainMotorsRight, DELTA_TIME / 4);
+        LiveWindow.addActuator("DriveTrain", "PIDRight", driveTrainPIDRight);
+        driveTrainPIDLeft.setAbsoluteTolerance(DRIVETRAIN_ON_TARGET_ERROR);
         
         
         
