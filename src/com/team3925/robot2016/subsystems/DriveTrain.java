@@ -30,6 +30,8 @@ public class DriveTrain extends Subsystem implements SmartdashBoardLoggable {
     private final PIDController pidRight = RobotMap.driveTrainPIDRight;
     
     private Pose cached_pose = new Pose(0, 0, 0, 0, 0, 0);
+    private double maxErrorLeft = 0;
+    private double maxErrorRight = 0;
     
     
     public void setMotorSpeeds(DriveTrainSignal input) {
@@ -57,8 +59,9 @@ public class DriveTrain extends Subsystem implements SmartdashBoardLoggable {
     
     public void setPIDEnabled(boolean enabled) {
     	if (enabled) {
-			pidLeft.enable();
-			pidRight.enable();
+			pidLeft.reset();
+			pidRight.reset();
+			maxErrorLeft = maxErrorRight = 0;
 		} else {
 			pidLeft.disable();
 			pidRight.disable();
@@ -140,10 +143,27 @@ public class DriveTrain extends Subsystem implements SmartdashBoardLoggable {
 		putNumberSD("MotorsLeft_Speed", motorsLeft.get());
 		putNumberSD("MotorsRight_Speed", motorsRight.get());
 		
+		putDataSD("PIDControllerLeft", pidLeft);
+		putDataSD("PIDControllerRight", pidRight);
+		
+		putBooleanSD("PIDEnabled", getPIDEnabled());
 		putNumberSD("PIDLeftSetpoint", pidLeft.get());
 		putNumberSD("PIDRightSetpoint", pidRight.get());
-		putBooleanSD("PIDEnabled", getPIDEnabled());
+		putNumberSD("PIDLeftError", pidLeft.getError());
+		putNumberSD("PIDRightError", pidRight.getError());
+		putNumberSD("PIDLeftDeltaSetpoint", pidLeft.getDeltaSetpoint());
+		putNumberSD("PIDRightDeltaSetpoint", pidRight.getDeltaSetpoint());
+		putNumberSD("PIDLeftAverageError", pidLeft.getAvgError());
+		putNumberSD("PIDRightAverageError", pidRight.getAvgError());
+		maxErrorLeft = Math.max(maxErrorLeft, pidLeft.getError());
+		maxErrorRight = Math.max(maxErrorRight, pidRight.getError());
+		putNumberSD("PIDLeftMaxError", maxErrorLeft);
+		putNumberSD("PIDRightMaxError", maxErrorRight);
 		
+		putStringSD("Special Characters :D", "≈ç√˚∫¬˚∆˙´∑πª¨®¥πø˜≈ç≤µøˆåßƒπø");
+		
+		
+//		Commented out due to bugs with PDP and Null Pointers
 //		maxCurLeftAbs = Math.max( Math.abs(motorsLeft.getCurrent()), maxCurLeftAbs );
 //		maxCurRightAbs = Math.max( Math.abs(motorsRight.getCurrent()), maxCurRightAbs );
 //		
