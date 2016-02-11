@@ -20,7 +20,7 @@ public class Constants {
 	public static final double XBOX_AXIS_TOLERANCE = 0.1;
 
 	public static final double GLOBAL_MAX_SHOOTER_PWR = 1;
-	public static final double LAUNCHER_AIM_MOTOR_SPEED_MULTIPLIED = 0.6;
+	public static final double LAUNCHER_AIM_MOTOR_SPEED_MULTIPLIED = 0.5;
 	
 	public static final double MAX_ACCEL_M_SEC2 = 0.923;
 	public static final double MAX_VEL_M_SEC = 1.973;
@@ -36,7 +36,7 @@ public class Constants {
 	
 //	Straight Gyro Drive PID Constants
 	//TODO: tune gyro straight drive pid
-	public static final double GYRO_DRIVE_KP = 1;
+	public static final double GYRO_DRIVE_KP = 0.1;
 	public static final double GYRO_DRIVE_KI = 0;
 	public static final double GYRO_DRIVE_KD = 0;
 	
@@ -58,8 +58,9 @@ public class Constants {
 	public static final int LAUNCHER_WHEELS_IZONE = 0; // izone eliminates
 	public static final int LAUNCHER_WHEELS_PROFILE = 0;
 	
-	public static final double MAX_LAUNCHER_HEIGHT = 700;
-	
+	public static final double MAX_LAUNCHER_HEIGHT = 700; // in encoder ticks
+	public static final double MIN_LAUNCHER_HEIGHT = 50; // in encoder ticks
+	public static final double LAUNCHER_INCREMENT = 40; // in encoder ticks
 	
 	
 //	Drivetrain PID Constants

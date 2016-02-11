@@ -180,7 +180,7 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 		// this line or comment it out.
 		if (autoCommandGroup != null) autoCommandGroup.cancel();
 		
-		launcherPID.start();
+//		launcherPID.start();
 		
 		reset();
 
@@ -198,17 +198,17 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 		logData();
 		launcher.update();
 		
-//		boolean leftTrigger = XboxHelper.getShooterButton(XboxHelper.TRIGGER_RT);
-//		boolean rightTrigger = XboxHelper.getShooterButton(XboxHelper.TRIGGER_LT);
-//		if (leftTrigger) {
-//			launcher.setAimMotorSpeed(1);
-//		} else if (rightTrigger) {
-//			launcher.setAimMotorSpeed(-1);
-//		} else if (rightTrigger == leftTrigger) {
-//			launcher.setAimMotorSpeed(0);
-//		} else {
-//			launcher.setAimMotorSpeed(0); //it should never get here but just in case
-//		}
+		boolean leftTrigger = XboxHelper.getShooterButton(XboxHelper.TRIGGER_RT);
+		boolean rightTrigger = XboxHelper.getShooterButton(XboxHelper.TRIGGER_LT);
+		if (leftTrigger) {
+			launcher.setAimMotorSpeed(1);
+		} else if (rightTrigger) {
+			launcher.setAimMotorSpeed(-1);
+		} else if (rightTrigger == leftTrigger) {
+			launcher.setAimMotorSpeed(0);
+		} else {
+			launcher.setAimMotorSpeed(0); //it should never get here but just in case
+		}
 		
 		boolean isPunch = XboxHelper.getShooterButton(XboxHelper.STICK_RIGHT);
 		if (isPunch)

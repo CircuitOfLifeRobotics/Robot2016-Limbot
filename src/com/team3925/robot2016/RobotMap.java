@@ -10,6 +10,7 @@ import static com.team3925.robot2016.Constants.DRIVETRAIN_RIGHT_KD;
 import static com.team3925.robot2016.Constants.DRIVETRAIN_RIGHT_KI;
 import static com.team3925.robot2016.Constants.DRIVETRAIN_RIGHT_KP;
 
+import com.ni.vision.NIVision.CalibrationThumbnailType;
 import com.team3925.robot2016.util.CheesySpeedController;
 
 import edu.wpi.first.wpilibj.CANTalon;
@@ -122,13 +123,15 @@ public class RobotMap {
         launcherMotorAim = new CANTalon(2);
         LiveWindow.addActuator("Launcher", "AimMotor", launcherMotorAim);
         launcherMotorAim.setFeedbackDevice(FeedbackDevice.PulseWidth);
-        launcherMotorAim.changeControlMode(TalonControlMode.PercentVbus); //TODO change to position and do code to make it work
+        launcherMotorAim.changeControlMode(TalonControlMode.MotionProfile); //TODO change to position and do code to make it work
+        launcherMotorAim.setFeedbackDevice(FeedbackDevice.CtreMagEncoder_Relative);
+//        launcherMotorAim.reverseSensor(true); doesn't work, sensor value is still negative
         
         launcherMotorLeft = new CANTalon(0);
         LiveWindow.addActuator("Launcher", "MotorLeft", launcherMotorLeft);
         launcherMotorLeft.setFeedbackDevice(FeedbackDevice.QuadEncoder);
         launcherMotorLeft.changeControlMode(TalonControlMode.PercentVbus); //TODO check if we want to use speed
-        launcherMotorLeft.setInverted(true);
+        launcherMotorLeft.setInverted(false);
         
         launcherMotorRight = new CANTalon(1);
         LiveWindow.addActuator("Launcher", "MotorRight", launcherMotorRight);
