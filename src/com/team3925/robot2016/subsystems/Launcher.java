@@ -4,7 +4,6 @@ import static com.team3925.robot2016.Constants.LAUNCHER_AIM_MOTOR_SPEED_MULTIPLI
 
 import com.team3925.robot2016.Constants;
 import com.team3925.robot2016.RobotMap;
-import com.team3925.robot2016.commands.LauncherPID;
 import com.team3925.robot2016.util.SmartdashBoardLoggable;
 
 import edu.wpi.first.wpilibj.CANTalon;
@@ -26,7 +25,6 @@ public class Launcher extends Subsystem implements SmartdashBoardLoggable {
 //    Sensor for ball goes here
     
     private boolean hasBall = false;
-    
 
     /**
      * @param speed

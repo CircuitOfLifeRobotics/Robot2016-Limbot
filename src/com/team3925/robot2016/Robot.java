@@ -142,6 +142,7 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 	public void disabledInit(){
 		driveTrain.setMotorSpeeds(DriveTrainSignal.NEUTRAL);
 		launcher.setIntakeSpeeds(0);
+		
 		reset();
 	}
 
