@@ -172,7 +172,7 @@ public class DriveTrain extends Subsystem implements SmartdashBoardLoggable {
 //		putNumberSD("LeftMotors_MaxAbsCurrent", maxCurLeftAbs);
 //		putNumberSD("RightMotors_MaxAbxCurrent", maxCurRightAbs);
 		
-		putBooleanSD("HighGear", isHighGear());
+//		putBooleanSD("HighGear", isHighGear());
 		
 		MiscUtil.putPoseSD(getFormattedName() + "PhysicalState_", getPhysicalPose());
 		

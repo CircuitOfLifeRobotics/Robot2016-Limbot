@@ -2,81 +2,52 @@ package com.team3925.robot2016.commands;
 
 import com.team3925.robot2016.Constants;
 import com.team3925.robot2016.Robot;
-import com.team3925.robot2016.RobotMap;
 import com.team3925.robot2016.subsystems.Launcher;
-import com.team3925.robot2016.util.MotionProfile;
 import com.team3925.robot2016.util.SmartdashBoardLoggable;
+import com.team3925.robot2016.util.XboxHelper;
 
-import edu.wpi.first.wpilibj.CANTalon;
-import edu.wpi.first.wpilibj.command.PIDCommand;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.CANTalon.TalonControlMode;
+import edu.wpi.first.wpilibj.command.Command;
 
-public class LauncherPID extends PIDCommand implements SmartdashBoardLoggable {
+public class LauncherPID extends Command implements SmartdashBoardLoggable {
 	
 	private final Launcher launcher = Robot.launcher;
-	//TODO: make an actual motion profile
-	private MotionProfile motionProfile = new MotionProfile(RobotMap.launcherMotorAim, Constants.MOTION_PROFILE_HOLD);
-	private CANTalon.SetValueMotionProfile setOutput;
 	
-	private double setpoint, pidSetpoint, difference;
+	private double setpoint, position, difference;
 	
-	public LauncherPID() {
-		super(Constants.LAUNCHER_AIM_KP, Constants.LAUNCHER_AIM_KI, Constants.LAUNCHER_AIM_KD);
-		this.setpoint = 0;
+	public LauncherPID(double setPoint) {
+		this.setpoint = setPoint;
 	}
 	
-//	public LauncherPID(double setPoint) {
-//		super(Constants.LAUNCHER_AIM_KP, Constants.LAUNCHER_AIM_KI, Constants.LAUNCHER_AIM_KD);
-//		this.setpoint = setPoint;
-//	}
-//	
-//	public LauncherPID(double p, double i, double d, double setPoint) {
-//		super(p, i, d);
-//		this.setpoint = setPoint;
-//	}
+	public LauncherPID(double pUp, double iUp, double dUp, double fUp, int izoneUp, double closeLoopRampRateUp,
+			double pDown, double iDown, double dDown, double fDown, int izoneDown, double closeLoopRampRateDown, 
+			double setPoint) {
+		this.setpoint = setPoint;
+		launcher.setAimPID(pUp, iUp, dUp, fUp, izoneUp, closeLoopRampRateUp, 0);
+		launcher.setAimPID(pDown, iDown, dDown, fDown, izoneDown, closeLoopRampRateDown, 1);
+	}
 	
-	@Override
-	protected double returnPIDInput() {
-		SmartDashboard.putNumber("test_pid_input", launcher.getAimMotorPosition());
-		return launcher.getAimMotorPosition();
-	}
-
-	@Override
-	protected void usePIDOutput(double output) {
-		SmartDashboard.putNumber("test_pid_output", output);
-		launcher.setAimMotorSpeed(output);
-	}
-
-	@Override
 	protected void initialize() {
-		motionProfile.startMotionProfile();
+		launcher.changeAimControlMode(TalonControlMode.Position);
 	}
 
-	@Override
 	protected void execute() {
-		motionProfile.control();
+		setpoint = -XboxHelper.getShooterAxis(XboxHelper.AXIS_LEFT_Y) * Constants.LAUNCHER_MAX_HEIGHT;
+		position = launcher.getAimMotorPosition();
+		difference = setpoint - position;
 		
-		setOutput = motionProfile.getSetValue();
+		if (difference > 0)
+			launcher.setAimProfile(0);
+		else
+			launcher.setAimProfile(1);
 		
-		launcher.setAimMotorSpeed(setpoint, true);
-//		setpoint = XboxHelper.getShooterAxis(XboxHelper.AXIS_RIGHT_Y) * Constants.MAX_LAUNCHER_HEIGHT;
+		if (Math.abs(difference) > Constants.LAUNCHER_AIM_TOLERANCE) {
+			setpoint = position + Constants.LAUNCHER_AIM_INCREMENT * (difference>0 ? 1:-1);
+		}
 		
-//		difference = setpoint - launcher.getAimMotorPosition();
-//		
-//		if (difference < Constants.LAUNCHER_INCREMENT) {
-//			pidSetpoint = setpoint;
-//		} else {
-//			pidSetpoint = launcher.getAimMotorPosition();
-//			if (difference > 0) {
-//				pidSetpoint += Constants.LAUNCHER_INCREMENT;
-//			}else {
-//				pidSetpoint -= Constants.LAUNCHER_INCREMENT;
-//			}
-//		}
-//		
-//		setSetpoint(pidSetpoint);
+//		launcher.setAim(setpoint);
 		
-		this.logData();
+		logData();
 	}
 	
 	@Override
@@ -86,27 +57,20 @@ public class LauncherPID extends PIDCommand implements SmartdashBoardLoggable {
 
 	@Override
 	protected void end() {
-		motionProfile.reset();
-		
 		launcher.setAimMotorSpeed(0, false);
 	}
 
 	@Override
 	protected void interrupted() {
-		motionProfile.reset();
-		
 		launcher.setAimMotorSpeed(0);
 	}
 
 	@Override
 	public void logData() {
+		putNumberSD("Difference", difference);
 		putNumberSD("Setpoint", setpoint);
-		putNumberSD("PIDSetpoint", pidSetpoint);
-		putNumberSD("GetSetpoint", getSetpoint());
-		putNumberSD("difference", difference);
-		putDataSD("PIDController", getPIDController());
-		putNumberSD("Error", getPIDController().getError());
-		putBooleanSD("Enabled", getPIDController().isEnabled());
+		putNumberSD("Position", position);
+		putBooleanSD("UporDown", difference>0);
 	}
 
 	@Override

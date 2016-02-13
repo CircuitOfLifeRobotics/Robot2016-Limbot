@@ -8,8 +8,11 @@ import com.team3925.robot2016.util.SmartdashBoardLoggable;
 
 import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.CANTalon.TalonControlMode;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
+import edu.wpi.first.wpilibj.PIDSourceType;
 import edu.wpi.first.wpilibj.command.Subsystem;
+import edu.wpi.first.wpilibj.hal.CanTalonJNI;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 
@@ -25,13 +28,31 @@ public class Launcher extends Subsystem implements SmartdashBoardLoggable {
 //    Sensor for ball goes here
     
     private boolean hasBall = false;
-
+    
     /**
      * @param speed
      */
     public void setIntakeSpeeds(double speed) {
     	motorLeft.set(speed);
     	motorRight.set(speed);
+    }
+    
+    public void changeAimControlMode(TalonControlMode mode) {
+    	motorAim.changeControlMode(mode);
+    }
+    
+    public void setAimProfile(int profile) {
+    	profile = Math.min(1, Math.max(0, profile));
+    	motorAim.setProfile(profile);
+    }
+    
+    public void setAimPID(double p, double i, double d, double f, int izone, double closeLoopRampRate, int profile) {
+    	profile = Math.min(1, Math.max(0, profile));
+    	motorAim.setPID(p, i, d, f, izone, closeLoopRampRate, profile);
+    }
+    
+    public void setAim(double output) {
+    	motorAim.set(output);
     }
     
     public void setAimMotorSpeed(double speed) {
@@ -42,7 +63,7 @@ public class Launcher extends Subsystem implements SmartdashBoardLoggable {
     	if (doLimits) {
 	    	if (getAimMotorPosition() <= 10)
 	    		speed = Math.max(speed, 0);
-	    	if (getAimMotorPosition() >= (Constants.MAX_LAUNCHER_HEIGHT-10))
+	    	if (getAimMotorPosition() >= (Constants.LAUNCHER_MAX_HEIGHT+10))
 	    		speed = Math.min(speed, 0);
     	}
     	
@@ -60,7 +81,7 @@ public class Launcher extends Subsystem implements SmartdashBoardLoggable {
     }
     
     public double getAimMotorPosition() {
-    	return motorAim.getEncPosition();
+    	return -motorAim.getEncPosition();
     }
     
     public void setPuncher(boolean isHigh) {
@@ -69,10 +90,11 @@ public class Launcher extends Subsystem implements SmartdashBoardLoggable {
     
     @Override
     public void logData() {
-    	putNumberSD("MotorLeft", motorLeft.get());
-    	putNumberSD("MotorRight", motorRight.get());
+//    	putNumberSD("MotorLeft", motorLeft.get());
+//    	putNumberSD("MotorRight", motorRight.get());
     	putNumberSD("AimMotorSpeed", motorAim.getSpeed());
     	putNumberSD("MotorAimPosition", getAimMotorPosition());
+    	putStringSD("MotorAimMode", motorAim.getControlMode().toString());
     }
     
     @Override
