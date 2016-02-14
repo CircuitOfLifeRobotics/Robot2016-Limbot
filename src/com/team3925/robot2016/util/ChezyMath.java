@@ -7,6 +7,27 @@ package com.team3925.robot2016.util;
  * mathematics
  */
 public class ChezyMath {
+	
+	/**
+	 * Get the angle setpoint from joystick value
+	 * 
+	 * @param joystickVal
+	 * @return angle
+	 */
+	public static double joystickToDegrees(double joystickVal) {
+		return (Math.abs(joystickVal)*78)-3;
+	}
+	
+	/**
+	 * Get the angle of the launcher from the encoder output
+	 * 
+	 * @param enocderTicks
+	 * @return degrees
+	 */
+	public static double encoderTicksToDegrees(double encoderTicks) {
+		return (encoderTicks + 36)/11.377777778;
+	}
+	
     /**
      * Get the difference in angle between two angles.
      *

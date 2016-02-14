@@ -16,6 +16,7 @@ import com.team3925.robot2016.util.CheesySpeedController;
 import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.CANTalon.FeedbackDevice;
 import edu.wpi.first.wpilibj.CANTalon.TalonControlMode;
+import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.CounterBase.EncodingType;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Encoder;
@@ -47,14 +48,18 @@ public class RobotMap {
     public static DoubleSolenoid driveTrainShifterSolenoid;
     public static PIDController driveTrainPIDLeft;
     public static PIDController driveTrainPIDRight;
-
+    
     public static CANTalon launcherMotorAim;
     public static CANTalon launcherMotorLeft;
     public static CANTalon launcherMotorRight;
     public static DoubleSolenoid launcherPuncherSolenoid;
     
+    public static DoubleSolenoid armsSolenoid;
+    
     public static PowerDistributionPanel pdp;
-
+    
+//    public static Compressor compressor;
+    
     public static void init() {
     	
     	boolean invertLeft = true;
@@ -123,23 +128,27 @@ public class RobotMap {
         launcherMotorAim = new CANTalon(2);
         LiveWindow.addActuator("Launcher", "AimMotor", launcherMotorAim);
         launcherMotorAim.setFeedbackDevice(FeedbackDevice.PulseWidth);
-        launcherMotorAim.changeControlMode(TalonControlMode.MotionProfile); //TODO change to position and do code to make it work
+        launcherMotorAim.changeControlMode(TalonControlMode.PercentVbus);
         launcherMotorAim.setFeedbackDevice(FeedbackDevice.CtreMagEncoder_Relative);
+        launcherMotorAim.reverseSensor(true);
 //        launcherMotorAim.reverseSensor(true); doesn't work, sensor value is still negative
         
-        launcherMotorLeft = new CANTalon(0);
+        launcherMotorLeft = new CANTalon(3);
         LiveWindow.addActuator("Launcher", "MotorLeft", launcherMotorLeft);
         launcherMotorLeft.setFeedbackDevice(FeedbackDevice.QuadEncoder);
-        launcherMotorLeft.changeControlMode(TalonControlMode.PercentVbus); //TODO check if we want to use speed
-        launcherMotorLeft.setInverted(false);
+        launcherMotorLeft.changeControlMode(TalonControlMode.PercentVbus);
+        launcherMotorLeft.setInverted(true);
         
         launcherMotorRight = new CANTalon(1);
         LiveWindow.addActuator("Launcher", "MotorRight", launcherMotorRight);
         launcherMotorRight.setFeedbackDevice(FeedbackDevice.QuadEncoder);
         launcherMotorRight.changeControlMode(TalonControlMode.PercentVbus);
-//        launcherMotorRight.setInverted(true);
 //        TODO check if this the correct motor to invert
 //        TODO add PID to CANTalons
+        
+        armsSolenoid = new DoubleSolenoid(4, 5);
+        
+//        compressor = new Compressor();
         
         pdp = new PowerDistributionPanel();
     }

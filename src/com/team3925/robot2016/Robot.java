@@ -9,10 +9,12 @@ import com.team3925.robot2016.commands.AutoRoutineCenter;
 import com.team3925.robot2016.commands.AutoRoutineCourtyard;
 import com.team3925.robot2016.commands.AutoRoutineDoNothing;
 import com.team3925.robot2016.commands.CollectBall;
+import com.team3925.robot2016.commands.JankyLauncher;
 import com.team3925.robot2016.commands.LaunchBallHigh;
 import com.team3925.robot2016.commands.LauncherPID;
 import com.team3925.robot2016.commands.ManualDrive;
 import com.team3925.robot2016.commands.TrapzoidalMotionTest;
+import com.team3925.robot2016.subsystems.Arms;
 import com.team3925.robot2016.subsystems.DriveTrain;
 import com.team3925.robot2016.subsystems.Launcher;
 import com.team3925.robot2016.util.DriveTrainSignal;
@@ -42,15 +44,17 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 	public static AHRS navx = null;
 	
 	Command autoCommandGroup;
-	Command collectBall;
-	Command launchBall;
+//	Command collectBall;
+//	Command launchBall;
 	Command manualDrive;
 	Command launcherPID;
 	Command trapMotionTest;
+	Command jankyLauncher;
 
 	public static OI oi;
 	public static DriveTrain driveTrain;
 	public static Launcher launcher;
+	public static Arms arms;
 	PowerDistributionPanel pdp;
 
 	public static double deltaTime = 0;
@@ -83,6 +87,7 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 
 		driveTrain = new DriveTrain();
 		launcher = new Launcher();
+		arms = new Arms();
 
 		// OI must be constructed after subsystems. If the OI creates Commands
 		//(which it very likely will), subsystems are not guaranteed to be
@@ -110,11 +115,12 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 			break;
 		}
 
-		collectBall = new CollectBall();
-		launchBall = new LaunchBallHigh();
+//		collectBall = new CollectBall();
+//		launchBall = new LaunchBallHigh();
 		manualDrive = new ManualDrive();
-		launcherPID = new LauncherPID();
 		trapMotionTest = new TrapzoidalMotionTest();
+		jankyLauncher = new JankyLauncher();
+		launcherPID = new LauncherPID(Constants.LAUNCHER_AIM_KP_UP, Constants.LAUNCHER_AIM_KI_UP, Constants.LAUNCHER_AIM_KD_UP, 0d);
 		
 		pdp = RobotMap.pdp;
 
@@ -141,14 +147,15 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 	 */
 	public void disabledInit(){
 		driveTrain.setMotorSpeeds(DriveTrainSignal.NEUTRAL);
-		launcher.setIntakeSpeeds(0);
+//		launcher.setIntakeSpeeds(0);
+		
 		reset();
 	}
 
 	public void disabledPeriodic() {
 		Scheduler.getInstance().run();
 		driveTrain.setMotorSpeeds(DriveTrainSignal.NEUTRAL);
-		launcher.setIntakeSpeeds(0);
+//		launcher.setIntakeSpeeds(0);
 	}
 
 	public void autonomousInit() {
@@ -180,10 +187,11 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 		// this line or comment it out.
 		if (autoCommandGroup != null) autoCommandGroup.cancel();
 		
-//		launcherPID.start();
+		launcherPID.start();
+//		jankyLauncher.start();
 		
 		reset();
-
+		
 		manualDrive.start();
 		System.out.println("Robot has init! (Said through System.out.println)");
 		driveTrain.setPIDEnabled(false);
@@ -196,25 +204,20 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 		Scheduler.getInstance().run();
 		
 		logData();
-		launcher.update();
 		
-		boolean leftTrigger = XboxHelper.getShooterButton(XboxHelper.TRIGGER_RT);
-		boolean rightTrigger = XboxHelper.getShooterButton(XboxHelper.TRIGGER_LT);
-		if (leftTrigger) {
-			launcher.setAimMotorSpeed(1);
-		} else if (rightTrigger) {
-			launcher.setAimMotorSpeed(-1);
-		} else if (rightTrigger == leftTrigger) {
-			launcher.setAimMotorSpeed(0);
-		} else {
-			launcher.setAimMotorSpeed(0); //it should never get here but just in case
-		}
+//		boolean leftTrigger = XboxHelper.getShooterButton(XboxHelper.TRIGGER_LT);
+//		boolean rightTrigger = XboxHelper.getShooterButton(XboxHelper.TRIGGER_RT);
+//		double madrSpid = 0;
+//		if (leftTrigger) {
+//			madrSpid++;
+//		}
+//		if (rightTrigger) {
+//			madrSpid--;
+//		}
+//		launcher.setAimMotorSpeed(madrSpid, true);
+//		putNumberSD("Madr_Spid", madrSpid);
 		
-		boolean isPunch = XboxHelper.getShooterButton(XboxHelper.STICK_RIGHT);
-		if (isPunch)
-			launcher.setPuncher(true);
-		else
-			launcher.setPuncher(false);
+		arms.setArm(XboxHelper.getDriverAxis(2)>0.5);
 		
 	}
 
@@ -223,6 +226,8 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 	 */
 	public void testPeriodic() {
 		LiveWindow.run();
+		
+		launcher.liveWindow();
 	}
 
 	@Override
@@ -361,11 +366,12 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 	}
 	
 	private void logPDPData() {
+		SmartDashboard.putData("PDP", pdp);
 		SmartDashboard.putNumber("PDP_Temperature", pdp.getTemperature());
-		SmartDashboard.putNumber("PDP_Total_Current", pdp.getTotalCurrent());
+//		SmartDashboard.putNumber("PDP_Total_Current", pdp.getTotalCurrent());
 		SmartDashboard.putNumber("PDP_Total_Energy", pdp.getTotalEnergy()); // in milliJoules
 		SmartDashboard.putNumber("PDP_Total_Power", pdp.getTotalPower());
-		SmartDashboard.putNumber("PDP_Voltage", pdp.getVoltage());
+//		SmartDashboard.putNumber("PDP_Voltage", pdp.getVoltage());
 	}
 	
 }
