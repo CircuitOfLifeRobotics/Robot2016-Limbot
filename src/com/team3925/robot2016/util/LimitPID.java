@@ -130,14 +130,14 @@ public class LimitPID {
 	}
 	
 	public void setPIDLimits(double pMax, double iMax, double dMax, double totalErrorMax, double pMin, double iMin, double dMin, double totalErrorMin) {
-		m_P_max = pMax;
-		m_I_max = iMax;
-		m_D_max = dMax;
-		m_totalError_max = totalErrorMax;
-		m_P_min = pMin;
-		m_I_min = iMin;
-		m_D_min = dMin;
-		m_totalError_min = totalErrorMin;
+		m_P_max = (double) pMax;
+		m_I_max = (double) iMax;
+		m_D_max = (double) dMax;
+		m_totalError_max = (double) totalErrorMax;
+		m_P_min = (double) pMin;
+		m_I_min = (double) iMin;
+		m_D_min = (double) dMin;
+		m_totalError_min = (double) totalErrorMin;
 	}
 	
 	/**
