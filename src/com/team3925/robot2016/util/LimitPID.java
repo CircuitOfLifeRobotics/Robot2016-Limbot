@@ -1,6 +1,5 @@
 package com.team3925.robot2016.util;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.BoundaryException;
 
 public class LimitPID {

@@ -133,17 +133,16 @@ public class RobotMap {
         launcherMotorAim.reverseSensor(true);
 //        launcherMotorAim.reverseSensor(true); doesn't work, sensor value is still negative
         
-        launcherMotorLeft = new CANTalon(0);
+        launcherMotorLeft = new CANTalon(3);
         LiveWindow.addActuator("Launcher", "MotorLeft", launcherMotorLeft);
         launcherMotorLeft.setFeedbackDevice(FeedbackDevice.QuadEncoder);
         launcherMotorLeft.changeControlMode(TalonControlMode.PercentVbus);
-        launcherMotorLeft.setInverted(false);
+        launcherMotorLeft.setInverted(true);
         
         launcherMotorRight = new CANTalon(1);
         LiveWindow.addActuator("Launcher", "MotorRight", launcherMotorRight);
         launcherMotorRight.setFeedbackDevice(FeedbackDevice.QuadEncoder);
         launcherMotorRight.changeControlMode(TalonControlMode.PercentVbus);
-//        launcherMotorRight.setInverted(true);
 //        TODO check if this the correct motor to invert
 //        TODO add PID to CANTalons
         

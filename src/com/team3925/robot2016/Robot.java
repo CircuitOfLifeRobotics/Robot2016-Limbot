@@ -191,7 +191,7 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 //		jankyLauncher.start();
 		
 		reset();
-
+		
 		manualDrive.start();
 		System.out.println("Robot has init! (Said through System.out.println)");
 		driveTrain.setPIDEnabled(false);

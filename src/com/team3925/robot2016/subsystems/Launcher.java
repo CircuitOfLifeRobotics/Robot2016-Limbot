@@ -68,8 +68,6 @@ public class Launcher extends Subsystem implements SmartdashBoardLoggable {
 	    		speed = Math.min(speed, 0);
     	}
     	
-    	SmartDashboard.putNumber("Launcher_Aim_Speed_Is_Broke?_Test", speed);
-    	
     	motorAim.set(speed * LAUNCHER_AIM_MOTOR_SPEED_MULTIPLIED);
     }
     
