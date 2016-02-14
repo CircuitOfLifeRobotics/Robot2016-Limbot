@@ -58,7 +58,7 @@ public class RobotMap {
     
     public static PowerDistributionPanel pdp;
     
-//    public static Compressor/ compressor;
+//    public static Compressor compressor;
     
     public static void init() {
     	
@@ -130,6 +130,7 @@ public class RobotMap {
         launcherMotorAim.setFeedbackDevice(FeedbackDevice.PulseWidth);
         launcherMotorAim.changeControlMode(TalonControlMode.PercentVbus);
         launcherMotorAim.setFeedbackDevice(FeedbackDevice.CtreMagEncoder_Relative);
+        launcherMotorAim.reverseSensor(true);
 //        launcherMotorAim.reverseSensor(true); doesn't work, sensor value is still negative
         
         launcherMotorLeft = new CANTalon(0);
@@ -149,7 +150,6 @@ public class RobotMap {
         armsSolenoid = new DoubleSolenoid(4, 5);
         
 //        compressor = new Compressor();
-//        compressor.start();
         
         pdp = new PowerDistributionPanel();
     }

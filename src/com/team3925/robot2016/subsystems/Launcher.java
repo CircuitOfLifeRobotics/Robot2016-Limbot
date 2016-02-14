@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.PIDSourceType;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.hal.CanTalonJNI;
+import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 
@@ -92,9 +93,34 @@ public class Launcher extends Subsystem implements SmartdashBoardLoggable {
     public void logData() {
 //    	putNumberSD("MotorLeft", motorLeft.get());
 //    	putNumberSD("MotorRight", motorRight.get());
-    	putNumberSD("AimMotorSpeed", motorAim.getSpeed());
-    	putNumberSD("MotorAimPosition", getAimMotorPosition());
-    	putStringSD("MotorAimMode", motorAim.getControlMode().toString());
+//    	putNumberSD("AimMotorSpeed", motorAim.getSpeed());
+//    	putNumberSD("MotorAimPosition", getAimMotorPosition());
+//    	putStringSD("MotorAimMode", motorAim.getControlMode().toString());
+    	
+    	//non linear loop gain
+    	
+    	putNumberSD("MotorAim_getBusVoltage", motorAim.getBusVoltage()              );
+    	putNumberSD("MotorAim_getClosedLoopError", motorAim.getClosedLoopError()    );
+    	putNumberSD("MotorAim_getCloseLoopRampRate", motorAim.getCloseLoopRampRate());
+    	putNumberSD("MotorAim_getP", motorAim.getP()                                );
+    	putNumberSD("MotorAim_getI", motorAim.getI()                                );
+    	putNumberSD("MotorAim_getD", motorAim.getD()                                );
+    	putNumberSD("MotorAim_getF", motorAim.getF()                                );
+    	putNumberSD("MotorAim_getEncPosition", motorAim.getEncPosition()            );
+    	putNumberSD("MotorAim_getEncVelocity", motorAim.getEncVelocity()            );
+    	putNumberSD("MotorAim_getError", motorAim.getError()                        );
+    	putNumberSD("MotorAim_getIZone", motorAim.getIZone()                        );
+    	putNumberSD("MotorAim_getOutputCurrent", motorAim.getOutputCurrent()        );
+    	putNumberSD("MotorAim_getPosition", motorAim.getPosition()                  );
+    	putNumberSD("MotorAim_getSetpoint", motorAim.getSetpoint()                  );
+    	putNumberSD("MotorAim_getSpeed", motorAim.getSpeed()                        );
+    	putNumberSD("MotorAim_getPidGet", motorAim.pidGet()                         );
+    	putBooleanSD("MotorAim_getInverted", motorAim.getInverted()                 );
+    }
+    
+    public void liveWindow() {
+    	LiveWindow.addActuator("Launcher_", "MotorAim", motorAim);
+    	
     }
     
     @Override

@@ -44,8 +44,8 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 	public static AHRS navx = null;
 	
 	Command autoCommandGroup;
-	Command collectBall;
-	Command launchBall;
+//	Command collectBall;
+//	Command launchBall;
 	Command manualDrive;
 	Command launcherPID;
 	Command trapMotionTest;
@@ -115,12 +115,12 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 			break;
 		}
 
-		collectBall = new CollectBall();
-		launchBall = new LaunchBallHigh();
+//		collectBall = new CollectBall();
+//		launchBall = new LaunchBallHigh();
 		manualDrive = new ManualDrive();
 		trapMotionTest = new TrapzoidalMotionTest();
 		jankyLauncher = new JankyLauncher();
-		launcherPID = new LauncherPID(Constants.LAUNCHER_AIM_KP_DOWN, Constants.LAUNCHER_AIM_KI_DOWN, Constants.LAUNCHER_AIM_KD_DOWN, Constants.LAUNCHER_AIM_KF_DOWN, Constants.LAUNCHER_AIM_IZONE_DOWN, Constants.LAUNCHER_AIM_RAMP_RATE_DOWN, Constants.LAUNCHER_AIM_KP_DOWN, Constants.LAUNCHER_AIM_KI_DOWN, Constants.LAUNCHER_AIM_KD_DOWN, Constants.LAUNCHER_AIM_KF_DOWN, Constants.LAUNCHER_AIM_IZONE_DOWN, Constants.LAUNCHER_AIM_RAMP_RATE_DOWN, 0d);
+		launcherPID = new LauncherPID(Constants.LAUNCHER_AIM_KP_UP, Constants.LAUNCHER_AIM_KI_UP, Constants.LAUNCHER_AIM_KD_UP, 0d);
 		
 		pdp = RobotMap.pdp;
 
@@ -147,7 +147,7 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 	 */
 	public void disabledInit(){
 		driveTrain.setMotorSpeeds(DriveTrainSignal.NEUTRAL);
-		launcher.setIntakeSpeeds(0);
+//		launcher.setIntakeSpeeds(0);
 		
 		reset();
 	}
@@ -155,7 +155,7 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 	public void disabledPeriodic() {
 		Scheduler.getInstance().run();
 		driveTrain.setMotorSpeeds(DriveTrainSignal.NEUTRAL);
-		launcher.setIntakeSpeeds(0);
+//		launcher.setIntakeSpeeds(0);
 	}
 
 	public void autonomousInit() {
@@ -187,8 +187,8 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 		// this line or comment it out.
 		if (autoCommandGroup != null) autoCommandGroup.cancel();
 		
-//		launcherPID.start();
-		jankyLauncher.start();
+		launcherPID.start();
+//		jankyLauncher.start();
 		
 		reset();
 
@@ -226,6 +226,8 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 	 */
 	public void testPeriodic() {
 		LiveWindow.run();
+		
+		launcher.liveWindow();
 	}
 
 	@Override

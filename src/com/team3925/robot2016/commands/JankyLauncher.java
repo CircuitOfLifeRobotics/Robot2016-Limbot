@@ -36,12 +36,14 @@ public class JankyLauncher extends Command implements SmartdashBoardLoggable {
 		encoderSetpoint = -XboxHelper.getShooterAxis(XboxHelper.AXIS_LEFT_Y) * Constants.LAUNCHER_MAX_HEIGHT;
 		encoderPos = launcher.getAimMotorPosition();
 		
-		spid = FEEDFWD;
+//		spid = FEEDFWD;
+//		
+//		difference = encoderSetpoint - encoderPos;
+//		if (Math.abs(difference) >= TOLERANCE) {
+//			spid = spid + difference * SPID_COEFF;
+//		}
 		
-		difference = encoderSetpoint - encoderPos;
-		if (Math.abs(difference) >= TOLERANCE) {
-			spid = spid + difference * SPID_COEFF;
-		}
+		spid = Math.abs(XboxHelper.getShooterAxis(XboxHelper.AXIS_LEFT_Y));
 		
 		launcher.setAimMotorSpeed(spid, true);
 		
