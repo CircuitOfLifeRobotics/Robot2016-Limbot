@@ -48,9 +48,9 @@ public class Constants {
 	public static final double LAUNCHER_AIM_SLOWDOWN = 40;
 	public static final double LAUNCHER_AIM_INCREMENT = 2;
 	//TODO: tune shooter pid
-	public static final double LAUNCHER_AIM_KP_UP = 170d/10000d;
-	public static final double LAUNCHER_AIM_KI_UP = 8d/10000d;
-	public static final double LAUNCHER_AIM_KD_UP = 250d/10000d;
+	public static final double LAUNCHER_AIM_KP_UP = 800d/10000d;   //200d/10000d
+	public static final double LAUNCHER_AIM_KI_UP = 16d/10000d;     //8d/10000d; 
+	public static final double LAUNCHER_AIM_KD_UP = 850d/10000d;   //250d/10000d
 	public static final double LAUNCHER_AIM_KF_UP = 0.0;
 	public static final double LAUNCHER_AIM_RAMP_RATE_UP = 5;//ramp rate is maximum acceleration in voltage/second
 	public static final int LAUNCHER_AIM_IZONE_UP = 0; // izone eliminates

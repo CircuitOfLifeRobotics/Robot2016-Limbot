@@ -7,6 +7,7 @@ import com.team3925.robot2016.Constants;
 import com.team3925.robot2016.Robot;
 import com.team3925.robot2016.subsystems.DriveTrain;
 import com.team3925.robot2016.util.DriveTrainSignal;
+import com.team3925.robot2016.util.SmartdashBoardLoggable;
 import com.team3925.robot2016.util.XboxHelper;
 
 import edu.wpi.first.wpilibj.command.Command;
@@ -15,7 +16,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 /**
  *
  */
-public class ManualDrive extends Command {
+public class ManualDrive extends Command implements SmartdashBoardLoggable {
 	private DriveTrain driveTrain = Robot.driveTrain;
 	
 	private double fwdSet, turnSet, lastFwdSet, lastTurnSet, deltaFwd, deltaTurn;
@@ -72,7 +73,13 @@ public class ManualDrive extends Command {
 		driveTrain.setMotorSpeeds(DriveTrainSignal.NEUTRAL);
 	}
 	
+	@Override
 	public void logData() {
 		SmartDashboard.putNumber("Fwd_MotorPwr", fwdSet);
+	}
+	
+	@Override
+	public String getFormattedName() {
+		return "ManualDrive_";
 	}
 }

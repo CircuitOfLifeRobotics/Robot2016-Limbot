@@ -10,13 +10,11 @@ import static com.team3925.robot2016.Constants.DRIVETRAIN_RIGHT_KD;
 import static com.team3925.robot2016.Constants.DRIVETRAIN_RIGHT_KI;
 import static com.team3925.robot2016.Constants.DRIVETRAIN_RIGHT_KP;
 
-import com.ni.vision.NIVision.CalibrationThumbnailType;
 import com.team3925.robot2016.util.CheesySpeedController;
 
 import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.CANTalon.FeedbackDevice;
 import edu.wpi.first.wpilibj.CANTalon.TalonControlMode;
-import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.CounterBase.EncodingType;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Encoder;
@@ -138,13 +136,14 @@ public class RobotMap {
         launcherMotorLeft.setFeedbackDevice(FeedbackDevice.QuadEncoder);
         launcherMotorLeft.changeControlMode(TalonControlMode.PercentVbus);
         launcherMotorLeft.setInverted(true);
+        launcherMotorLeft.configEncoderCodesPerRev(4096);
         
         launcherMotorRight = new CANTalon(1);
         LiveWindow.addActuator("Launcher", "MotorRight", launcherMotorRight);
         launcherMotorRight.setFeedbackDevice(FeedbackDevice.QuadEncoder);
         launcherMotorRight.changeControlMode(TalonControlMode.PercentVbus);
+        launcherMotorRight.configEncoderCodesPerRev(4096);
 //        TODO check if this the correct motor to invert
-//        TODO add PID to CANTalons
         
         armsSolenoid = new DoubleSolenoid(4, 5);
         

@@ -35,4 +35,38 @@ public class MiscUtil {
 		SmartDashboard.putNumber(prefix + "HeadingVelocity", pose.getHeadingVelocity());
 	}
 	
+	/**
+	 * Get the angle setpoint from joystick value
+	 * (assuming 1 on joystick is full height on launcher,
+	 * and 0 on joystick is flat on launcher)
+	 * 
+	 * @param joystickVal
+	 * @return angle
+	 */
+	public static double joystickToDegrees(double joystickVal) {
+		return (Math.abs(joystickVal)*78)-3;
+	}
+	
+	/**
+	 * Get the rotation count of an intake wheel from the encoder output
+	 * 
+	 * @param encoderTicks
+	 * @return rotations
+	 */
+	public static double intakeEncoderTicksToRotations(double encoderTicks) {
+		return encoderTicks/4096 * 3;
+		// gearing:	3:1
+		// encoder:	
+	}
+	
+	/**
+	 * Get the angle of the launcher from the encoder output
+	 * 
+	 * @param enocderTicks
+	 * @return degrees
+	 */
+	public static double aimEncoderTicksToDegrees(double encoderTicks) {
+		return (encoderTicks + 36)/11.377777778;
+	}
+	
 }

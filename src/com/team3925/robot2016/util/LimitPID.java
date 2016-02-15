@@ -3,8 +3,6 @@ package com.team3925.robot2016.util;
 import edu.wpi.first.wpilibj.util.BoundaryException;
 
 public class LimitPID {
-	private double angleMultiplier;
-	
 	private double m_P; // factor for "proportional" control
 	private double m_I; // factor for "integral" control
 	private double m_D; // factor for "derivative" control
@@ -33,8 +31,8 @@ public class LimitPID {
 	private double m_P_value = 0.0;
 	private double m_I_value = 0.0;
 	private double m_D_value = 0.0;
-//	private double prev_m_D_value;
-//	private double avg_m_D_value;
+	private double prev_m_D_value;
+	private double avg_m_D_value;
 	private double m_result = 0.0;
 	private double m_last_input = Double.NaN;
 
@@ -96,11 +94,11 @@ public class LimitPID {
 		m_I_value = Math.max(m_I_min, Math.min(m_I_max, m_I * m_totalError));
 		m_D_value = Math.max(m_D_min, Math.min(m_D_max, m_D * (m_error - m_prevError)));
 		
-//		avg_m_D_value = m_D_value*0.3 + prev_m_D_value*0.7;
+		avg_m_D_value = m_D_value*0.5 + prev_m_D_value*0.5;
 		
 		m_result = (m_P_value + m_I_value + m_D_value);
 		m_prevError = m_error;
-//		prev_m_D_value = avg_m_D_value;
+		prev_m_D_value = avg_m_D_value;
 		
 //		SmartDashboard.putNumber("Launcher_PID_Avg_D_value", avg_m_D_value);
 		

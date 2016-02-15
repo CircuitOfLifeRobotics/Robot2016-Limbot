@@ -38,8 +38,32 @@ public class Launcher extends Subsystem implements SmartdashBoardLoggable {
     	motorRight.set(speed);
     }
     
+    public double getIntakeSpeedLeft() {
+    	return motorLeft.getEncVelocity();
+    }
+    
+    public double getIntakeSpeedRight() {
+    	return motorRight.getEncVelocity();
+    }
+    
+    public double getIntakePosLeft() {
+    	return motorLeft.getEncPosition();
+    }
+    
+    public double getIntakePosRight() {
+    	return motorRight.getEncPosition();
+    }
+    
     public void changeAimControlMode(TalonControlMode mode) {
     	motorAim.changeControlMode(mode);
+    }
+    
+    public void changeIntakeLeftControlMode(TalonControlMode mode) {
+    	motorLeft.changeControlMode(mode);
+    }
+    
+    public void changeIntakeRightControlMode(TalonControlMode mode) {
+    	motorRight.changeControlMode(mode);
     }
     
     public void setAimProfile(int profile) {

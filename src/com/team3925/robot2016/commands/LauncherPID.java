@@ -3,8 +3,8 @@ package com.team3925.robot2016.commands;
 import com.team3925.robot2016.Constants;
 import com.team3925.robot2016.Robot;
 import com.team3925.robot2016.subsystems.Launcher;
-import com.team3925.robot2016.util.ChezyMath;
 import com.team3925.robot2016.util.LimitPID;
+import com.team3925.robot2016.util.MiscUtil;
 import com.team3925.robot2016.util.SmartdashBoardLoggable;
 import com.team3925.robot2016.util.XboxHelper;
 
@@ -18,9 +18,9 @@ public class LauncherPID extends Command implements SmartdashBoardLoggable {
 	
 	private LimitPID pidLoop = new LimitPID();
 	
+	private boolean aimEnabled = true, intakeEnabled = true;
 	private double aimJoystickSetpoint, aimSetpointDiff, aimLastSetpoint, aimSetpoint, aimPosition, aimDifference, aimOutput, aimAngleMultiplier;
-	private double intakeOutput;
-	private double lastTime, thisTime, deltaTime;
+	private double intakeOutput, intakeSpeedLeft, intakeSpeedRight, intakeSetpoint;
 	
 	public LauncherPID(double setPoint) {
 		this.aimSetpoint = setPoint;
@@ -33,63 +33,93 @@ public class LauncherPID extends Command implements SmartdashBoardLoggable {
 	
 	protected void initialize() {
 		launcher.changeAimControlMode(TalonControlMode.PercentVbus);
+		launcher.changeIntakeLeftControlMode(TalonControlMode.Speed);
+		launcher.changeIntakeRightControlMode(TalonControlMode.Speed);
 		
-//		pidLoop.setInputRange(-10, Constants.LAUNCHER_MAX_HEIGHT+10);
-//		pidLoop.setOutputRange(-0.1, 0.6);
 		pidLoop.setPIDLimits(10000, 10000, 10000, 10000, -10000, -10000, -10000, -10000);
-		
 		intakeOutput = 0;
 		aimJoystickSetpoint = 0;
-		
 		aimLastSetpoint = 0;
-		lastTime = Timer.getFPGATimestamp();
+		
+		intakeSpeedLeft = intakeSpeedRight = 0;
 	}
 
 	protected void execute() {
-		thisTime = Timer.getFPGATimestamp();
-		deltaTime = thisTime-lastTime;
-		aimJoystickSetpoint = XboxHelper.getShooterButton(XboxHelper.TRIGGER_LT) ? ChezyMath.joystickToDegrees(XboxHelper.getShooterAxis(XboxHelper.AXIS_LEFT_Y)):aimJoystickSetpoint;
-		aimSetpoint = aimJoystickSetpoint;
-		aimPosition = ChezyMath.encoderTicksToDegrees(launcher.getAimMotorPosition());
-		aimDifference = aimSetpoint - aimPosition;
-		aimSetpointDiff = aimSetpoint - aimLastSetpoint;
-		
-		if (Math.abs(aimSetpointDiff) > Constants.LAUNCHER_AIM_INCREMENT) {
-			aimSetpoint = aimLastSetpoint + Constants.LAUNCHER_AIM_INCREMENT * (aimSetpointDiff>0 ? 1:-1);
+		if (aimEnabled) {
+			aimJoystickSetpoint = XboxHelper.getShooterButton(XboxHelper.TRIGGER_LT) ? MiscUtil.joystickToDegrees(XboxHelper.getShooterAxis(XboxHelper.AXIS_LEFT_Y)):aimJoystickSetpoint;
+			aimSetpoint = aimJoystickSetpoint;
+			aimPosition = MiscUtil.aimEncoderTicksToDegrees(launcher.getAimMotorPosition());
+			aimDifference = aimSetpoint - aimPosition;
+			aimSetpointDiff = aimSetpoint - aimLastSetpoint;
+			
+			if (Math.abs(aimSetpointDiff) > Constants.LAUNCHER_AIM_INCREMENT) {
+				aimSetpoint = aimLastSetpoint + Constants.LAUNCHER_AIM_INCREMENT * (aimSetpointDiff>0 ? 1:-1);
+			}
+			
+			pidLoop.setSetpoint(aimSetpoint);
+			pidLoop.calculate(aimPosition);
+			aimOutput = pidLoop.get();
+			aimAngleMultiplier = (2*Math.cos(Math.toRadians(aimPosition))+0.3)/5;
+			aimOutput = aimOutput * aimAngleMultiplier;
+			aimOutput = Math.min(Math.max(aimOutput, -0.2), 0.8);
+			
+			launcher.setAim(aimOutput);
+		} else {
+			//launcher.setAim(on vacation);
 		}
 		
-		pidLoop.setSetpoint(aimSetpoint);
-		pidLoop.calculate(aimPosition);
-		aimOutput = pidLoop.get();
-		aimAngleMultiplier = (2*Math.cos(Math.toRadians(aimPosition))+0.3)/2.5;
-		aimOutput = aimOutput * aimAngleMultiplier;
-		aimOutput = Math.min(Math.max(aimOutput, -0.2), 0.8);
+		intakeSpeedLeft = launcher.getIntakeSpeedLeft();
+		intakeSpeedRight = launcher.getIntakeSpeedRight();
 		
-		launcher.setAim(aimOutput);
+		/* TODO: get the acutal number of encoder counts per rev
+		 * Encoder counts per rev?
+		 * 15266664
+		 * 4316 
+		 * 7301
+		 * ~6000
+		 * 4246 -> 7250
+		 */
 		
-		
-		
-		if (XboxHelper.getShooterButton(XboxHelper.START)) {intakeOutput = 0;}
-		else if (XboxHelper.getShooterButton(XboxHelper.Y)) {intakeOutput = 1;}
-		else if (XboxHelper.getShooterButton(XboxHelper.X)) {intakeOutput = 0.5;}
-		else if (XboxHelper.getShooterButton(XboxHelper.B)) {intakeOutput = -0.5;}
-		else if (XboxHelper.getShooterButton(XboxHelper.A)) {intakeOutput = -1;}
-		
-		launcher.setIntakeSpeeds(intakeOutput);
+		if (intakeEnabled) {
+			if (XboxHelper.getShooterButton(XboxHelper.START)) {intakeSetpoint = 0;}
+			else if (XboxHelper.getShooterButton(XboxHelper.Y)) {intakeSetpoint = 13000 /*intakeOutput = 1    */;}
+			else if (XboxHelper.getShooterButton(XboxHelper.X)) {intakeSetpoint = 4000  /*intakeOutput = 0.05 */;}
+			else if (XboxHelper.getShooterButton(XboxHelper.B)) {intakeSetpoint = -4000 /*intakeOutput = -0.05*/;}
+			else if (XboxHelper.getShooterButton(XboxHelper.A)) {intakeSetpoint = -13000/*intakeOutput = -1   */;}
+			
+			launcher.setIntakeSpeeds(intakeSetpoint);
+		} else {
+			//launcher.setIntake(on vacation);
+		}
 		
 		launcher.setPuncher(XboxHelper.getShooterButton(XboxHelper.TRIGGER_RT));
 		
 		logData();
 		
 		aimLastSetpoint = aimSetpoint;
-		lastTime = thisTime;
+	}
+	
+	public void enableAim(boolean isEnable) {
+		aimEnabled = isEnable;
+	}
+	
+	public void enableIntake(boolean isEnable) {
+		intakeEnabled = isEnable;
+	}
+	
+	public boolean getAimEnabled() {
+		return aimEnabled;
+	}
+	
+	public boolean getIntakeEnabled() {
+		return intakeEnabled;
 	}
 	
 	@Override
 	protected boolean isFinished() {
 		return false;
 	}
-
+	
 	@Override
 	protected void end() {
 		launcher.setAimMotorSpeed(0, false);
@@ -108,10 +138,14 @@ public class LauncherPID extends Command implements SmartdashBoardLoggable {
 		putNumberSD("Output", aimOutput);
 		putNumberSD("AngleMultiplier", aimAngleMultiplier);
 		putNumberSD("Differential", pidLoop.getDValue());
-		putNumberSD("DeltaTime", deltaTime);
 		putNumberSD("Error", pidLoop.getError());
 		putNumberSD("PrevError", pidLoop.getPrevError());
+		putNumberSD("IntakeSpeedLeft", intakeSpeedLeft);
+		putNumberSD("IntakeSpeedRight", intakeSpeedRight);
+		putNumberSD("IntakeSpeedSetpoint", intakeSetpoint);
 		putBooleanSD("UporDown", aimDifference>0);
+		putBooleanSD("AimEnabled", aimEnabled);
+		putBooleanSD("IntakeEnabled", intakeEnabled);
 	}
 
 	@Override
