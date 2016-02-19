@@ -7,14 +7,11 @@ import com.team3925.robot2016.RobotMap;
 import com.team3925.robot2016.util.SmartdashBoardLoggable;
 
 import edu.wpi.first.wpilibj.CANTalon;
-import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.CANTalon.TalonControlMode;
+import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
-import edu.wpi.first.wpilibj.PIDSourceType;
 import edu.wpi.first.wpilibj.command.Subsystem;
-import edu.wpi.first.wpilibj.hal.CanTalonJNI;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 
 /**
@@ -118,26 +115,39 @@ public class Launcher extends Subsystem implements SmartdashBoardLoggable {
 //    	putNumberSD("AimMotorSpeed", motorAim.getSpeed());
 //    	putNumberSD("MotorAimPosition", getAimMotorPosition());
 //    	putStringSD("MotorAimMode", motorAim.getControlMode().toString());
+    	putNumberSD("EncoderAimPos", getAimMotorPosition());
+    	
+    	putNumberSD("MotorLeftPos", motorLeft.getEncPosition());
+    	putNumberSD("MotorRightPos", motorRight.getEncPosition());
+    	putNumberSD("MotorLeftVeloctiy", motorLeft.getEncVelocity());
+    	putNumberSD("MotorRightVeloctiy", motorRight.getEncVelocity());
+    	putNumberSD("MotorRightAnalogInRaw", motorRight.getAnalogInRaw());
+    	putNumberSD("MotorLeftAnalogInRaw", motorLeft.getAnalogInRaw());
+    	putNumberSD("MotorRightPinStateQuadA", motorRight.getPinStateQuadA());
+    	putNumberSD("MotorRightPinStateQuadB", motorRight.getPinStateQuadB());
+    	putNumberSD("MotorRightPinStateQuadIdx", motorRight.getPinStateQuadIdx());
+    	putNumberSD("MotorLeftPinStateQuadA", motorLeft.getPinStateQuadA());
+    	putNumberSD("MotorLeftPinStateQuadB", motorLeft.getPinStateQuadB());
+    	putNumberSD("MotorLeftPinStateQuadIdx", motorLeft.getPinStateQuadIdx());
     	
     	//non linear loop gain
-    	
-    	putNumberSD("MotorAim_getBusVoltage", motorAim.getBusVoltage()              );
-    	putNumberSD("MotorAim_getClosedLoopError", motorAim.getClosedLoopError()    );
-    	putNumberSD("MotorAim_getCloseLoopRampRate", motorAim.getCloseLoopRampRate());
-    	putNumberSD("MotorAim_getP", motorAim.getP()                                );
-    	putNumberSD("MotorAim_getI", motorAim.getI()                                );
-    	putNumberSD("MotorAim_getD", motorAim.getD()                                );
-    	putNumberSD("MotorAim_getF", motorAim.getF()                                );
-    	putNumberSD("MotorAim_getEncPosition", motorAim.getEncPosition()            );
-    	putNumberSD("MotorAim_getEncVelocity", motorAim.getEncVelocity()            );
-    	putNumberSD("MotorAim_getError", motorAim.getError()                        );
-    	putNumberSD("MotorAim_getIZone", motorAim.getIZone()                        );
-    	putNumberSD("MotorAim_getOutputCurrent", motorAim.getOutputCurrent()        );
-    	putNumberSD("MotorAim_getPosition", motorAim.getPosition()                  );
-    	putNumberSD("MotorAim_getSetpoint", motorAim.getSetpoint()                  );
-    	putNumberSD("MotorAim_getSpeed", motorAim.getSpeed()                        );
-    	putNumberSD("MotorAim_getPidGet", motorAim.pidGet()                         );
-    	putBooleanSD("MotorAim_getInverted", motorAim.getInverted()                 );
+//    	putNumberSD("MotorAim_getBusVoltage", motorAim.getBusVoltage()              );
+//    	putNumberSD("MotorAim_getClosedLoopError", motorAim.getClosedLoopError()    );
+//    	putNumberSD("MotorAim_getCloseLoopRampRate", motorAim.getCloseLoopRampRate());
+//    	putNumberSD("MotorAim_getP", motorAim.getP()                                );
+//    	putNumberSD("MotorAim_getI", motorAim.getI()                                );
+//    	putNumberSD("MotorAim_getD", motorAim.getD()                                );
+//    	putNumberSD("MotorAim_getF", motorAim.getF()                                );
+//    	putNumberSD("MotorAim_getEncPosition", motorAim.getEncPosition()            );
+//    	putNumberSD("MotorAim_getEncVelocity", motorAim.getEncVelocity()            );
+//    	putNumberSD("MotorAim_getError", motorAim.getError()                        );
+//    	putNumberSD("MotorAim_getIZone", motorAim.getIZone()                        );
+//    	putNumberSD("MotorAim_getOutputCurrent", motorAim.getOutputCurrent()        );
+//    	putNumberSD("MotorAim_getPosition", motorAim.getPosition()                  );
+//    	putNumberSD("MotorAim_getSetpoint", motorAim.getSetpoint()                  );
+//    	putNumberSD("MotorAim_getSpeed", motorAim.getSpeed()                        );
+//    	putNumberSD("MotorAim_getPidGet", motorAim.pidGet()                         );
+//    	putBooleanSD("MotorAim_getInverted", motorAim.getInverted()                 );
     }
     
     public void liveWindow() {

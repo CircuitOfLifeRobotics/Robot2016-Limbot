@@ -56,8 +56,6 @@ public class RobotMap {
     
     public static PowerDistributionPanel pdp;
     
-//    public static Compressor compressor;
-    
     public static void init() {
     	
     	boolean invertLeft = true;
@@ -136,14 +134,13 @@ public class RobotMap {
         launcherMotorLeft.setFeedbackDevice(FeedbackDevice.QuadEncoder);
         launcherMotorLeft.changeControlMode(TalonControlMode.PercentVbus);
         launcherMotorLeft.setInverted(true);
-        launcherMotorLeft.configEncoderCodesPerRev(4096);
+//        launcherMotorLeft.configEncoderCodesPerRev(4096);
         
-        launcherMotorRight = new CANTalon(1);
+        launcherMotorRight = new CANTalon(5);
         LiveWindow.addActuator("Launcher", "MotorRight", launcherMotorRight);
         launcherMotorRight.setFeedbackDevice(FeedbackDevice.QuadEncoder);
         launcherMotorRight.changeControlMode(TalonControlMode.PercentVbus);
-        launcherMotorRight.configEncoderCodesPerRev(4096);
-//        TODO check if this the correct motor to invert
+//        launcherMotorRight.configEncoderCodesPerRev(4096);
         
         armsSolenoid = new DoubleSolenoid(4, 5);
         

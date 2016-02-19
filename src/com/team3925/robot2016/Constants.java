@@ -48,9 +48,9 @@ public class Constants {
 	public static final double LAUNCHER_AIM_SLOWDOWN = 40;
 	public static final double LAUNCHER_AIM_INCREMENT = 2;
 	//TODO: tune shooter pid
-	public static final double LAUNCHER_AIM_KP_UP = 800d/10000d;   //200d/10000d
+	public static final double LAUNCHER_AIM_KP_UP = 1200d/10000d;   //200d/10000d
 	public static final double LAUNCHER_AIM_KI_UP = 16d/10000d;     //8d/10000d; 
-	public static final double LAUNCHER_AIM_KD_UP = 850d/10000d;   //250d/10000d
+	public static final double LAUNCHER_AIM_KD_UP = 950d/10000d;   //250d/10000d
 	public static final double LAUNCHER_AIM_KF_UP = 0.0;
 	public static final double LAUNCHER_AIM_RAMP_RATE_UP = 5;//ramp rate is maximum acceleration in voltage/second
 	public static final int LAUNCHER_AIM_IZONE_UP = 0; // izone eliminates
@@ -91,8 +91,23 @@ public class Constants {
 	public static final double DRIVETRAIN_RIGHT_KI = 0.005;
 	public static final double DRIVETRAIN_RIGHT_KD = 0;
     
+	//Gyro turn constants
+	public static final double GYROTURN_P = 0.0085;
+	public static final double GYROTURN_I = 0.0;
+	public static final double GYROTURN_D = 0.001;
+	public static final double GYROTURN_F = 0.0;
+	
     public static final double DRIVETRAIN_ON_TARGET_ERROR = .05;
 	
+    //Camera constants
+    public static final double CAMERA_AIMED_X = 159;
+    public static final double CAMERA_FOV_DEG = 45.134;
+    public static final double CAMERA_FOV_PIX = 320;
+    public static final double CAMERA_DEGS_PER_PIX = CAMERA_FOV_DEG/CAMERA_FOV_PIX;
+    public static final double CAMERA_TARGET_WIDTH = 5d/3d;//in feet
+    public static final double GYROTURN_POS_TOLERANCE = 3;
+    public static final double GYROTURN_RATE_TOLERANCE = 0.1;
+    
     //Default Motion Profiles
     //{Position (rotations), Velocity (RPM), Duration (ms)}
     public static final double[][] MOTION_PROFILE_HOLD = {

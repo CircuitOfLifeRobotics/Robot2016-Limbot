@@ -11,6 +11,7 @@ import com.team3925.robot2016.util.XboxHelper;
 import edu.wpi.first.wpilibj.CANTalon.TalonControlMode;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class LauncherPID extends Command implements SmartdashBoardLoggable {
 	
@@ -18,7 +19,7 @@ public class LauncherPID extends Command implements SmartdashBoardLoggable {
 	
 	private LimitPID pidLoop = new LimitPID();
 	
-	private boolean aimEnabled = true, intakeEnabled = true;
+	private boolean aimEnabled = true, intakeEnabled = true, doRunIntake = true;
 	private double aimJoystickSetpoint, aimSetpointDiff, aimLastSetpoint, aimSetpoint, aimPosition, aimDifference, aimOutput, aimAngleMultiplier;
 	private double intakeOutput, intakeSpeedLeft, intakeSpeedRight, intakeSetpoint;
 	
@@ -33,8 +34,8 @@ public class LauncherPID extends Command implements SmartdashBoardLoggable {
 	
 	protected void initialize() {
 		launcher.changeAimControlMode(TalonControlMode.PercentVbus);
-		launcher.changeIntakeLeftControlMode(TalonControlMode.Speed);
-		launcher.changeIntakeRightControlMode(TalonControlMode.Speed);
+		launcher.changeIntakeLeftControlMode(TalonControlMode.PercentVbus);
+		launcher.changeIntakeRightControlMode(TalonControlMode.PercentVbus);
 		
 		pidLoop.setPIDLimits(10000, 10000, 10000, 10000, -10000, -10000, -10000, -10000);
 		intakeOutput = 0;
@@ -55,6 +56,7 @@ public class LauncherPID extends Command implements SmartdashBoardLoggable {
 			if (Math.abs(aimSetpointDiff) > Constants.LAUNCHER_AIM_INCREMENT) {
 				aimSetpoint = aimLastSetpoint + Constants.LAUNCHER_AIM_INCREMENT * (aimSetpointDiff>0 ? 1:-1);
 			}
+			doRunIntake = (aimPosition>Constants.LAUNCHER_AIM_INCREMENT) || (Math.abs(aimSetpointDiff)>Constants.LAUNCHER_AIM_INCREMENT);
 			
 			pidLoop.setSetpoint(aimSetpoint);
 			pidLoop.calculate(aimPosition);
@@ -63,8 +65,13 @@ public class LauncherPID extends Command implements SmartdashBoardLoggable {
 			aimOutput = aimOutput * aimAngleMultiplier;
 			aimOutput = Math.min(Math.max(aimOutput, -0.2), 0.8);
 			
-			launcher.setAim(aimOutput);
+			if (doRunIntake) {
+				launcher.setAim(aimOutput);
+			}else {
+				launcher.setAim(0);
+			}
 		} else {
+			launcher.setAim(0);
 			//launcher.setAim(on vacation);
 		}
 		
@@ -81,14 +88,15 @@ public class LauncherPID extends Command implements SmartdashBoardLoggable {
 		 */
 		
 		if (intakeEnabled) {
-			if (XboxHelper.getShooterButton(XboxHelper.START)) {intakeSetpoint = 0;}
-			else if (XboxHelper.getShooterButton(XboxHelper.Y)) {intakeSetpoint = 13000 /*intakeOutput = 1    */;}
-			else if (XboxHelper.getShooterButton(XboxHelper.X)) {intakeSetpoint = 4000  /*intakeOutput = 0.05 */;}
-			else if (XboxHelper.getShooterButton(XboxHelper.B)) {intakeSetpoint = -4000 /*intakeOutput = -0.05*/;}
-			else if (XboxHelper.getShooterButton(XboxHelper.A)) {intakeSetpoint = -13000/*intakeOutput = -1   */;}
+			if (XboxHelper.getShooterButton(XboxHelper.START)) {intakeOutput = 0;}
+			else if (XboxHelper.getShooterButton(XboxHelper.Y)) {/*intakeSetpoint = 13000 */intakeOutput = 1    ;}
+			else if (XboxHelper.getShooterButton(XboxHelper.X)) {/*intakeSetpoint = 4000  */intakeOutput = 0.5 ;}
+			else if (XboxHelper.getShooterButton(XboxHelper.B)) {/*intakeSetpoint = -4000 */intakeOutput = -0.5;}
+			else if (XboxHelper.getShooterButton(XboxHelper.A)) {/*intakeSetpoint = -13000*/intakeOutput = -1   ;}
 			
-			launcher.setIntakeSpeeds(intakeSetpoint);
+			launcher.setIntakeSpeeds(intakeOutput);
 		} else {
+			launcher.setIntakeSpeeds(0);
 			//launcher.setIntake(on vacation);
 		}
 		
@@ -143,9 +151,11 @@ public class LauncherPID extends Command implements SmartdashBoardLoggable {
 		putNumberSD("IntakeSpeedLeft", intakeSpeedLeft);
 		putNumberSD("IntakeSpeedRight", intakeSpeedRight);
 		putNumberSD("IntakeSpeedSetpoint", intakeSetpoint);
+		putNumberSD("IntakeOutput", intakeOutput);
 		putBooleanSD("UporDown", aimDifference>0);
 		putBooleanSD("AimEnabled", aimEnabled);
 		putBooleanSD("IntakeEnabled", intakeEnabled);
+		putBooleanSD("DoRunIntake", doRunIntake);
 	}
 
 	@Override

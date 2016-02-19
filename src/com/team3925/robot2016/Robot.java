@@ -9,6 +9,7 @@ import com.team3925.robot2016.commands.AutoRoutineCenter;
 import com.team3925.robot2016.commands.AutoRoutineCourtyard;
 import com.team3925.robot2016.commands.AutoRoutineDoNothing;
 import com.team3925.robot2016.commands.CollectBall;
+import com.team3925.robot2016.commands.GyroTurn;
 import com.team3925.robot2016.commands.JankyLauncher;
 import com.team3925.robot2016.commands.LaunchBallHigh;
 import com.team3925.robot2016.commands.LauncherPID;
@@ -30,6 +31,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
+import edu.wpi.first.wpilibj.networktables.NetworkTable;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
@@ -42,15 +44,16 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 
 	public static AHRS navx = null;
+	public static NetworkTable table;
 	
 	Command autoCommandGroup;
-//	Command collectBall;
-//	Command launchBall;
+	Command collectBall;
+	Command launchBall;
 	Command manualDrive;
-	Command launcherPID;
+	public static Command launcherPID;
 	Command trapMotionTest;
 	Command jankyLauncher;
-
+	
 	public static OI oi;
 	public static DriveTrain driveTrain;
 	public static Launcher launcher;
@@ -115,15 +118,21 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 			break;
 		}
 
-//		collectBall = new CollectBall();
-//		launchBall = new LaunchBallHigh();
+		collectBall = new CollectBall();
+		launchBall = new LaunchBallHigh();
 		manualDrive = new ManualDrive();
 		trapMotionTest = new TrapzoidalMotionTest();
 		jankyLauncher = new JankyLauncher();
 		launcherPID = new LauncherPID(Constants.LAUNCHER_AIM_KP_UP, Constants.LAUNCHER_AIM_KI_UP, Constants.LAUNCHER_AIM_KD_UP, 0d);
 		
 		pdp = RobotMap.pdp;
-
+		
+		table = NetworkTable.getTable("GRIP/Feb_15ContourReport");
+		try {
+			new ProcessBuilder("/home/lvuser/grip").inheritIO().start();
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 	
 	/**
@@ -140,7 +149,7 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 		maxRotationVel = 0;
 		maxRotationAccel = 0;
 	}
-
+	
 	/**
 	 * This function is called when the disabled button is hit.
 	 * You can use it to reset subsystems before shutting down.
@@ -151,19 +160,22 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 		
 		reset();
 	}
-
+	
 	public void disabledPeriodic() {
 		Scheduler.getInstance().run();
 		driveTrain.setMotorSpeeds(DriveTrainSignal.NEUTRAL);
 //		launcher.setIntakeSpeeds(0);
 	}
-
+	
 	public void autonomousInit() {
 		// schedule the autonomous command (example)
 		if (autoCommandGroup != null) autoCommandGroup.start();
-
+		
+		driveTrain.setHighGear(false);
 		reset();
 		autoWait.config(1);
+		
+		launchBall.start();
 	}
 	
 	/**
@@ -173,11 +185,10 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 		Scheduler.getInstance().run();
 		logData();
 		
-		driveTrain.setHighGear(false);
-		if (autoWait.isFinished()) {
-			trapMotionTest.start();
-		}
-
+//		if (autoWait.isFinished()) {
+//			trapMotionTest.start();
+//		}
+		
 	}
 
 	public void teleopInit() {
@@ -203,24 +214,28 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 	public void teleopPeriodic() {
 		Scheduler.getInstance().run();
 		
-		logData();
-		
-//		boolean leftTrigger = XboxHelper.getShooterButton(XboxHelper.TRIGGER_LT);
-//		boolean rightTrigger = XboxHelper.getShooterButton(XboxHelper.TRIGGER_RT);
-//		double madrSpid = 0;
-//		if (leftTrigger) {
-//			madrSpid++;
+//		double[] area = table.getNumberArray("area", defaultVal);
+//		double[] width = table.getNumberArray("width", defaultVal);
+//		double[] height = table.getNumberArray("height", defaultVal);
+//		double[] solidity = table.getNumberArray("solidity", defaultVal);
+//		double[] centerX = table.getNumberArray("centerX", defaultVal);
+//		double[] centerY = table.getNumberArray("centerY", defaultVal);
+//		areasCount = area.length;
+//		putNumberSD("NetworkTables_Count", areasCount);
+//		for (int i=0; i<1; i++) {
+//			putNumberSD("NetworkTables_Area_"+i, area[i]);
+//			putNumberSD("NetworkTables_Width_"+i, width[i]);
+//			putNumberSD("NetworkTables_Height_"+i, height[i]);
+//			putNumberSD("NetworkTables_Solidity_"+i, solidity[i]);
+//			putNumberSD("NetworkTables_CenterX_"+i, centerX[i]);
+//			putNumberSD("NetworkTables_CenterY_"+i, centerY[i]);
 //		}
-//		if (rightTrigger) {
-//			madrSpid--;
-//		}
-//		launcher.setAimMotorSpeed(madrSpid, true);
-//		putNumberSD("Madr_Spid", madrSpid);
 		
+		//TODO: move into command
 		arms.setArm(XboxHelper.getDriverAxis(2)>0.5);
-		
+		logData();
 	}
-
+	
 	/**
 	 * This function is called periodically during test mode
 	 */
@@ -229,38 +244,38 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 		
 		launcher.liveWindow();
 	}
-
+	
 	@Override
 	public void logData() {
 		driveTrain.logData();
 		launcher.logData();
-
+		
 		double now = Timer.getFPGATimestamp();
 		deltaTime = now - lastTimestamp;
 		lastTimestamp = now;
-
-
+		
+		
 		double curVel = Math.toRadians(navx.getRate());
 		deltaRotation = curVel - lastRotationStamp;
 		lastRotationStamp = curVel;
-
-
+		
+		
 		maxAccel = Math.max(maxAccel, navx.getWorldLinearAccelX());
 		maxVel = Math.max(maxVel, navx.getVelocityX());
-
+		
 		maxRotationVel = Math.max(maxRotationVel, Math.toRadians(navx.getRate()));
 		maxRotationAccel = Math.max(maxRotationAccel, deltaRotation / deltaTime );
-
-
+		
+		
 		putNumberSD("MaxAcceleration", maxAccel);
 		putNumberSD("MaxVelocity", maxVel);
-
+		
 		putNumberSD("MaxRotationVelocity", maxRotationVel);
 		putNumberSD("MaxRotationAccel", maxRotationAccel);
-
+		
 		putNumberSD("CurrentTime", Timer.getFPGATimestamp());
 		putNumberSD("DeltaTime", deltaTime);
-
+		
 		if (DO_LOG_AHRS_VALUES) {
 			if (navx != null) {
 				logNavXData();
