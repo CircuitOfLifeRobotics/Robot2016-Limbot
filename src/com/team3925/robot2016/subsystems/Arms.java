@@ -16,11 +16,16 @@ import edu.wpi.first.wpilibj.command.Subsystem;
 public class Arms extends Subsystem {
 	
 	private DoubleSolenoid armsSolenoid = RobotMap.armsPlexiSolenoid;
+	private DoubleSolenoid candyCaneSolenoid = RobotMap.armsCandyCaneSolenoid;
 	private CANTalon climbMotor = RobotMap.armsMotorClimb;
 	
 	@Override
 	protected void initDefaultCommand() {
 		
+	}
+	
+	public void setCandyCaneSolenoid(boolean engaged) {
+		candyCaneSolenoid.set(engaged ? Value.kForward:Value.kReverse);
 	}
 	
 	public void setArm(boolean engaged) {

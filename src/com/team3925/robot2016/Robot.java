@@ -9,6 +9,7 @@ import com.kauailabs.navx.frc.AHRS;
 import com.team3925.robot2016.commands.AutoRoutineCenter;
 import com.team3925.robot2016.commands.AutoRoutineCourtyard;
 import com.team3925.robot2016.commands.AutoRoutineDoNothing;
+import com.team3925.robot2016.commands.CandyCane;
 import com.team3925.robot2016.commands.CollectBall;
 import com.team3925.robot2016.commands.JankyLauncher;
 import com.team3925.robot2016.commands.LaunchBallHigh;
@@ -52,6 +53,7 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 	public static NetworkTable table;
 	public static OI oi;
 	public static Preferences prefs;
+	private TimeoutAction candyCaneWait = new TimeoutAction();
 	
 	//Subsystems
 	public static DriveTrain driveTrain;
@@ -66,6 +68,7 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 	Command manualDrive;
 	Command trapMotionTest;
 	Command jankyLauncher;
+	Command candyCaneRun;
 	SendableChooser autoChooser;
 	
 	//Variables
@@ -150,7 +153,7 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 		trapMotionTest = new TrapzoidalMotionTest();
 		jankyLauncher = new JankyLauncher();
 		launcherPID = new LauncherPID(Constants.LAUNCHER_AIM_KP_UP, Constants.LAUNCHER_AIM_KI_UP, Constants.LAUNCHER_AIM_KD_UP, 0d);
-		
+		candyCaneRun = new CandyCane();
 	}
 	
 	/**
@@ -224,6 +227,8 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 		manualDrive.start();
 		System.out.println("Robot has init! (Said through System.out.println)");
 		driveTrain.setPIDEnabled(false);
+		
+		candyCaneWait.config(55d);
 	}
 
 	/**
@@ -231,6 +236,16 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 	 */
 	public void teleopPeriodic() {
 		Scheduler.getInstance().run();
+		
+		if (XboxHelper.getShooterButton(XboxHelper.START)) {
+			if (candyCaneWait.isFinished() && !candyCaneRun.isRunning()) {
+				candyCaneRun.start();
+			} else {
+				XboxHelper.setShooterRumble(1f);
+			}
+		}else {
+			XboxHelper.setShooterRumble(0);
+		}
 		
 		//TODO: move into command
 		arms.setArm(XboxHelper.getDriverAxis(2)>0.5);
