@@ -33,14 +33,12 @@ import edu.wpi.first.wpilibj.livewindow.LiveWindow;
  */
 public class RobotMap {
 	
-    private static SpeedController driveTrainMotorLeftA;
-    private static SpeedController driveTrainMotorLeftB;
-    private static SpeedController driveTrainMotorLeftC;
-    private static SpeedController driveTrainMotorRightA;
-    private static SpeedController driveTrainMotorRightB;
-    private static SpeedController driveTrainMotorRightC;
-	public static CheesySpeedController driveTrainMotorsLeft;
-	public static CheesySpeedController driveTrainMotorsRight;
+    public static CANTalon driveTrainMotorLeftA;
+    public static CANTalon driveTrainMotorLeftB;
+    public static CANTalon driveTrainMotorLeftC;
+    public static CANTalon driveTrainMotorRightA;
+    public static CANTalon driveTrainMotorRightB;
+    public static CANTalon driveTrainMotorRightC;
     public static Encoder driveTrainEncoderLeft;
     public static Encoder driveTrainEncoderRight;
     public static DoubleSolenoid driveTrainShifterSolenoid;
@@ -52,7 +50,9 @@ public class RobotMap {
     public static CANTalon launcherMotorRight;
     public static DoubleSolenoid launcherPuncherSolenoid;
     
-    public static DoubleSolenoid armsSolenoid;
+    public static DoubleSolenoid armsPlexiSolenoid;
+    public static DoubleSolenoid armsCandyCaneSolenoid;
+    public static CANTalon armsMotorClimb;
     
     public static PowerDistributionPanel pdp;
     
@@ -61,38 +61,40 @@ public class RobotMap {
     	boolean invertLeft = true;
     	boolean invertRight = false;
     	
-        driveTrainMotorLeftA = new Talon(3);
-        LiveWindow.addActuator("DriveTrain", "MotorLeftA", (Talon) driveTrainMotorLeftA);
+        driveTrainMotorLeftA = new CANTalon(30);
+        LiveWindow.addActuator("DriveTrain", "MotorLeftA", driveTrainMotorLeftA);
         driveTrainMotorLeftA.setInverted(invertLeft);
+        driveTrainMotorLeftA.changeControlMode(TalonControlMode.PercentVbus);
         
-        driveTrainMotorLeftB = new Talon(4);
-        LiveWindow.addActuator("DriveTrain", "MotorLeftB", (Talon) driveTrainMotorLeftB);
+        driveTrainMotorLeftB = new CANTalon(29);
+        LiveWindow.addActuator("DriveTrain", "MotorLeftB", driveTrainMotorLeftB);
         driveTrainMotorLeftB.setInverted(invertLeft);
+        driveTrainMotorLeftB.changeControlMode(TalonControlMode.Follower);
+        driveTrainMotorLeftB.set(driveTrainMotorLeftA.getDeviceID());
         
-        driveTrainMotorLeftC = new Talon(5);
-        LiveWindow.addActuator("DriveTrain", "MotorLeftC", (Talon) driveTrainMotorLeftC);
+        driveTrainMotorLeftC = new CANTalon(28);
+        LiveWindow.addActuator("DriveTrain", "MotorLeftC", driveTrainMotorLeftC);
         driveTrainMotorLeftC.setInverted(invertLeft);
+        driveTrainMotorLeftC.changeControlMode(TalonControlMode.Follower);
+        driveTrainMotorLeftC.set(driveTrainMotorLeftA.getDeviceID());
         
-        driveTrainMotorRightA = new Talon(0);
-        LiveWindow.addActuator("DriveTrain", "MotorRightA", (Talon) driveTrainMotorRightA);
+        driveTrainMotorRightA = new CANTalon(27);
+        LiveWindow.addActuator("DriveTrain", "MotorRightA", driveTrainMotorRightA);
         driveTrainMotorRightA.setInverted(invertRight);
+        driveTrainMotorRightA.changeControlMode(TalonControlMode.PercentVbus);
         
-        driveTrainMotorRightB = new Talon(1);
-        LiveWindow.addActuator("DriveTrain", "MotorRightB", (Talon) driveTrainMotorRightB);
+        driveTrainMotorRightB = new CANTalon(26);
+        LiveWindow.addActuator("DriveTrain", "MotorRightB", driveTrainMotorRightB);
         driveTrainMotorRightB.setInverted(invertRight);
+        driveTrainMotorRightB.changeControlMode(TalonControlMode.Follower);
+        driveTrainMotorRightB.set(driveTrainMotorRightA.getDeviceID());
         
-        driveTrainMotorRightC = new Talon(2);
-        LiveWindow.addActuator("DriveTrain", "MotorRightC", (Talon) driveTrainMotorRightC);
-        driveTrainMotorRightB.setInverted(invertRight);
+        driveTrainMotorRightC = new CANTalon(25);
+        LiveWindow.addActuator("DriveTrain", "MotorRightC", driveTrainMotorRightC);
+        driveTrainMotorRightC.setInverted(invertRight);
+        driveTrainMotorRightC.changeControlMode(TalonControlMode.Follower);
+        driveTrainMotorRightC.set(driveTrainMotorRightA.getDeviceID());
        
-    	int[] pdpLeft = { 1, 2, 3 };
-    	int[] pdpRight = { 4, 5, 6 };
-        SpeedController[] leftMotors = { driveTrainMotorLeftA, driveTrainMotorLeftB, driveTrainMotorLeftC };
-        SpeedController[] rightMotors = { driveTrainMotorRightA, driveTrainMotorRightB, driveTrainMotorRightC };
-        
-    	driveTrainMotorsLeft = new CheesySpeedController(leftMotors, pdpLeft);
-    	driveTrainMotorsRight = new CheesySpeedController(rightMotors, pdpRight);
-    	
         driveTrainEncoderLeft = new Encoder(0, 1, false, EncodingType.k4X);
         LiveWindow.addSensor("DriveTrain", "EncoderLeft", driveTrainEncoderLeft);
         driveTrainEncoderLeft.setDistancePerPulse(DRIVETRAIN_ENCODER_FACTOR);
@@ -107,12 +109,12 @@ public class RobotMap {
         LiveWindow.addActuator("DriveTrain", "ShifterSolenoid", driveTrainShifterSolenoid);
         
         driveTrainPIDLeft = new PIDController(DRIVETRAIN_LEFT_KP, DRIVETRAIN_LEFT_KI,
-        		DRIVETRAIN_LEFT_KD, driveTrainEncoderLeft, driveTrainMotorsLeft, DELTA_TIME / 4);
+        		DRIVETRAIN_LEFT_KD, driveTrainEncoderLeft, driveTrainMotorLeftA, DELTA_TIME / 4);
         LiveWindow.addActuator("DriveTrain", "PIDLeft", driveTrainPIDLeft);
         driveTrainPIDLeft.setAbsoluteTolerance(DRIVETRAIN_ON_TARGET_ERROR);
         
         driveTrainPIDRight = new PIDController(DRIVETRAIN_RIGHT_KP, DRIVETRAIN_RIGHT_KI,
-        		DRIVETRAIN_RIGHT_KD, driveTrainEncoderRight, driveTrainMotorsRight, DELTA_TIME / 4);
+        		DRIVETRAIN_RIGHT_KD, driveTrainEncoderRight, driveTrainMotorRightA, DELTA_TIME / 4);
         LiveWindow.addActuator("DriveTrain", "PIDRight", driveTrainPIDRight);
         driveTrainPIDLeft.setAbsoluteTolerance(DRIVETRAIN_ON_TARGET_ERROR);
         
@@ -121,7 +123,7 @@ public class RobotMap {
         launcherPuncherSolenoid = new DoubleSolenoid(3, 2);
         LiveWindow.addActuator("Launcher", "PuncherSolenoid", launcherPuncherSolenoid);
         
-        launcherMotorAim = new CANTalon(2);
+        launcherMotorAim = new CANTalon(21);
         LiveWindow.addActuator("Launcher", "AimMotor", launcherMotorAim);
         launcherMotorAim.setFeedbackDevice(FeedbackDevice.PulseWidth);
         launcherMotorAim.changeControlMode(TalonControlMode.PercentVbus);
@@ -129,20 +131,28 @@ public class RobotMap {
         launcherMotorAim.reverseSensor(true);
 //        launcherMotorAim.reverseSensor(true); doesn't work, sensor value is still negative
         
-        launcherMotorLeft = new CANTalon(3);
+        launcherMotorLeft = new CANTalon(22);
         LiveWindow.addActuator("Launcher", "MotorLeft", launcherMotorLeft);
         launcherMotorLeft.setFeedbackDevice(FeedbackDevice.QuadEncoder);
         launcherMotorLeft.changeControlMode(TalonControlMode.PercentVbus);
         launcherMotorLeft.setInverted(true);
-//        launcherMotorLeft.configEncoderCodesPerRev(4096);
+        launcherMotorLeft.configEncoderCodesPerRev(4096);
         
-        launcherMotorRight = new CANTalon(5);
+        launcherMotorRight = new CANTalon(23);
         LiveWindow.addActuator("Launcher", "MotorRight", launcherMotorRight);
         launcherMotorRight.setFeedbackDevice(FeedbackDevice.QuadEncoder);
         launcherMotorRight.changeControlMode(TalonControlMode.PercentVbus);
-//        launcherMotorRight.configEncoderCodesPerRev(4096);
+        launcherMotorRight.configEncoderCodesPerRev(4096);
         
-        armsSolenoid = new DoubleSolenoid(4, 5);
+        armsPlexiSolenoid = new DoubleSolenoid(4, 5);
+        //TODO: correct ports for candy cane solenoid
+        armsCandyCaneSolenoid = new DoubleSolenoid(10000,10000);
+        
+        armsMotorClimb = new CANTalon(24);
+        LiveWindow.addActuator("Arms", "MotorClimb", armsMotorClimb);
+        armsMotorClimb.setFeedbackDevice(FeedbackDevice.QuadEncoder);
+        armsMotorClimb.changeControlMode(TalonControlMode.PercentVbus);
+        armsMotorClimb.configEncoderCodesPerRev(4096);
         
 //        compressor = new Compressor();
         

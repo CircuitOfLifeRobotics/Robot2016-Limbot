@@ -69,7 +69,7 @@ public class XboxHelper {
 	
 	public static double getDriverPOV() {
 		if (!hasInit) {	init();	}
-		return shooter.getPOV();
+		return driver.getPOV();
 	}
 	
 }

@@ -9,17 +9,18 @@ public class Constants {
 	// Loop time of the program
 	public static final double DELTA_TIME = 0.020; // 20 ms
 	
-	public static enum AutoStartPos {
-		COURTYARD, CENTER, DO_NOTHING;
-	}
-
-	public static final AutoStartPos AUTO_START_LOCATION = AutoStartPos.CENTER;
-	public static final boolean DO_LOG_AHRS_VALUES = false;
-	public static final boolean DO_LOG_PDP_VALUES = false;
-
+//	public static enum AutoStartPos {
+//		COURTYARD, CENTER, DO_NOTHING;
+//	}
+	
+//	public static final AutoStartPos AUTO_START_LOCATION = AutoStartPos.CENTER;
+	public static final boolean DO_LOG_AHRS_VALUES = false;//Robot.prefs.getBoolean("Do Log AHRS Vals", false);
+	public static final boolean DO_LOG_PDP_VALUES = false;//Robot.prefs.getBoolean("Do Log PDP Vals", false);
+	public static final boolean DO_LOG_GRIP_VALUES = true;//Robot.prefs.getBoolean("Do Log GRIP Vals", false);
+	
 	public static final double XBOX_AXIS_TOLERANCE = 0.1;
-
-	public static final double GLOBAL_MAX_SHOOTER_PWR = 1;
+	
+	public static final double GLOBAL_MAX_SHOOTER_PWR = 1;//Robot.prefs.getDouble("Max Shooter Pwr", 1);
 	public static final double LAUNCHER_AIM_MOTOR_SPEED_MULTIPLIED = 1;
 	
 	public static final double MAX_ACCEL_M_SEC2 = 0.923;
@@ -32,7 +33,7 @@ public class Constants {
 	
 	
 //	DRIVETRAIN CONSTANTS
-	public static final double GLOBAL_MAX_DRIVE_TRAIN_PWR = 1;
+	public static final double GLOBAL_MAX_DRIVE_TRAIN_PWR = 1;//Robot.prefs.getDouble("Max DriveTrain Pwr", 1);
 	
 //	Straight Gyro Drive PID Constants
 	//TODO: tune gyro straight drive pid
@@ -92,7 +93,7 @@ public class Constants {
 	public static final double DRIVETRAIN_RIGHT_KD = 0;
     
 	//Gyro turn constants
-	public static final double GYROTURN_P = 0.0085;
+	public static final double GYROTURN_P = 0.04;
 	public static final double GYROTURN_I = 0.0;
 	public static final double GYROTURN_D = 0.001;
 	public static final double GYROTURN_F = 0.0;
@@ -103,7 +104,7 @@ public class Constants {
     public static final double CAMERA_AIMED_X = 159;
     public static final double CAMERA_FOV_DEG = 45.134;
     public static final double CAMERA_FOV_PIX = 320;
-    public static final double CAMERA_DEGS_PER_PIX = CAMERA_FOV_DEG/CAMERA_FOV_PIX;
+    public static final double CAMERA_DEGS_PER_PX = CAMERA_FOV_DEG/CAMERA_FOV_PIX;
     public static final double CAMERA_TARGET_WIDTH = 5d/3d;//in feet
     public static final double GYROTURN_POS_TOLERANCE = 3;
     public static final double GYROTURN_RATE_TOLERANCE = 0.1;

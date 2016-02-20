@@ -11,6 +11,7 @@ import com.team3925.robot2016.util.MiscUtil;
 import com.team3925.robot2016.util.Pose;
 import com.team3925.robot2016.util.SmartdashBoardLoggable;
 
+import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.Encoder;
@@ -21,8 +22,8 @@ import edu.wpi.first.wpilibj.command.Subsystem;
 public class DriveTrain extends Subsystem implements SmartdashBoardLoggable {
 
 	private final AHRS navx = Robot.navx;
-	private final CheesySpeedController motorsLeft = RobotMap.driveTrainMotorsLeft;
-	private final CheesySpeedController motorsRight = RobotMap.driveTrainMotorsRight;
+	private final CANTalon motorLeft = RobotMap.driveTrainMotorLeftA;
+	private final CANTalon motorRight = RobotMap.driveTrainMotorRightA;
     private final Encoder encoderLeft = RobotMap.driveTrainEncoderLeft;
     private final Encoder encoderRight = RobotMap.driveTrainEncoderRight;
     private final DoubleSolenoid shifterSolenoid = RobotMap.driveTrainShifterSolenoid;
@@ -35,8 +36,8 @@ public class DriveTrain extends Subsystem implements SmartdashBoardLoggable {
     
     
     public void setMotorSpeeds(DriveTrainSignal input) {
-    	motorsLeft.set(MiscUtil.limit(input.left * GLOBAL_MAX_DRIVE_TRAIN_PWR));
-    	motorsRight.set(MiscUtil.limit(input.right * GLOBAL_MAX_DRIVE_TRAIN_PWR));
+    	motorLeft.set(MiscUtil.limit(input.left * GLOBAL_MAX_DRIVE_TRAIN_PWR));
+    	motorRight.set(MiscUtil.limit(input.right * GLOBAL_MAX_DRIVE_TRAIN_PWR));
     }
     
     public void setSetpoint(DriveTrainSignal setpoints) {
@@ -140,8 +141,8 @@ public class DriveTrain extends Subsystem implements SmartdashBoardLoggable {
 	
 	@Override
 	public void logData() {
-		putNumberSD("MotorsLeft_Speed", motorsLeft.get());
-		putNumberSD("MotorsRight_Speed", motorsRight.get());
+		putNumberSD("MotorLeft_Speed", motorLeft.get());
+		putNumberSD("MotorRight_Speed", motorRight.get());
 		
 		putDataSD("PIDControllerLeft", pidLeft);
 		putDataSD("PIDControllerRight", pidRight);
@@ -159,8 +160,6 @@ public class DriveTrain extends Subsystem implements SmartdashBoardLoggable {
 		maxErrorRight = Math.max(maxErrorRight, pidRight.getError());
 		putNumberSD("PIDLeftMaxError", maxErrorLeft);
 		putNumberSD("PIDRightMaxError", maxErrorRight);
-		
-		putStringSD("Special Characters :D", "≈ç√˚∫¬˚∆˙´∑πª¨®¥πø˜≈ç≤µøˆåßƒπø");
 		
 		
 //		Commented out due to bugs with PDP and Null Pointers

@@ -117,10 +117,10 @@ public class Launcher extends Subsystem implements SmartdashBoardLoggable {
 //    	putStringSD("MotorAimMode", motorAim.getControlMode().toString());
     	putNumberSD("EncoderAimPos", getAimMotorPosition());
     	
-    	putNumberSD("MotorLeftPos", motorLeft.getEncPosition());
-    	putNumberSD("MotorRightPos", motorRight.getEncPosition());
-    	putNumberSD("MotorLeftVeloctiy", motorLeft.getEncVelocity());
-    	putNumberSD("MotorRightVeloctiy", motorRight.getEncVelocity());
+    	putNumberSD("MotorLeftEncPos", motorLeft.getEncPosition());
+    	putNumberSD("MotorRightEncPos", motorRight.getEncPosition());
+    	putNumberSD("MotorLeftEncVeloctiy", motorLeft.getEncVelocity());
+    	putNumberSD("MotorRight`EncVeloctiy", motorRight.getEncVelocity());
     	putNumberSD("MotorRightAnalogInRaw", motorRight.getAnalogInRaw());
     	putNumberSD("MotorLeftAnalogInRaw", motorLeft.getAnalogInRaw());
     	putNumberSD("MotorRightPinStateQuadA", motorRight.getPinStateQuadA());
