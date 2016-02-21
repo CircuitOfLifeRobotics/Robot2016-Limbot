@@ -32,7 +32,8 @@ public class Constants {
 	
 	
 //	DRIVETRAIN CONSTANTS
-	public static final double GLOBAL_MAX_DRIVE_TRAIN_PWR = 1;//Robot.prefs.getDouble("Max DriveTrain Pwr", 1);
+	public static final double GLOBAL_MAX_DRIVE_TRAIN_PWR = 0.8;//Robot.prefs.getDouble("Max DriveTrain Pwr", 1);
+	public static final double DRIVE_TRAIN_VOLTAGE_RAMP_RATE = 1;
 	
 //	Straight Gyro Drive PID Constants
 	//TODO: tune gyro straight drive pid
