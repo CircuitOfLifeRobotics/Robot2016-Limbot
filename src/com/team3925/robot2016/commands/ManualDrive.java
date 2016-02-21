@@ -27,6 +27,7 @@ public class ManualDrive extends Command implements SmartdashBoardLoggable {
 
 	// Called just before this Command runs the first time
 	protected void initialize() {
+		driveTrain.setPIDEnabled(false);
 	}
 
 	// Called repeatedly when this Command is scheduled to run
@@ -75,7 +76,7 @@ public class ManualDrive extends Command implements SmartdashBoardLoggable {
 	
 	@Override
 	public void logData() {
-		SmartDashboard.putNumber("Fwd_MotorPwr", fwdSet);
+		
 	}
 	
 	@Override

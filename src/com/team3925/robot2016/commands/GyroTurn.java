@@ -5,7 +5,6 @@ import com.team3925.robot2016.Constants;
 import com.team3925.robot2016.Robot;
 import com.team3925.robot2016.subsystems.DriveTrain;
 import com.team3925.robot2016.util.DriveTrainSignal;
-import com.team3925.robot2016.util.MiscUtil;
 import com.team3925.robot2016.util.SmartdashBoardLoggable;
 
 import edu.wpi.first.wpilibj.command.PIDCommand;
@@ -18,17 +17,22 @@ public class GyroTurn extends PIDCommand implements SmartdashBoardLoggable {
 	private DriveTrainSignal output = DriveTrainSignal.NEUTRAL;
 	private boolean isRunning = true;
 	
-	public GyroTurn(double relativeTurnAngle) {
+	public GyroTurn() {
 		super(Constants.GYROTURN_P, Constants.GYROTURN_I, Constants.GYROTURN_D);
-		relativeSetpoint = relativeTurnAngle;
+		relativeSetpoint = 0;
+	}
+	
+	public GyroTurn(double turnAngle) {
+		super(Constants.GYROTURN_P, Constants.GYROTURN_I, Constants.GYROTURN_D);
+		relativeSetpoint = turnAngle;
 	}
 	
 	@Override
 	protected void initialize() {
 		driveTrain.setMotorSpeeds(DriveTrainSignal.NEUTRAL);
-		navx.reset();
+		driveTrain.setHighGear(true);
 		
-		startAngle = navx.getFusedHeading();
+		startAngle = convDegRange(navx.getFusedHeading());
 		targetAngle = startAngle + relativeSetpoint;
 		lastAngle = startAngle;
 		errorAngle = 0;
@@ -45,14 +49,15 @@ public class GyroTurn extends PIDCommand implements SmartdashBoardLoggable {
 	protected void usePIDOutput(double output) {
 		//when positive output, turn clockwise, left side fwd
 		output += Constants.GYROTURN_F * (output>0 ? 1:-1);
-		this.output.left = -output;
+		output = Math.max(-0.6, Math.min(0.6, output));
+		this.output.left = -output * 1.2;
 		this.output.right = output;
 		driveTrain.setMotorSpeeds(this.output);
 	}
 	
 	@Override
 	protected void execute() {
-		currentAngle = navx.getFusedHeading();
+		currentAngle = convDegRange(navx.getFusedHeading());
 		if (Math.abs(currentAngle-lastAngle) > 180) {
 			rotations += currentAngle>lastAngle ? -1:1;
 		}
@@ -95,81 +100,13 @@ public class GyroTurn extends PIDCommand implements SmartdashBoardLoggable {
 		return "Gyro_Turn_";
 	}
 	
-//	DriveTrain driveTrain = Robot.driveTrain;
-//	AHRS navx = Robot.navx;
-//	private double startAngle, targetAngle, errorAngle, currentAngle, pidValue;
-//	private DriveTrainSignal output = DriveTrainSignal.NEUTRAL;
-//	
-//	public GyroTurn(double relativeTurnAngle) {
-//		super(Constants.GYROTURN_P, Constants.GYROTURN_I, Constants.GYROTURN_D);
-//		errorAngle = MiscUtil.changeAngleRangeDeg(relativeTurnAngle);
-//	}
-//	
-//	@Override
-//	protected void initialize() {
-//		driveTrain.setMotorSpeeds(DriveTrainSignal.NEUTRAL);
-//		
-//		startAngle = MiscUtil.changeAngleRangeDeg(navx.getFusedHeading());
-//		targetAngle = MiscUtil.changeAngleRangeDeg(startAngle + errorAngle);
-//	}
-//	
-//	@Override
-//	protected double returnPIDInput() {
-//		return pidValue;
-//	}
-//	
-//	@Override
-//	protected void usePIDOutput(double output) {
-//		//when positive output, turn left, right side fwd
-//		output += Constants.GYROTURN_F;
-//		this.output.left = output;
-//		this.output.right = -output;
-//		driveTrain.setMotorSpeeds(this.output);
-//	}
-//	
-//	@Override
-//	protected void execute() {
-//		currentAngle = MiscUtil.changeAngleRangeDeg(navx.getFusedHeading());
-//		errorAngle = targetAngle-currentAngle;//MiscUtil.changeAngleRangeDeg(targetAngle - currentAngle);
-//		pidValue = errorAngle/Constants.GYROTURN_MAX_ERROR;
-//		
-//		logData();
-//	}
-//
-//	@Override
-//	protected boolean isFinished() {
-//		if (Math.abs(errorAngle) < Constants.GYROTURN_POS_TOLERANCE &&
-//				driveTrain.getEncoderRates().left < Constants.GYROTURN_RATE_TOLERANCE &&
-//				driveTrain.getEncoderRates().right < Constants.GYROTURN_RATE_TOLERANCE) {
-//			return true;
-//		}else {
-//			return false;
-//		}
-//	}
-//
-//	@Override
-//	protected void end() {
-//		driveTrain.setMotorSpeeds(DriveTrainSignal.NEUTRAL);
-//	}
-//
-//	@Override
-//	protected void interrupted() {
-//		driveTrain.setMotorSpeeds(DriveTrainSignal.NEUTRAL);
-//	}
-//
-//	@Override
-//	public void logData() {
-//		putNumberSD("CurrentAngle", currentAngle);
-//		putNumberSD("TargetAngle", targetAngle);
-//		putNumberSD("ErrorAngle", errorAngle);
-//		putNumberSD("OutputLeft", output.left);
-//		putNumberSD("OutputRight", output.right);
-//		putNumberSD("PIDValue", pidValue);
-//	}
-//
-//	@Override
-//	public String getFormattedName() {
-//		return "Gyro_Turn_";
-//	}
-
+	public void setSetpointRelative(double relativeAngle) {
+		relativeSetpoint = relativeAngle;
+		initialize();
+	}
+	
+	private double convDegRange(double angle) {
+		return ((((angle-180)%360)+360)%360)-180;
+	}
+	
 }

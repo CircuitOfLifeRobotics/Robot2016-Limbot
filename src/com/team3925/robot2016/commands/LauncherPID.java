@@ -1,71 +1,115 @@
 package com.team3925.robot2016.commands;
 
+
 import com.team3925.robot2016.Constants;
 import com.team3925.robot2016.Robot;
 import com.team3925.robot2016.subsystems.Launcher;
-import com.team3925.robot2016.util.LimitPID;
+import com.team3925.robot2016.util.LimitPIDController;
 import com.team3925.robot2016.util.MiscUtil;
 import com.team3925.robot2016.util.SmartdashBoardLoggable;
 import com.team3925.robot2016.util.XboxHelper;
 
-import edu.wpi.first.wpilibj.CANTalon.TalonControlMode;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Command;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class LauncherPID extends Command implements SmartdashBoardLoggable {
 	
 	private final Launcher launcher = Robot.launcher;
 	
-	private LimitPID pidLoop = new LimitPID();
+	private LimitPIDController pidLoop = new LimitPIDController();
 	
-	private boolean aimEnabled = true, intakeEnabled = true, doRunIntake = true;
-	private double aimJoystickSetpoint, aimSetpointDiff, aimLastSetpoint, aimSetpoint, aimPosition, aimDifference, aimOutput, aimAngleMultiplier;
-	private double intakeOutput, intakeSpeedLeft, intakeSpeedRight, intakeSetpoint;
+	private boolean aimEnabled = true, intakeEnabled = true, doRunAim = true, aimOnTarget = false, intakeOnTarget = false;
+	private double aimSetpoint, aimSetpointDiff, aimLastSetpoint, aimLimitedSetpoint, aimPosition, aimDifference, aimOutput, aimAngleMultiplier;
+	private double intakeOutput, intakeSpeedLeft, intakeSpeedRight;
 	
 	public LauncherPID(double setPoint) {
-		this.aimSetpoint = setPoint;
+		this.aimLimitedSetpoint = setPoint;
+		requires(Robot.launcher);
 	}
 	
 	public LauncherPID(double p, double i, double d, double setPoint) {
-		this.aimSetpoint = setPoint;
+		this.aimLimitedSetpoint = setPoint;
 		pidLoop.setPID(p, i, d);
+		requires(Robot.launcher);
+	}
+	
+	/**
+	 * If isPunch is true, the piston will engage and punch the ball
+	 * 
+	 * @param isPunch
+	 */
+	public void setPuncher(boolean isPunch) {
+		launcher.setPuncher(isPunch);
+	}
+	
+	/**
+	 * Returns true if the intake wheels are both at the specified speed
+	 * 
+	 * @return intakeOnTarget
+	 */
+	public boolean isIntakeOnSetpoint() {
+		return intakeOnTarget;
+	}
+	
+	/**
+	 * Returns true if the aim position is at the specified setpoint angle
+	 * and the aim is stable (not moving)
+	 * 
+	 * @return aimOnTarget
+	 */
+	public boolean isAimOnSetpoint() {
+		return aimOnTarget;
+	}
+	
+	/**
+	 * Sets the setpoint of the aim motor
+	 * In degrees
+	 * 
+	 * @param setpoint
+	 */
+	public void setAimSetpoint(double setpoint) {
+		setpoint = Math.max(0, Math.min(Constants.LAUNCHER_MAX_HEIGHT, setpoint));
+		aimSetpoint = setpoint;
+	}
+	
+	/**
+	 * Sets the setpoint of the intake motors
+	 * TODO: change to easier units
+	 * In native units per 100 ms
+	 * 
+	 * @param setpoint
+	 */
+	public void setIntakeSetpoint(double setpoint) {
+		intakeOutput = Math.max(-26000, Math.min(26000, setpoint));
 	}
 	
 	protected void initialize() {
-		launcher.changeAimControlMode(TalonControlMode.PercentVbus);
-		launcher.changeIntakeLeftControlMode(TalonControlMode.PercentVbus);
-		launcher.changeIntakeRightControlMode(TalonControlMode.PercentVbus);
-		
-		pidLoop.setPIDLimits(10000, 10000, 10000, 10000, -10000, -10000, -10000, -10000);
-		intakeOutput = 0;
-		aimJoystickSetpoint = 0;
-		aimLastSetpoint = 0;
-		
-		intakeSpeedLeft = intakeSpeedRight = 0;
+		reset();
 	}
 
 	protected void execute() {
 		if (aimEnabled) {
-			aimJoystickSetpoint = XboxHelper.getShooterButton(XboxHelper.TRIGGER_LT) ? MiscUtil.joystickToDegrees(XboxHelper.getShooterAxis(XboxHelper.AXIS_LEFT_Y)):aimJoystickSetpoint;
-			aimSetpoint = aimJoystickSetpoint;
+//			aimSetpoint = XboxHelper.getShooterButton(XboxHelper.TRIGGER_LT) ? MiscUtil.joystickToDegrees(XboxHelper.getShooterAxis(XboxHelper.AXIS_LEFT_Y)):aimJoystickSetpoint;
+			aimLimitedSetpoint = aimSetpoint;
 			aimPosition = MiscUtil.aimEncoderTicksToDegrees(launcher.getAimMotorPosition());
-			aimDifference = aimSetpoint - aimPosition;
-			aimSetpointDiff = aimSetpoint - aimLastSetpoint;
+			aimDifference = aimLimitedSetpoint - aimPosition;
+			aimSetpointDiff = aimLimitedSetpoint - aimLastSetpoint;
 			
 			if (Math.abs(aimSetpointDiff) > Constants.LAUNCHER_AIM_INCREMENT) {
-				aimSetpoint = aimLastSetpoint + Constants.LAUNCHER_AIM_INCREMENT * (aimSetpointDiff>0 ? 1:-1);
+				aimLimitedSetpoint = aimLastSetpoint + Constants.LAUNCHER_AIM_INCREMENT * (aimSetpointDiff>0 ? 1:-1);
 			}
-			doRunIntake = (aimPosition>Constants.LAUNCHER_AIM_INCREMENT) || (Math.abs(aimSetpointDiff)>Constants.LAUNCHER_AIM_INCREMENT);
 			
-			pidLoop.setSetpoint(aimSetpoint);
+			aimOnTarget = Math.abs(aimSetpoint) < Constants.LAUNCHER_AIM_TOLERANCE && Math.abs(launcher.getAimMotorSpeed()) < 1000;
+			
+			doRunAim = (aimPosition>Constants.LAUNCHER_AIM_INCREMENT) || (Math.abs(aimSetpointDiff)>Constants.LAUNCHER_AIM_INCREMENT);
+			
+			pidLoop.setSetpoint(aimLimitedSetpoint);
 			pidLoop.calculate(aimPosition);
 			aimOutput = pidLoop.get();
-			aimAngleMultiplier = (2*Math.cos(Math.toRadians(aimPosition))+0.3)/5;
+			aimAngleMultiplier = 0.4*Math.cos(Math.toRadians(aimPosition))+0.06;
 			aimOutput = aimOutput * aimAngleMultiplier;
 			aimOutput = Math.min(Math.max(aimOutput, -0.2), 0.8);
 			
-			if (doRunIntake) {
+			if (doRunAim) {
 				launcher.setAim(aimOutput);
 			}else {
 				launcher.setAim(0);
@@ -78,6 +122,9 @@ public class LauncherPID extends Command implements SmartdashBoardLoggable {
 		intakeSpeedLeft = launcher.getIntakeSpeedLeft();
 		intakeSpeedRight = launcher.getIntakeSpeedRight();
 		
+		intakeOnTarget = Math.abs(launcher.getIntakeSpeedLeft()-intakeOutput)<Constants.LAUNCHER_WHEELS_TOLERANCE &&
+				Math.abs(launcher.getIntakeSpeedRight()-intakeOutput)<Constants.LAUNCHER_WHEELS_TOLERANCE;
+		
 		/* TODO: get the acutal number of encoder counts per rev
 		 * Encoder counts per rev?
 		 * 15266664
@@ -89,14 +136,17 @@ public class LauncherPID extends Command implements SmartdashBoardLoggable {
 		
 		if (intakeEnabled) {
 			if (XboxHelper.getShooterButton(XboxHelper.START)) {intakeOutput = 0;}
-			else if (XboxHelper.getShooterButton(XboxHelper.Y)) {/*intakeSetpoint = 13000 */intakeOutput = 1    ;}
-			else if (XboxHelper.getShooterButton(XboxHelper.X)) {/*intakeSetpoint = 4000  */intakeOutput = 0.5 ;}
-			else if (XboxHelper.getShooterButton(XboxHelper.B)) {/*intakeSetpoint = -4000 */intakeOutput = -0.5;}
-			else if (XboxHelper.getShooterButton(XboxHelper.A)) {/*intakeSetpoint = -13000*/intakeOutput = -1   ;}
-			
-			launcher.setIntakeSpeeds(intakeOutput);
+//			else if (XboxHelper.getShooterButton(XboxHelper.Y)) {intakeOutput = 1;}
+//			else if (XboxHelper.getShooterButton(XboxHelper.X)) {intakeOutput = 0.2;}
+//			else if (XboxHelper.getShooterButton(XboxHelper.B)) {intakeOutput = -0.2;}
+//			else if (XboxHelper.getShooterButton(XboxHelper.A)) {intakeOutput = -1;}
+//			else if (XboxHelper.getShooterButton(XboxHelper.Y)) {intakeOutput = 25000;}
+//			else if (XboxHelper.getShooterButton(XboxHelper.X)) {intakeOutput = 4000;}
+//			else if (XboxHelper.getShooterButton(XboxHelper.B)) {intakeOutput = -4000;}
+//			else if (XboxHelper.getShooterButton(XboxHelper.A)) {intakeOutput = -25000;}
+			launcher.setIntake(intakeOutput);
 		} else {
-			launcher.setIntakeSpeeds(0);
+			launcher.setIntake(0);
 			//launcher.setIntake(on vacation);
 		}
 		
@@ -104,7 +154,7 @@ public class LauncherPID extends Command implements SmartdashBoardLoggable {
 		
 		logData();
 		
-		aimLastSetpoint = aimSetpoint;
+		aimLastSetpoint = aimLimitedSetpoint;
 	}
 	
 	public void enableAim(boolean isEnable) {
@@ -123,6 +173,14 @@ public class LauncherPID extends Command implements SmartdashBoardLoggable {
 		return intakeEnabled;
 	}
 	
+	public void setAimEnabled(boolean isEnabled) {
+		aimEnabled = isEnabled;
+	}
+	
+	public void setIntakeEnabled(boolean isEnabled) {
+		intakeEnabled = isEnabled;
+	}
+	
 	@Override
 	protected boolean isFinished() {
 		return false;
@@ -130,18 +188,18 @@ public class LauncherPID extends Command implements SmartdashBoardLoggable {
 	
 	@Override
 	protected void end() {
-		launcher.setAimMotorSpeed(0, false);
+		launcher.setAim(0);
 	}
 
 	@Override
 	protected void interrupted() {
-		launcher.setAimMotorSpeed(0);
+		launcher.setAim(0);
 	}
 
 	@Override
 	public void logData() {
 		putNumberSD("Difference", aimDifference);
-		putNumberSD("Setpoint", aimSetpoint);
+		putNumberSD("Setpoint", aimLimitedSetpoint);
 		putNumberSD("Position", aimPosition);
 		putNumberSD("Output", aimOutput);
 		putNumberSD("AngleMultiplier", aimAngleMultiplier);
@@ -150,17 +208,31 @@ public class LauncherPID extends Command implements SmartdashBoardLoggable {
 		putNumberSD("PrevError", pidLoop.getPrevError());
 		putNumberSD("IntakeSpeedLeft", intakeSpeedLeft);
 		putNumberSD("IntakeSpeedRight", intakeSpeedRight);
-		putNumberSD("IntakeSpeedSetpoint", intakeSetpoint);
 		putNumberSD("IntakeOutput", intakeOutput);
 		putBooleanSD("UporDown", aimDifference>0);
 		putBooleanSD("AimEnabled", aimEnabled);
 		putBooleanSD("IntakeEnabled", intakeEnabled);
-		putBooleanSD("DoRunIntake", doRunIntake);
+		putBooleanSD("DoRunIntake", doRunAim);
 	}
 
 	@Override
 	public String getFormattedName() {
 		return "Launcher_PID_";
+	}
+	
+	public void reset() {
+		launcher.setIntakePID(Constants.LAUNCHER_WHEELS_KP, Constants.LAUNCHER_WHEELS_KI, Constants.LAUNCHER_WHEELS_KD, Constants.LAUNCHER_WHEELS_KF, Constants.LAUNCHER_WHEELS_IZONE, Constants.LAUNCHER_WHEELS_RAMP_RATE, 0);
+		launcher.setIntakeProfile(0);
+		
+		pidLoop.setPIDLimits(10000, 10000, 10000, 10000, -10000, -10000, -10000, -10000);
+		
+		setAimSetpoint(0);
+		setIntakeSetpoint(0);
+		intakeOutput = 0;
+		aimSetpoint = 0;
+		aimLastSetpoint = 0;
+		
+		intakeSpeedLeft = intakeSpeedRight = 0;
 	}
 	
 }

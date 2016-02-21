@@ -24,7 +24,6 @@ public class JankyLauncher extends Command implements SmartdashBoardLoggable {
 	
 	@Override
 	protected void initialize() {
-		launcher.changeAimControlMode(TalonControlMode.PercentVbus);
 		
 		encoderPos = launcher.getAimMotorPosition();
 		encoderSetpoint = encoderPos;
@@ -47,7 +46,6 @@ public class JankyLauncher extends Command implements SmartdashBoardLoggable {
 		
 		spid = XboxHelper.getShooterAxis(XboxHelper.AXIS_RIGHT_Y);
 		
-		launcher.setAimMotorSpeed(spid, true);
 		
 		boolean isPunch = XboxHelper.getShooterButton(XboxHelper.STICK_RIGHT);
 		if (isPunch)
@@ -56,9 +54,9 @@ public class JankyLauncher extends Command implements SmartdashBoardLoggable {
 			launcher.setPuncher(false);
 		
 		if (XboxHelper.getShooterButton(XboxHelper.A))
-			launcher.setIntakeSpeeds(1);
+			launcher.setIntake(1);
 		else
-			launcher.setIntakeSpeeds(0);
+			launcher.setIntake(0);
 	}
 
 	@Override
@@ -68,12 +66,10 @@ public class JankyLauncher extends Command implements SmartdashBoardLoggable {
 
 	@Override
 	protected void end() {
-		launcher.setAimMotorSpeed(0, false);
 	}
 
 	@Override
 	protected void interrupted() {
-		launcher.setAimMotorSpeed(0, false);
 	}
 
 	@Override

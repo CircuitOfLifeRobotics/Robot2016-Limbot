@@ -2,7 +2,7 @@ package com.team3925.robot2016.util;
 
 import edu.wpi.first.wpilibj.util.BoundaryException;
 
-public class LimitPID {
+public class LimitPIDController {
 	private double m_P; // factor for "proportional" control
 	private double m_I; // factor for "integral" control
 	private double m_D; // factor for "derivative" control
@@ -36,7 +36,7 @@ public class LimitPID {
 	private double m_result = 0.0;
 	private double m_last_input = Double.NaN;
 
-	public LimitPID() {
+	public LimitPIDController() {
     }
 
 	/**
@@ -47,7 +47,7 @@ public class LimitPID {
      * @param Ki the integral coefficient
      * @param Kd the derivative coefficient
      */
-    public LimitPID(double Kp, double Ki, double Kd, double maxP, double maxI, double maxD, double maxError, double minP, double minI, double minD, double minError) {
+    public LimitPIDController(double Kp, double Ki, double Kd, double maxP, double maxI, double maxD, double maxError, double minP, double minI, double minD, double minError) {
         m_P = Kp;
         m_I = Ki;
         m_D = Kd;

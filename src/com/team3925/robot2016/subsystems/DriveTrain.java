@@ -11,18 +11,24 @@ import com.team3925.robot2016.util.MiscUtil;
 import com.team3925.robot2016.util.Pose;
 import com.team3925.robot2016.util.SmartdashBoardLoggable;
 
+import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.command.Subsystem;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 
 public class DriveTrain extends Subsystem implements SmartdashBoardLoggable {
 
 	private final AHRS navx = Robot.navx;
-	private final CheesySpeedController motorsLeft = RobotMap.driveTrainMotorsLeft;
-	private final CheesySpeedController motorsRight = RobotMap.driveTrainMotorsRight;
+	private final CANTalon motorLeftA = RobotMap.driveTrainMotorLeftA;
+	private final CANTalon motorRightA = RobotMap.driveTrainMotorRightA;
+	private final CANTalon motorLeftB = RobotMap.driveTrainMotorLeftB;
+	private final CANTalon motorRightB = RobotMap.driveTrainMotorRightB;
+	private final CANTalon motorLeftC = RobotMap.driveTrainMotorLeftC;
+	private final CANTalon motorRightC = RobotMap.driveTrainMotorRightC;
     private final Encoder encoderLeft = RobotMap.driveTrainEncoderLeft;
     private final Encoder encoderRight = RobotMap.driveTrainEncoderRight;
     private final DoubleSolenoid shifterSolenoid = RobotMap.driveTrainShifterSolenoid;
@@ -35,8 +41,12 @@ public class DriveTrain extends Subsystem implements SmartdashBoardLoggable {
     
     
     public void setMotorSpeeds(DriveTrainSignal input) {
-    	motorsLeft.set(MiscUtil.limit(input.left * GLOBAL_MAX_DRIVE_TRAIN_PWR));
-    	motorsRight.set(MiscUtil.limit(input.right * GLOBAL_MAX_DRIVE_TRAIN_PWR));
+    	motorLeftA.set(MiscUtil.limit(input.left * GLOBAL_MAX_DRIVE_TRAIN_PWR));
+    	motorRightA.set(MiscUtil.limit(input.right * GLOBAL_MAX_DRIVE_TRAIN_PWR));
+    	motorLeftB.set(MiscUtil.limit(input.left * GLOBAL_MAX_DRIVE_TRAIN_PWR));
+    	motorRightB.set(MiscUtil.limit(input.right * GLOBAL_MAX_DRIVE_TRAIN_PWR));
+    	motorLeftC.set(MiscUtil.limit(input.left * GLOBAL_MAX_DRIVE_TRAIN_PWR));
+    	motorRightC.set(MiscUtil.limit(input.right * GLOBAL_MAX_DRIVE_TRAIN_PWR));
     }
     
     public void setSetpoint(DriveTrainSignal setpoints) {
@@ -140,27 +150,40 @@ public class DriveTrain extends Subsystem implements SmartdashBoardLoggable {
 	
 	@Override
 	public void logData() {
-		putNumberSD("MotorsLeft_Speed", motorsLeft.get());
-		putNumberSD("MotorsRight_Speed", motorsRight.get());
+		putNumberSD("MotorLeft_Speed", motorLeftA.get());
+		putNumberSD("MotorRight_Speed", motorRightA.get());
 		
-		putDataSD("PIDControllerLeft", pidLeft);
-		putDataSD("PIDControllerRight", pidRight);
+		putNumberSD("MotorLeftA_V", motorLeftA.getOutputVoltage());
+		putNumberSD("MotorLeftB_V", motorLeftB.getOutputVoltage());
+		putNumberSD("MotorLeftC_V", motorLeftC.getOutputVoltage());
+		putNumberSD("MotorRightA_V", motorRightA.getOutputVoltage());
+		putNumberSD("MotorRightB_V", motorRightB.getOutputVoltage());
+		putNumberSD("MotorRightC_V", motorRightC.getOutputVoltage());
 		
-		putBooleanSD("PIDEnabled", getPIDEnabled());
-		putNumberSD("PIDLeftSetpoint", pidLeft.get());
-		putNumberSD("PIDRightSetpoint", pidRight.get());
-		putNumberSD("PIDLeftError", pidLeft.getError());
-		putNumberSD("PIDRightError", pidRight.getError());
-		putNumberSD("PIDLeftDeltaSetpoint", pidLeft.getDeltaSetpoint());
-		putNumberSD("PIDRightDeltaSetpoint", pidRight.getDeltaSetpoint());
-		putNumberSD("PIDLeftAverageError", pidLeft.getAvgError());
-		putNumberSD("PIDRightAverageError", pidRight.getAvgError());
-		maxErrorLeft = Math.max(maxErrorLeft, pidLeft.getError());
-		maxErrorRight = Math.max(maxErrorRight, pidRight.getError());
-		putNumberSD("PIDLeftMaxError", maxErrorLeft);
-		putNumberSD("PIDRightMaxError", maxErrorRight);
+		putNumberSD("MotorLeftA_C", motorLeftA.getOutputCurrent());
+		putNumberSD("MotorLeftB_C", motorLeftB.getOutputCurrent());
+		putNumberSD("MotorLeftC_C", motorLeftC.getOutputCurrent());
+		putNumberSD("MotorRightA_C", motorRightA.getOutputCurrent());
+		putNumberSD("MotorRightB_C", motorRightB.getOutputCurrent());
+		putNumberSD("MotorRightC_C", motorRightC.getOutputCurrent());
 		
-		putStringSD("Special Characters :D", "≈ç√˚∫¬˚∆˙´∑πª¨®¥πø˜≈ç≤µøˆåßƒπø");
+		//Commented out due to not using PID with drive train yet
+//		putDataSD("PIDControllerLeft", pidLeft);
+//		putDataSD("PIDControllerRight", pidRight);
+		
+//		putBooleanSD("PIDEnabled", getPIDEnabled());
+//		putNumberSD("PIDLeftSetpoint", pidLeft.get());
+//		putNumberSD("PIDRightSetpoint", pidRight.get());
+//		putNumberSD("PIDLeftError", pidLeft.getError());
+//		putNumberSD("PIDRightError", pidRight.getError());
+//		putNumberSD("PIDLeftDeltaSetpoint", pidLeft.getDeltaSetpoint());
+//		putNumberSD("PIDRightDeltaSetpoint", pidRight.getDeltaSetpoint());
+//		putNumberSD("PIDLeftAverageError", pidLeft.getAvgError());
+//		putNumberSD("PIDRightAverageError", pidRight.getAvgError());
+//		maxErrorLeft = Math.max(maxErrorLeft, pidLeft.getError());
+//		maxErrorRight = Math.max(maxErrorRight, pidRight.getError());
+//		putNumberSD("PIDLeftMaxError", maxErrorLeft);
+//		putNumberSD("PIDRightMaxError", maxErrorRight);
 		
 		
 //		Commented out due to bugs with PDP and Null Pointers

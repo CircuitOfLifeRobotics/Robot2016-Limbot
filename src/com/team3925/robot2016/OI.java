@@ -57,13 +57,13 @@ public class OI {
     	xboxDriver = new Joystick(0);
     	xboxShooter = new Joystick(1);
     	
-    	startCollectBall = new JoystickButton(xboxShooter, XboxHelper.A);
+    	startCollectBall = new JoystickButton(xboxShooter, XboxHelper.BACK);
     	startCollectBall.whenPressed(new CollectBall());
 		
-    	startLaunchBallLow = new JoystickButton(xboxShooter, XboxHelper.B);
+    	startLaunchBallLow = new JoystickButton(xboxShooter, XboxHelper.BACK);
     	startLaunchBallLow.whenPressed(new LaunchBallLow());
     	
-    	startLaunchBallHigh = new JoystickButton(xboxShooter, XboxHelper.Y);
+    	startLaunchBallHigh = new JoystickButton(xboxShooter, XboxHelper.BACK);
     	startLaunchBallHigh.whenPressed(new LaunchBallHigh());
     	
     	

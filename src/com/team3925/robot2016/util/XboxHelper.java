@@ -4,6 +4,7 @@ import com.team3925.robot2016.Constants;
 import com.team3925.robot2016.Robot;
 
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.Joystick.RumbleType;
 
 /**
  * ControllersHelper elimanates the need for classes to create copies of the xboxes.
@@ -69,7 +70,17 @@ public class XboxHelper {
 	
 	public static double getDriverPOV() {
 		if (!hasInit) {	init();	}
-		return shooter.getPOV();
+		return driver.getPOV();
+	}
+	
+	public static void setShooterRumble(float magnitude) {
+		shooter.setRumble(RumbleType.kLeftRumble, magnitude);
+		shooter.setRumble(RumbleType.kRightRumble, magnitude);
+	}
+	
+	public static void setDriverRumble(float magnitude) {
+		driver.setRumble(RumbleType.kLeftRumble, magnitude);
+		driver.setRumble(RumbleType.kRightRumble, magnitude);
 	}
 	
 }

@@ -1,18 +1,19 @@
 package com.team3925.robot2016;
 
-import static com.team3925.robot2016.Constants.AUTO_START_LOCATION;
 import static com.team3925.robot2016.Constants.DO_LOG_AHRS_VALUES;
+import static com.team3925.robot2016.Constants.DO_LOG_GRIP_VALUES;
 import static com.team3925.robot2016.Constants.DO_LOG_PDP_VALUES;
 
 import com.kauailabs.navx.frc.AHRS;
 import com.team3925.robot2016.commands.AutoRoutineCenter;
 import com.team3925.robot2016.commands.AutoRoutineCourtyard;
 import com.team3925.robot2016.commands.AutoRoutineDoNothing;
-import com.team3925.robot2016.commands.CollectBall;
+import com.team3925.robot2016.commands.CandyCane;
 import com.team3925.robot2016.commands.GyroTurn;
 import com.team3925.robot2016.commands.JankyLauncher;
-import com.team3925.robot2016.commands.LaunchBallHigh;
+import com.team3925.robot2016.commands.LaunchBall;
 import com.team3925.robot2016.commands.LauncherPID;
+import com.team3925.robot2016.commands.ManualArms;
 import com.team3925.robot2016.commands.ManualDrive;
 import com.team3925.robot2016.commands.TrapzoidalMotionTest;
 import com.team3925.robot2016.subsystems.Arms;
@@ -26,12 +27,14 @@ import com.team3925.robot2016.util.XboxHelper;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
+import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.networktables.NetworkTable;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
@@ -42,24 +45,34 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  * directory.
  */
 public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
-
+	
+	//Other
 	public static AHRS navx = null;
+	public static PowerDistributionPanel pdp;
 	public static NetworkTable table;
-	
-	Command autoCommandGroup;
-	Command collectBall;
-	Command launchBall;
-	Command manualDrive;
-	public static Command launcherPID;
-	Command trapMotionTest;
-	Command jankyLauncher;
-	
 	public static OI oi;
+	public static Preferences prefs;
+	private TimeoutAction candyCaneWait = new TimeoutAction();
+	
+	//Subsystems
 	public static DriveTrain driveTrain;
 	public static Launcher launcher;
 	public static Arms arms;
-	PowerDistributionPanel pdp;
-
+	
+	//Commands
+	public static LauncherPID launcherPID;
+	Command autoCommandGroup;
+	Command manualDrive;
+	Command manualArms;
+	Command trapMotionTest;
+	Command jankyLauncher;
+	Command candyCaneRun;
+	Command launchBallTest;
+	Command gyroTurnTest;
+	SendableChooser autoChooser;
+	
+	
+	//Variables
 	public static double deltaTime = 0;
 	private static double lastTimestamp = 0;
 	private static double lastRotationStamp = 0;
@@ -68,6 +81,7 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 	private static double maxVel = 0;
 	private static double maxRotationVel = 0;
 	private static double maxRotationAccel = 0;
+	private double[] defaultVal;
 	
 	private static TimeoutAction autoWait = new TimeoutAction();
 	
@@ -87,56 +101,49 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 	 */
 	public void robotInit() {
 		RobotMap.init();
-
+		
+		//Creating Subsystems and Related Processes
 		driveTrain = new DriveTrain();
 		launcher = new Launcher();
 		arms = new Arms();
-
+		Preferences.getInstance();
+		pdp = RobotMap.pdp;
+		
+		table = NetworkTable.getTable("GRIP/contourReport");
+		try {
+			new ProcessBuilder("/home/lvuser/grip").inheritIO().start();
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		
 		// OI must be constructed after subsystems. If the OI creates Commands
 		//(which it very likely will), subsystems are not guaranteed to be
 		// constructed yet. Thus, their requires() statements may grab null
 		// pointers. Bad news. Don't move it.
 		oi = new OI();
 		XboxHelper.init();
-		reset();
-
-		//	Switch for current start position.
-		switch (AUTO_START_LOCATION) {
-		case CENTER:
-			autoCommandGroup = new AutoRoutineCenter();
-			break;
-		case COURTYARD:
-			autoCommandGroup = new AutoRoutineCourtyard();
-			break;
-		case DO_NOTHING:
-			autoCommandGroup = new AutoRoutineDoNothing();
-			break;
-
-		default:
-			DriverStation.reportError("Was unable to select Auto Routine! \nDefault routine selected.", false);
-			autoCommandGroup = new AutoRoutineDoNothing();
-			break;
-		}
-
-		collectBall = new CollectBall();
-		launchBall = new LaunchBallHigh();
+		
+		//Creating Autonomous
+		autoChooser = new SendableChooser();
+		autoChooser.addDefault("Nothing Auto", new AutoRoutineDoNothing());
+		autoChooser.addObject("Center Auto", new AutoRoutineCenter());
+		autoChooser.addObject("Courtyard Auto", new AutoRoutineCourtyard());
+		
+		//Creating Commands
 		manualDrive = new ManualDrive();
+		manualArms = new ManualArms();
 		trapMotionTest = new TrapzoidalMotionTest();
 		jankyLauncher = new JankyLauncher();
 		launcherPID = new LauncherPID(Constants.LAUNCHER_AIM_KP_UP, Constants.LAUNCHER_AIM_KI_UP, Constants.LAUNCHER_AIM_KD_UP, 0d);
+		candyCaneRun = new CandyCane();
+		launchBallTest = new LaunchBall(90, 40);
+		gyroTurnTest = new GyroTurn(90);
 		
-		pdp = RobotMap.pdp;
-		
-		table = NetworkTable.getTable("GRIP/Feb_15ContourReport");
-		try {
-			new ProcessBuilder("/home/lvuser/grip").inheritIO().start();
-		}catch (Exception e) {
-			e.printStackTrace();
-		}
+		reset();
 	}
 	
 	/**
-	 * Resets lastTimestamp, the IMU, max unit testers and encoders
+	 * Resets lastTimestamp, the IMU, max unit testers, encoders, and launcherPID
 	 */
 	private void reset() {
 		driveTrain.resetEncoders();
@@ -148,6 +155,7 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 		maxVel = 0;
 		maxRotationVel = 0;
 		maxRotationAccel = 0;
+		launcherPID.reset();
 	}
 	
 	/**
@@ -173,9 +181,12 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 		
 		driveTrain.setHighGear(false);
 		reset();
-		autoWait.config(1);
+//		autoWait.config(1);
 		
-		launchBall.start();
+		launcherPID.start();
+//		gyroTurnTest.start();
+		
+//		launchBallTest.start();
 	}
 	
 	/**
@@ -184,7 +195,6 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 	public void autonomousPeriodic() {
 		Scheduler.getInstance().run();
 		logData();
-		
 //		if (autoWait.isFinished()) {
 //			trapMotionTest.start();
 //		}
@@ -192,20 +202,21 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 	}
 
 	public void teleopInit() {
+		
 		// This makes sure that the autonomous stops running when
 		// teleop starts running. If you want the autonomous to
 		// continue until interrupted by another command, remove
 		// this line or comment it out.
 		if (autoCommandGroup != null) autoCommandGroup.cancel();
 		
-		launcherPID.start();
 //		jankyLauncher.start();
+		manualDrive.start();
+		manualArms.start();
 		
 		reset();
-		
-		manualDrive.start();
 		System.out.println("Robot has init! (Said through System.out.println)");
 		driveTrain.setPIDEnabled(false);
+		candyCaneWait.config(55d);
 	}
 
 	/**
@@ -214,25 +225,16 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 	public void teleopPeriodic() {
 		Scheduler.getInstance().run();
 		
-//		double[] area = table.getNumberArray("area", defaultVal);
-//		double[] width = table.getNumberArray("width", defaultVal);
-//		double[] height = table.getNumberArray("height", defaultVal);
-//		double[] solidity = table.getNumberArray("solidity", defaultVal);
-//		double[] centerX = table.getNumberArray("centerX", defaultVal);
-//		double[] centerY = table.getNumberArray("centerY", defaultVal);
-//		areasCount = area.length;
-//		putNumberSD("NetworkTables_Count", areasCount);
-//		for (int i=0; i<1; i++) {
-//			putNumberSD("NetworkTables_Area_"+i, area[i]);
-//			putNumberSD("NetworkTables_Width_"+i, width[i]);
-//			putNumberSD("NetworkTables_Height_"+i, height[i]);
-//			putNumberSD("NetworkTables_Solidity_"+i, solidity[i]);
-//			putNumberSD("NetworkTables_CenterX_"+i, centerX[i]);
-//			putNumberSD("NetworkTables_CenterY_"+i, centerY[i]);
-//		}
+		if (XboxHelper.getShooterButton(XboxHelper.START)) {
+			if (candyCaneWait.isFinished() && !candyCaneRun.isRunning()) {
+				candyCaneRun.start();
+			} else {
+				XboxHelper.setShooterRumble(1f);
+			}
+		}else {
+			XboxHelper.setShooterRumble(0);
+		}
 		
-		//TODO: move into command
-		arms.setArm(XboxHelper.getDriverAxis(2)>0.5);
 		logData();
 	}
 	
@@ -241,14 +243,13 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 	 */
 	public void testPeriodic() {
 		LiveWindow.run();
-		
-		launcher.liveWindow();
 	}
 	
 	@Override
 	public void logData() {
 		driveTrain.logData();
 		launcher.logData();
+		arms.logData();
 		
 		double now = Timer.getFPGATimestamp();
 		deltaTime = now - lastTimestamp;
@@ -276,6 +277,9 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 		putNumberSD("CurrentTime", Timer.getFPGATimestamp());
 		putNumberSD("DeltaTime", deltaTime);
 		
+		putDataSD("Autonomous Chooser", autoChooser);
+		putNamedDataSD(Scheduler.getInstance());
+		
 		if (DO_LOG_AHRS_VALUES) {
 			if (navx != null) {
 				logNavXData();
@@ -291,13 +295,40 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 				putStringSD("PDPLogger", "Cannot log PDP values while null!");
 			}
 		}
+		
+		if (DO_LOG_GRIP_VALUES) {
+			if (table.isConnected()) {
+				logGRIPData();
+			}else {
+				putStringSD("GRIPLogger", "Cannot log GRIP values while unconnected!");
+			}
+		}
 	}
 
 	@Override
 	public String getFormattedName() {
 		return "Robot_";
 	}
-
+	
+	private void logGRIPData() {
+		double[] area = table.getNumberArray("area", defaultVal);
+		double[] width = table.getNumberArray("width", defaultVal);
+		double[] height = table.getNumberArray("height", defaultVal);
+		double[] solidity = table.getNumberArray("solidity", defaultVal);
+		double[] centerX = table.getNumberArray("centerX", defaultVal);
+		double[] centerY = table.getNumberArray("centerY", defaultVal);
+		int areasCount = area.length;
+		putNumberSD("NetworkTables_Count", areasCount);
+		for (int i=0; i<1; i++) {
+			putNumberSD("NetworkTables_Area_"+i, area[i]);
+			putNumberSD("NetworkTables_Width_"+i, width[i]);
+			putNumberSD("NetworkTables_Height_"+i, height[i]);
+			putNumberSD("NetworkTables_Solidity_"+i, solidity[i]);
+			putNumberSD("NetworkTables_CenterX_"+i, centerX[i]);
+			putNumberSD("NetworkTables_CenterY_"+i, centerY[i]);
+		}
+	}
+	
 	private void logNavXData() {
 		//	Copied from navXMXP Data Monitor Project
 
@@ -382,11 +413,12 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 	
 	private void logPDPData() {
 		SmartDashboard.putData("PDP", pdp);
+		/*
 		SmartDashboard.putNumber("PDP_Temperature", pdp.getTemperature());
 //		SmartDashboard.putNumber("PDP_Total_Current", pdp.getTotalCurrent());
 		SmartDashboard.putNumber("PDP_Total_Energy", pdp.getTotalEnergy()); // in milliJoules
 		SmartDashboard.putNumber("PDP_Total_Power", pdp.getTotalPower());
-//		SmartDashboard.putNumber("PDP_Voltage", pdp.getVoltage());
+//		SmartDashboard.putNumber("PDP_Voltage", pdp.getVoltage()); */
 	}
 	
 }
