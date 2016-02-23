@@ -4,6 +4,7 @@ import static com.team3925.robot2016.Constants.CAMERA_AIMED_X;
 import static com.team3925.robot2016.Constants.CAMERA_DEGS_PER_PX;
 
 import com.team3925.robot2016.Robot;
+import com.team3925.robot2016.subsystems.Launcher;
 import com.team3925.robot2016.util.SmartdashBoardLoggable;
 import com.team3925.robot2016.util.XboxHelper;
 
@@ -19,9 +20,8 @@ import edu.wpi.first.wpilibj.tables.ITableListener;
 //TODO: add target selection, not just first value in data arrays
 public class LaunchBallHigh extends Command implements SmartdashBoardLoggable {
 	private NetworkTable table;
-//	private GyroTurn turnCommand;
 	private TableListener tableListener = new TableListener();
-	private final LauncherPID launcherPID = Robot.launcherPID;
+	
 	
 	private double[] centerX, centerY, area, width, height;
 	private boolean isData = true;
@@ -36,12 +36,12 @@ public class LaunchBallHigh extends Command implements SmartdashBoardLoggable {
 		table = Robot.table;
 		table.addTableListener(tableListener, true);
 		calcData();
-		launcherPID.setAimEnabled(true);
-//		turnCommand = new GyroTurn();
 	}
 	
 	// Called repeatedly when this Command is scheduled to run
 	protected void execute() {
+		
+		
 		logData();
 	}
 
@@ -99,10 +99,6 @@ public class LaunchBallHigh extends Command implements SmartdashBoardLoggable {
 		public void valueChanged(ITable source, String key, Object value, boolean isNew) {
 			DriverStation.reportError("TableListener: Called calcData\n", false);
 			calcData();
-//			turnCommand.setSetpointRelative(yawOffset);
-//			if (!turnCommand.isRunning()) {
-//				turnCommand.start();
-//			}
 		}
 		
 	}

@@ -1,18 +1,11 @@
 package com.team3925.robot2016;
 
-import static com.team3925.robot2016.Constants.DO_LOG_AHRS_VALUES;
-import static com.team3925.robot2016.Constants.DO_LOG_GRIP_VALUES;
-import static com.team3925.robot2016.Constants.DO_LOG_PDP_VALUES;
-
 import com.kauailabs.navx.frc.AHRS;
 import com.team3925.robot2016.commands.AutoRoutineCenter;
 import com.team3925.robot2016.commands.AutoRoutineCourtyard;
 import com.team3925.robot2016.commands.AutoRoutineDoNothing;
 import com.team3925.robot2016.commands.CandyCane;
-import com.team3925.robot2016.commands.GyroTurn;
-import com.team3925.robot2016.commands.JankyLauncher;
 import com.team3925.robot2016.commands.LaunchBall;
-import com.team3925.robot2016.commands.LauncherPID;
 import com.team3925.robot2016.commands.ManualArms;
 import com.team3925.robot2016.commands.ManualDrive;
 import com.team3925.robot2016.commands.TrapzoidalMotionTest;
@@ -60,15 +53,13 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 	public static Arms arms;
 	
 	//Commands
-	public static LauncherPID launcherPID;
+//	public static LauncherPID launcherPID;
 	Command autoCommandGroup;
+	Command trapMotionTest;
 	Command manualDrive;
 	Command manualArms;
-	Command trapMotionTest;
-	Command jankyLauncher;
 	Command candyCaneRun;
 	Command launchBallTest;
-	Command gyroTurnTest;
 	SendableChooser autoChooser;
 	
 	
@@ -133,11 +124,8 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 		manualDrive = new ManualDrive();
 		manualArms = new ManualArms();
 		trapMotionTest = new TrapzoidalMotionTest();
-		jankyLauncher = new JankyLauncher();
-		launcherPID = new LauncherPID(Constants.LAUNCHER_AIM_KP_UP, Constants.LAUNCHER_AIM_KI_UP, Constants.LAUNCHER_AIM_KD_UP, 0d);
 		candyCaneRun = new CandyCane();
-		launchBallTest = new LaunchBall(90, 40);
-		gyroTurnTest = new GyroTurn(90);
+		launchBallTest = new LaunchBall(30, 40);
 		
 		reset();
 	}
@@ -154,8 +142,8 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 		maxAccel = 0;
 		maxVel = 0;
 		maxRotationVel = 0;
-		maxRotationAccel = 0;
-		launcherPID.reset();
+		maxRotationAccel = 0; 
+//		launcherPID.reset();
 	}
 	
 	/**
@@ -183,10 +171,9 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 		reset();
 //		autoWait.config(1);
 		
-		launcherPID.start();
-//		gyroTurnTest.start();
+		launchBallTest.start();
 		
-//		launchBallTest.start();
+		launcher.init();
 	}
 	
 	/**
@@ -199,6 +186,7 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 //			trapMotionTest.start();
 //		}
 		
+		launcher.update();
 	}
 
 	public void teleopInit() {
@@ -209,7 +197,6 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 		// this line or comment it out.
 		if (autoCommandGroup != null) autoCommandGroup.cancel();
 		
-//		jankyLauncher.start();
 		manualDrive.start();
 		manualArms.start();
 		
@@ -217,6 +204,8 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 		System.out.println("Robot has init! (Said through System.out.println)");
 		driveTrain.setPIDEnabled(false);
 		candyCaneWait.config(55d);
+		
+		launcher.init();
 	}
 
 	/**
@@ -235,6 +224,8 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 			XboxHelper.setShooterRumble(0);
 		}
 		
+		launcher.update();
+		
 		logData();
 	}
 	
@@ -249,7 +240,7 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 	public void logData() {
 		driveTrain.logData();
 		launcher.logData();
-		arms.logData();
+//		arms.logData();
 		
 		double now = Timer.getFPGATimestamp();
 		deltaTime = now - lastTimestamp;
@@ -268,41 +259,41 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 		maxRotationAccel = Math.max(maxRotationAccel, deltaRotation / deltaTime );
 		
 		
-		putNumberSD("MaxAcceleration", maxAccel);
-		putNumberSD("MaxVelocity", maxVel);
+//		putNumberSD("MaxAcceleration", maxAccel);
+//		putNumberSD("MaxVelocity", maxVel);
+//		
+//		putNumberSD("MaxRotationVelocity", maxRotationVel);
+//		putNumberSD("MaxRotationAccel", maxRotationAccel);
+//		
+//		putNumberSD("CurrentTime", Timer.getFPGATimestamp());
+//		putNumberSD("DeltaTime", deltaTime);
+//		
+//		putDataSD("Autonomous Chooser", autoChooser);
+//		putNamedDataSD(Scheduler.getInstance());
 		
-		putNumberSD("MaxRotationVelocity", maxRotationVel);
-		putNumberSD("MaxRotationAccel", maxRotationAccel);
-		
-		putNumberSD("CurrentTime", Timer.getFPGATimestamp());
-		putNumberSD("DeltaTime", deltaTime);
-		
-		putDataSD("Autonomous Chooser", autoChooser);
-		putNamedDataSD(Scheduler.getInstance());
-		
-		if (DO_LOG_AHRS_VALUES) {
+		if (Constants.DO_LOG_AHRS_VALUES) {
 			if (navx != null) {
 				logNavXData();
 			} else {
 				putStringSD("NavXLogger", "Cannot log NavX values while null!");
 			}
 		}
-		
-		if (DO_LOG_PDP_VALUES) {
-			if (pdp != null) {
-				logPDPData();
-			} else {
-				putStringSD("PDPLogger", "Cannot log PDP values while null!");
-			}
-		}
-		
-		if (DO_LOG_GRIP_VALUES) {
-			if (table.isConnected()) {
-				logGRIPData();
-			}else {
-				putStringSD("GRIPLogger", "Cannot log GRIP values while unconnected!");
-			}
-		}
+//		
+//		if (DO_LOG_PDP_VALUES) {
+//			if (pdp != null) {
+//				logPDPData();
+//			} else {
+//				putStringSD("PDPLogger", "Cannot log PDP values while null!");
+//			}
+//		}
+//		
+//		if (DO_LOG_GRIP_VALUES) {
+//			if (table.isConnected()) {
+//				logGRIPData();
+//			}else {
+//				putStringSD("GRIPLogger", "Cannot log GRIP values while unconnected!");
+//			}
+//		}
 	}
 
 	@Override
@@ -366,45 +357,45 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 		/* of these errors due to single (velocity) integration and especially      */
 		/* double (displacement) integration.                                       */
 
-		SmartDashboard.putNumber(   "Velocity_X",           navx.getVelocityX());
-		SmartDashboard.putNumber(   "Velocity_Y",           navx.getVelocityY());
-		SmartDashboard.putNumber(   "Displacement_X",       navx.getDisplacementX());
-		SmartDashboard.putNumber(   "Displacement_Y",       navx.getDisplacementY());
+		SmartDashboard.putNumber(   "IMU_Velocity_X",           navx.getVelocityX());
+		SmartDashboard.putNumber(   "IMU_Velocity_Y",           navx.getVelocityY());
+		SmartDashboard.putNumber(   "IMU_Displacement_X",       navx.getDisplacementX());
+		SmartDashboard.putNumber(   "IMU_Displacement_Y",       navx.getDisplacementY());
 
 		/* Display Raw Gyro/Accelerometer/Magnetometer Values                       */
 		/* NOTE:  These values are not normally necessary, but are made available   */
 		/* for advanced users.  Before using this data, please consider whether     */
 		/* the processed data (see above) will suit your needs.                     */
 
-		SmartDashboard.putNumber(   "RawGyro_X",            navx.getRawGyroX());
-		SmartDashboard.putNumber(   "RawGyro_Y",            navx.getRawGyroY());
-		SmartDashboard.putNumber(   "RawGyro_Z",            navx.getRawGyroZ());
-		SmartDashboard.putNumber(   "RawAccel_X",           navx.getRawAccelX());
-		SmartDashboard.putNumber(   "RawAccel_Y",           navx.getRawAccelY());
-		SmartDashboard.putNumber(   "RawAccel_Z",           navx.getRawAccelZ());
-		SmartDashboard.putNumber(   "RawMag_X",             navx.getRawMagX());
-		SmartDashboard.putNumber(   "RawMag_Y",             navx.getRawMagY());
-		SmartDashboard.putNumber(   "RawMag_Z",             navx.getRawMagZ());
+		SmartDashboard.putNumber(   "IMU_RawGyro_X",            navx.getRawGyroX());
+		SmartDashboard.putNumber(   "IMU_RawGyro_Y",            navx.getRawGyroY());
+		SmartDashboard.putNumber(   "IMU_RawGyro_Z",            navx.getRawGyroZ());
+		SmartDashboard.putNumber(   "IMU_RawAccel_X",           navx.getRawAccelX());
+		SmartDashboard.putNumber(   "IMU_RawAccel_Y",           navx.getRawAccelY());
+		SmartDashboard.putNumber(   "IMU_RawAccel_Z",           navx.getRawAccelZ());
+		SmartDashboard.putNumber(   "IMU_RawMag_X",             navx.getRawMagX());
+		SmartDashboard.putNumber(   "IMU_RawMag_Y",             navx.getRawMagY());
+		SmartDashboard.putNumber(   "IMU_RawMag_Z",             navx.getRawMagZ());
 		SmartDashboard.putNumber(   "IMU_Temp_C",           navx.getTempC());
 
 		/* Omnimount Yaw Axis Information                                           */
 		/* For more info, see http://navx-mxp.kauailabs.com/installation/omnimount  */
 		AHRS.BoardYawAxis yaw_axis = navx.getBoardYawAxis();
-		SmartDashboard.putString(   "YawAxisDirection",     yaw_axis.up ? "Up" : "Down" );
-		SmartDashboard.putNumber(   "YawAxis",              yaw_axis.board_axis.getValue() );
+		SmartDashboard.putString(   "IMU_YawAxisDirection",     yaw_axis.up ? "Up" : "Down" );
+		SmartDashboard.putNumber(   "IMU_YawAxis",              yaw_axis.board_axis.getValue() );
 
 		/* Sensor Board Information                                                 */
-		SmartDashboard.putString(   "FirmwareVersion",      navx.getFirmwareVersion());
+		SmartDashboard.putString(   "IMU_FirmwareVersion",      navx.getFirmwareVersion());
 
 		/* Quaternion Data                                                          */
 		/* Quaternions are fascinating, and are the most compact representation of  */
 		/* orientation data.  All of the Yaw, Pitch and Roll Values can be derived  */
 		/* from the Quaternions.  If interested in motion processing, knowledge of  */
 		/* Quaternions is highly recommended.                                       */
-		SmartDashboard.putNumber(   "QuaternionW",          navx.getQuaternionW());
-		SmartDashboard.putNumber(   "QuaternionX",          navx.getQuaternionX());
-		SmartDashboard.putNumber(   "QuaternionY",          navx.getQuaternionY());
-		SmartDashboard.putNumber(   "QuaternionZ",          navx.getQuaternionZ());
+		SmartDashboard.putNumber(   "IMU_QuaternionW",          navx.getQuaternionW());
+		SmartDashboard.putNumber(   "IMU_QuaternionX",          navx.getQuaternionX());
+		SmartDashboard.putNumber(   "IMU_QuaternionY",          navx.getQuaternionY());
+		SmartDashboard.putNumber(   "IMU_QuaternionZ",          navx.getQuaternionZ());
 
 		/* Connectivity Debugging Support                                           */
 		SmartDashboard.putNumber(   "IMU_Byte_Count",       navx.getByteCount());

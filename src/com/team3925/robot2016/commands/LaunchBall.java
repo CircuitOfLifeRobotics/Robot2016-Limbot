@@ -1,64 +1,75 @@
 package com.team3925.robot2016.commands;
 
 import com.team3925.robot2016.Robot;
+import com.team3925.robot2016.subsystems.Launcher;
+import com.team3925.robot2016.util.SmartdashBoardLoggable;
 import com.team3925.robot2016.util.TimeoutAction;
 
 import edu.wpi.first.wpilibj.command.Command;
 
 enum State {
-	HORIZ_AIMING, VERT_AIMING, SHOOTING, DONE;
+	BEGIN_WAIT, HORIZ_AIMING, VERT_AIMING, SHOOTING, DONE;
 }
 
-public class LaunchBall extends Command {
+public class LaunchBall extends Command implements SmartdashBoardLoggable {
 	
 	GyroTurn turnCommand;
-	LauncherPID launcherPID = Robot.launcherPID;
-	TimeoutAction timer = new TimeoutAction();
-	State state = State.HORIZ_AIMING;
+	Launcher launcher = Robot.launcher;
+	TimeoutAction timeout = new TimeoutAction();
+	State state;
 	
 	double horizDeltaSetpoint, horizDelta, vertSetpoint;
 	
-	public LaunchBall(double horizAimSetpoint, double vertAimSetpoint) {
-		horizDeltaSetpoint = horizAimSetpoint;
+	public LaunchBall(double horizAimDeltaSetpoint, double vertAimSetpoint) {
+		horizDeltaSetpoint = horizAimDeltaSetpoint;
 		vertSetpoint = vertAimSetpoint;
 	}
 	
 	public void reset() {
-		launcherPID.setAimSetpoint(0);
-		launcherPID.setIntakeSetpoint(0);
-		timer.config(5);
+		launcher.setAimSetpoint(0);
+		launcher.setIntakeSetpoint(0);
+		timeout.config(0.2);
 	}
 	
 	@Override
 	protected void initialize() {
 		turnCommand = new GyroTurn(horizDeltaSetpoint);
 		reset();
+		state = State.BEGIN_WAIT;
 		turnCommand.start();
 	}
 	
 	@Override
 	protected void execute() {
 		switch (state) {
+		case BEGIN_WAIT:
+			if (timeout.isFinished()) {
+				timeout.config(5);
+				state = State.HORIZ_AIMING;
+			}
+			break;
 		case HORIZ_AIMING:
-			if ((!turnCommand.isRunning()) || timer.isFinished()) {
-				launcherPID.setAimEnabled(true);
-				launcherPID.setIntakeEnabled(true);
-				launcherPID.setAimSetpoint(vertSetpoint);
-				launcherPID.setIntakeSetpoint(20000);
-				timer.config(5);
+			if (!turnCommand.isRunning() || timeout.isFinished()) {
+				launcher.enableAim(true);
+				launcher.enableIntake(true);
+				launcher.setAimSetpoint(vertSetpoint);
+				launcher.setIntakeSetpoint(20000);
+				timeout.config(5);
 				state = State.VERT_AIMING;
 			}
 			break;
 		case VERT_AIMING:
-			if ((launcherPID.isAimOnSetpoint() && launcherPID.isIntakeOnSetpoint()) || timer.isFinished()) {
-				launcherPID.setPuncher(true);
-				timer.config(0.1);
+			if ((launcher.isAimOnSetpoint() && launcher.isIntakeOnSetpoint()) || timeout.isFinished()) {
+				launcher.setPuncher(true);
+				timeout.config(0.1);
 				state = State.SHOOTING;
 			}
 			break;
 		case SHOOTING:
-			if (timer.isFinished()) {
-				launcherPID.setPuncher(false);
+			if (timeout.isFinished()) {
+				launcher.setPuncher(false);
+				launcher.setIntakeSetpoint(0);
+				launcher.setAimSetpoint(0);
 				state = State.DONE;
 			}
 			break;
@@ -66,6 +77,8 @@ public class LaunchBall extends Command {
 			end();
 			break;
 		}
+		
+		logData();
 	}
 	
 	@Override
@@ -78,8 +91,19 @@ public class LaunchBall extends Command {
 	
 	@Override
 	protected void interrupted() {
-		launcherPID.setAimSetpoint(0);
-		launcherPID.setIntakeSetpoint(0);
+		launcher.setAimSetpoint(0);
+		launcher.setIntakeSetpoint(0);
+	}
+
+	@Override
+	public void logData() {
+		putStringSD("State", state.toString());
+		putBooleanSD("TurnCommandRunning", turnCommand.isRunning());
+	}
+
+	@Override
+	public String getFormattedName() {
+		return "LaunchBall_";
 	}
 	
 }

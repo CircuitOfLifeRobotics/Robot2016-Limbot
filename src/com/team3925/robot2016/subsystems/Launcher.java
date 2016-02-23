@@ -3,17 +3,19 @@ package com.team3925.robot2016.subsystems;
 import static com.team3925.robot2016.Constants.LAUNCHER_AIM_MOTOR_SPEED_MULTIPLIED;
 
 import com.team3925.robot2016.Constants;
-import com.team3925.robot2016.Robot;
 import com.team3925.robot2016.RobotMap;
 import com.team3925.robot2016.util.LimitPIDController;
+import com.team3925.robot2016.util.MiscUtil;
 import com.team3925.robot2016.util.SmartdashBoardLoggable;
+import com.team3925.robot2016.util.TimeoutAction;
+import com.team3925.robot2016.util.XboxHelper;
 
 import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.CANTalon.TalonControlMode;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.command.Subsystem;
-import edu.wpi.first.wpilibj.livewindow.LiveWindow;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 
 /**
@@ -26,12 +28,82 @@ public class Launcher extends Subsystem implements SmartdashBoardLoggable {
     private final CANTalon motorAim = RobotMap.launcherMotorAim;
     private final DoubleSolenoid puncherSolenoid = RobotMap.launcherPuncherSolenoid;
     private LimitPIDController pidLoop = new LimitPIDController();
+    private TimeoutAction manualPuncherWait = new TimeoutAction();
 //    Sensor for ball goes here
+    
+    private boolean aimEnabled = true, intakeEnabled = true, doRunAim = true, aimOnTarget = false, intakeOnTarget = false;
+	private double aimSetpoint, aimSetpointDiff, aimLastSetpoint, aimLimitedSetpoint, aimPosition, aimDifference, aimOutput, aimAngleMultiplier;
+	private double intakeSetpoint, intakeLimitedSetpoint, intakeSetpointDiff, intakeLastSetpoint/*, intakeSpeedLeft, intakeSpeedRight*/;
     
     private boolean hasBall = false;
 	
-	public void init() {}
+	public void init() {
+		pidLoop.setPID(Constants.LAUNCHER_AIM_KP, Constants.LAUNCHER_AIM_KI, Constants.LAUNCHER_AIM_KD);
+		pidLoop.setPIDLimits(10000, 10000, 10000, 10000, -10000, -10000, -10000, -10000);
+		
+		setIntakeProfile(0);
+		setAimSetpoint(0);
+		setIntakeSetpoint(0);
+		
+		intakeSetpoint = 0;
+		intakeLimitedSetpoint = 0;
+		intakeLastSetpoint = 0;
+		aimLimitedSetpoint = 0;
+		aimSetpoint = 0;
+		aimLastSetpoint = 0;
+//		intakeSpeedLeft = intakeSpeedRight = 0;
+	}
     
+	/**
+	 * Returns true if the intake wheels are both at the specified speed
+	 * 
+	 * @return intakeOnTarget
+	 */
+	public boolean isIntakeOnSetpoint() {
+		return intakeOnTarget;
+	}
+	
+	/**
+	 * Returns true if the aim position is at the specified setpoint angle
+	 * and the aim is stable (not moving)
+	 * 
+	 * @return aimOnTarget
+	 */
+	public boolean isAimOnSetpoint() {
+		return aimOnTarget;
+	}
+	
+	/**
+	 * Sets the setpoint of the aim motor
+	 * In degrees
+	 * 
+	 * @param setpoint
+	 */
+	public void setAimSetpoint(double setpoint) {
+//		setpoint = Math.max(0, Math.min(Constants.LAUNCHER_MAX_HEIGHT, setpoint));
+		aimSetpoint = setpoint;
+		SmartDashboard.putNumber("AimSetpointLauncher", setpoint);
+	}
+	
+	/**
+	 * Sets the setpoint of the intake motors
+	 * TODO: change to easier units
+	 * In native units per 100 ms
+	 * 
+	 * @param setpoint
+	 */
+	public void setIntakeSetpoint(double setpoint) {
+		intakeSetpoint = Math.max(-26000, Math.min(26000, setpoint));
+	}
+	
+	public double getIntakeSetpointLeft() {
+		return motorLeft.getSetpoint();
+	}
+	
+	public double getIntakeSetpointRight() {
+		return motorRight.getSetpoint();
+	}
+	
 	public double getIntakeSpeedRight() {
 		return motorRight.getEncVelocity();
 	}
@@ -48,12 +120,123 @@ public class Launcher extends Subsystem implements SmartdashBoardLoggable {
 		return motorRight.getEncPosition();
 	}
 	
+	public void enableAim(boolean isEnable) {
+		aimEnabled = isEnable;
+	}
+	
+	public void enableIntake(boolean isEnable) {
+		intakeEnabled = isEnable;
+	}
+	
+	public boolean getAimEnabled() {
+		return aimEnabled;
+	}
+	
+	public boolean getIntakeEnabled() {
+		return intakeEnabled;
+	}
+	
 	public void update() {
 		hasBall = false; //TODO add sensor for ball
+		
+		if (aimEnabled) {
+//			aimSetpoint = XboxHelper.getShooterButton(XboxHelper.TRIGGER_LT) ? MiscUtil.joystickToDegrees(XboxHelper.getShooterAxis(XboxHelper.AXIS_LEFT_Y)):aimSetpoint;
+			aimLimitedSetpoint = aimSetpoint;
+			aimPosition = MiscUtil.aimEncoderTicksToDegrees(getAimMotorPosition());
+			aimDifference = aimLimitedSetpoint - aimPosition;
+			aimSetpointDiff = aimLimitedSetpoint - aimLastSetpoint;
+			
+			if (Math.abs(aimSetpointDiff) > Constants.LAUNCHER_AIM_INCREMENT) {
+				aimLimitedSetpoint = aimLastSetpoint + Constants.LAUNCHER_AIM_INCREMENT * (aimSetpointDiff>0 ? 1:-1);
+			}
+			
+			aimOnTarget = Math.abs(aimSetpointDiff) < Constants.LAUNCHER_AIM_TOLERANCE && Math.abs(getAimMotorSpeed()) < 1000;
+			
+			doRunAim = (aimPosition>Constants.LAUNCHER_AIM_INCREMENT) || (Math.abs(aimSetpointDiff)>Constants.LAUNCHER_AIM_INCREMENT);
+			
+			pidLoop.setSetpoint(aimLimitedSetpoint);
+			pidLoop.calculate(aimPosition);
+			aimOutput = pidLoop.get();
+			aimAngleMultiplier = 0.4*Math.cos(Math.toRadians(aimPosition))+0.06;
+			aimOutput = aimOutput * aimAngleMultiplier;
+			aimOutput = Math.min(Math.max(aimOutput, -0.2), 0.8);
+			
+			if (doRunAim) {
+				setAim(aimOutput);
+			}else {
+				setAim(0);
+			}
+		} else {
+			setAim(0);
+			//launcher.setAim(on vacation);
+		}
+		
+//		intakeSpeedLeft = getIntakeSpeedLeft();
+//		intakeSpeedRight = getIntakeSpeedRight();
+		
+		double tempIntakeDiffLeft = Math.abs(getIntakeLeftError());
+		double tempIntakeDiffRight = Math.abs(getIntakeRightError());
+		intakeOnTarget = tempIntakeDiffLeft<Constants.LAUNCHER_WHEELS_TOLERANCE &&
+				tempIntakeDiffRight<Constants.LAUNCHER_WHEELS_TOLERANCE;
+		
+		/* TODO: get the acutal number of encoder counts per rev
+		 * Encoder counts per rev?
+		 * 15266664
+		 * 4316 
+		 * 7301
+		 * ~6000
+		 * 4246 -> 7250
+		 */
+		
+		if (intakeEnabled) {
+			if (XboxHelper.getShooterButton(XboxHelper.START)) {intakeSetpoint = 0;}
+//			else if (XboxHelper.getShooterButton(XboxHelper.Y)) {intakeOutput = 1;}
+//			else if (XboxHelper.getShooterButton(XboxHelper.X)) {intakeOutput = 0.2;}
+//			else if (XboxHelper.getShooterButton(XboxHelper.B)) {intakeOutput = -0.2;}
+//			else if (XboxHelper.getShooterButton(XboxHelper.A)) {intakeOutput = -1;}
+//			else if (XboxHelper.getShooterButton(XboxHelper.Y)) {intakeSetpoint = 25000;}
+//			else if (XboxHelper.getShooterButton(XboxHelper.X)) {intakeSetpoint = 4000;}
+//			else if (XboxHelper.getShooterButton(XboxHelper.B)) {intakeSetpoint = -4000;}
+//			else if (XboxHelper.getShooterButton(XboxHelper.A)) {intakeSetpoint = -25000;}
+			
+			intakeLimitedSetpoint = intakeSetpoint;
+			intakeSetpointDiff = intakeSetpoint - intakeLastSetpoint;
+			
+			if (Math.abs(intakeSetpointDiff) > Constants.LAUNCHER_INTAKE_INCREMENT) {
+				intakeLimitedSetpoint = intakeLastSetpoint + Constants.LAUNCHER_INTAKE_INCREMENT * (intakeSetpointDiff>0 ? 1:-1);
+			}
+			
+			setIntake(intakeLimitedSetpoint);
+		} else {
+			setIntake(0);
+			//launcher.setIntake(on vacation);
+		}
+		
+		if (XboxHelper.getDriverButton(XboxHelper.B)) {
+			setPuncher(true);
+			manualPuncherWait.config(0.1);
+		}
+		if (manualPuncherWait.isFinished()) {
+			setPuncher(false);
+			manualPuncherWait.config(99999);
+		}
+		
+		logData();
+		
+		aimLastSetpoint = aimLimitedSetpoint;
+		intakeLastSetpoint = intakeLimitedSetpoint;
 	}
 	
 	public boolean hasBall() {
 		return hasBall;
+	}
+	
+	public double getIntakeLeftError() {
+		return motorLeft.getError();
+	}
+	
+	public double getIntakeRightError() {
+		return motorRight.getError();
 	}
 	
 	public double getAimMotorPosition() {
@@ -65,10 +248,11 @@ public class Launcher extends Subsystem implements SmartdashBoardLoggable {
 	}
 	
 	public void setPuncher(boolean isHigh) {
-		puncherSolenoid.set(isHigh ? Value.kForward:Value.kReverse);
+		//reverse isHigh for practice bot
+		puncherSolenoid.set(!isHigh ? Value.kReverse:Value.kForward);
 	}
 	
-    public void setIntake(double speed) {
+    private void setIntake(double speed) {
     	motorLeft.set(speed);
     	motorRight.set(speed);
     }
@@ -105,7 +289,7 @@ public class Launcher extends Subsystem implements SmartdashBoardLoggable {
     	motorRight.setProfile(profile);
     }
     
-    public void setAim(double output) {
+    private void setAim(double output) {
     	motorAim.set(output);
     }
     
@@ -120,24 +304,6 @@ public class Launcher extends Subsystem implements SmartdashBoardLoggable {
     	motorAim.set(speed * LAUNCHER_AIM_MOTOR_SPEED_MULTIPLIED);
     }
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
     @Override
     public void logData() {
 //    	putNumberSD("MotorLeft", motorLeft.get());
@@ -147,11 +313,15 @@ public class Launcher extends Subsystem implements SmartdashBoardLoggable {
 //    	putStringSD("MotorAimMode", motorAim.getControlMode().toString());
     	putNumberSD("EncoderAimPos", getAimMotorPosition());
     	
+    	putNumberSD("AimSetpoint", aimSetpoint);
+    	putNumberSD("IntakeSetpoint", intakeSetpoint);
+    	
     	putNumberSD("MotorRightSetpoint", motorRight.getSetpoint());
     	putNumberSD("MotorLeftSetpoint", motorLeft.getSetpoint());
+    	putNumberSD("IntakeSetpointDiff", intakeSetpointDiff);
     	
-    	putNumberSD("MotorRightEncPos", motorRight.getEncPosition());
-    	putNumberSD("MotorLeftEncPos", motorLeft.getEncPosition());
+//    	putNumberSD("MotorRightEncPos", motorRight.getEncPosition());
+//    	putNumberSD("MotorLeftEncPos", motorLeft.getEncPosition());
     	
     	putNumberSD("MotorRightEncVeloctiy", motorRight.getEncVelocity());
     	putNumberSD("MotorLeftEncVeloctiy", motorLeft.getEncVelocity());
@@ -162,10 +332,10 @@ public class Launcher extends Subsystem implements SmartdashBoardLoggable {
     	putNumberSD("MotorRightError", motorRight.getError());
     	putNumberSD("MotorLeftError", motorLeft.getError());
     	
-    	putNumberSD("MotorRightOutV", motorRight.getOutputVoltage());
-    	putNumberSD("MotorRightOutC", motorRight.getOutputCurrent());
-    	putNumberSD("MotorLeftOutV", motorLeft.getOutputVoltage());
-    	putNumberSD("MotorLeftOutC", motorLeft.getOutputCurrent());
+//    	putNumberSD("MotorRightOutV", motorRight.getOutputVoltage());
+//    	putNumberSD("MotorRightOutC", motorRight.getOutputCurrent());
+//    	putNumberSD("MotorLeftOutV", motorLeft.getOutputVoltage());
+//    	putNumberSD("MotorLeftOutC", motorLeft.getOutputCurrent());
     	
 //    	putNumberSD("MotorRightAnalogInRaw", motorRight.getAnalogInRaw());
 //    	putNumberSD("MotorLeftAnalogInRaw", motorLeft.getAnalogInRaw());

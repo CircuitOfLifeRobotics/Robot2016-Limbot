@@ -30,11 +30,11 @@ public class XboxHelper {
 	STICK_RIGHT = 10,
 	
 	AXIS_LEFT_Y = 1,
-	AXIS_LEFT_X = 2,
-	AXIS_RIGHT_Y = 3,
+	AXIS_LEFT_X = 0,
+	AXIS_RIGHT_Y = 5,
 	AXIS_RIGHT_X = 4,
-	AXIS_TRIGGER_LEFT = 5,
-	AXIS_TRIGGER_RIGHT = 6;
+	AXIS_TRIGGER_LEFT = 2,
+	AXIS_TRIGGER_RIGHT = 3;
 	
 	private static boolean hasInit = false;
 	

@@ -13,9 +13,9 @@ public class GyroTurn extends PIDCommand implements SmartdashBoardLoggable {
 	
 	DriveTrain driveTrain = Robot.driveTrain;
 	AHRS navx = Robot.navx;
-	private double startAngle, targetAngle, currentAngle, lastAngle, errorAngle, rotations, relativeSetpoint;
-	private DriveTrainSignal output = DriveTrainSignal.NEUTRAL;
+	private double startAngle, targetAngle, currentAngle, lastAngle, errorAngle, rotations, relativeSetpoint, deltaRotation;
 	private boolean isRunning = true;
+	private double fwdOutput = 0.3;
 	
 	public GyroTurn() {
 		super(Constants.GYROTURN_P, Constants.GYROTURN_I, Constants.GYROTURN_D);
@@ -48,11 +48,7 @@ public class GyroTurn extends PIDCommand implements SmartdashBoardLoggable {
 	@Override
 	protected void usePIDOutput(double output) {
 		//when positive output, turn clockwise, left side fwd
-		output += Constants.GYROTURN_F * (output>0 ? 1:-1);
-		output = Math.max(-0.6, Math.min(0.6, output));
-		this.output.left = -output * 1.2;
-		this.output.right = output;
-		driveTrain.setMotorSpeeds(this.output);
+		driveTrain.arcadeDrive(fwdOutput, output, false);
 	}
 	
 	@Override
@@ -63,13 +59,19 @@ public class GyroTurn extends PIDCommand implements SmartdashBoardLoggable {
 		}
 		errorAngle = targetAngle - currentAngle - rotations*360;
 		
+		deltaRotation = currentAngle - lastAngle;
+		
+//		if (Math.abs(deltaRotation) < 0.001) {
+//			fwdOutput += 0.05;
+//		}
+		
 		lastAngle = currentAngle;
 		logData();
 	}
 	
 	@Override
 	protected boolean isFinished() {
-		return Math.abs(currentAngle-targetAngle) < Constants.GYROTURN_POS_TOLERANCE;
+		return Math.abs(currentAngle-targetAngle) < Constants.GYROTURN_POS_TOLERANCE && Math.abs(deltaRotation) < 0.4;
 	}
 	
 	@Override
@@ -89,10 +91,10 @@ public class GyroTurn extends PIDCommand implements SmartdashBoardLoggable {
 		putNumberSD("CurrentAngle", currentAngle);
 		putNumberSD("TargetAngle", targetAngle);
 		putNumberSD("ErrorAngle", errorAngle);
-		putNumberSD("OutputLeft", output.left);
-		putNumberSD("OutputRight", output.right);
 		putNumberSD("Rotations", rotations);
 		putBooleanSD("IsRunning", isRunning );
+		putNumberSD("DeltaRotations", deltaRotation);
+		putNumberSD("FwdOutput", fwdOutput);
 	}
 
 	@Override

@@ -3,9 +3,11 @@ package com.team3925.robot2016;
 import com.team3925.robot2016.commands.AutoRoutineCenter;
 import com.team3925.robot2016.commands.AutoRoutineCourtyard;
 import com.team3925.robot2016.commands.CollectBall;
+import com.team3925.robot2016.commands.FeedBall;
 import com.team3925.robot2016.commands.LaunchBallHigh;
 import com.team3925.robot2016.commands.LaunchBallLow;
 import com.team3925.robot2016.commands.ManualDrive;
+import com.team3925.robot2016.commands.ThrowBall;
 import com.team3925.robot2016.util.XboxHelper;
 
 import edu.wpi.first.wpilibj.Joystick;
@@ -51,29 +53,34 @@ public class OI {
     public Button startCollectBall;
     public Button startLaunchBallLow;
     public Button startLaunchBallHigh;
-
+    
     public OI() {
 
     	xboxDriver = new Joystick(0);
     	xboxShooter = new Joystick(1);
     	
-    	startCollectBall = new JoystickButton(xboxShooter, XboxHelper.BACK);
-    	startCollectBall.whenPressed(new CollectBall());
+//    	startCollectBall = new JoystickButton(xboxDriver, XboxHelper.A);
+//    	startCollectBall.whenPressed(new FeedBall());
 		
-    	startLaunchBallLow = new JoystickButton(xboxShooter, XboxHelper.BACK);
-    	startLaunchBallLow.whenPressed(new LaunchBallLow());
+//    	startLaunchBallLow = new JoystickButton(xboxShooter, XboxHelper.BACK);
+//    	startLaunchBallLow.whenPressed(new LaunchBallLow());
     	
-    	startLaunchBallHigh = new JoystickButton(xboxShooter, XboxHelper.BACK);
-    	startLaunchBallHigh.whenPressed(new LaunchBallHigh());
+//    	startLaunchBallHigh = new JoystickButton(xboxDriver, XboxHelper.Y);
+//    	startLaunchBallHigh.whenPressed(new ThrowBall());
+    	
+    	
     	
     	
         // SmartDashboard Buttons
-        SmartDashboard.putData("ManualDrive", new ManualDrive());
-        SmartDashboard.putData("LaunchBall", new LaunchBallHigh());
-        SmartDashboard.putData("CollectBall", new CollectBall());
-        SmartDashboard.putData("AutoRoutineCenter", new AutoRoutineCenter());
-        SmartDashboard.putData("AutoRoutineCourtyard", new AutoRoutineCourtyard());
+//        SmartDashboard.putData("ManualDrive", new ManualDrive());
+//        SmartDashboard.putData("LaunchBall", new LaunchBallHigh());
+//        SmartDashboard.putData("CollectBall", new CollectBall());
+//        SmartDashboard.putData("AutoRoutineCenter", new AutoRoutineCenter());
+//        SmartDashboard.putData("AutoRoutineCourtyard", new AutoRoutineCourtyard());
         
+//    	SmartDashboard.putData("ThrowBall", new ThrowBall());
+//    	SmartDashboard.putData("FeedBall", new FeedBall());
+    	
     }
 
 }

@@ -73,36 +73,42 @@ public class RobotMap {
         driveTrainMotorLeftA.setInverted(invertLeft);
         driveTrainMotorLeftA.changeControlMode(TalonControlMode.PercentVbus);
         driveTrainMotorLeftA.setVoltageRampRate(Constants.DRIVE_TRAIN_VOLTAGE_RAMP_RATE);
+        driveTrainMotorLeftA.enableBrakeMode(true);
         
         driveTrainMotorLeftB = new CANTalon(19);
         LiveWindow.addActuator("DriveTrain", "MotorLeftB", driveTrainMotorLeftB);
         driveTrainMotorLeftB.setInverted(invertLeft);
         driveTrainMotorLeftB.changeControlMode(TalonControlMode.PercentVbus);
         driveTrainMotorLeftB.setVoltageRampRate(Constants.DRIVE_TRAIN_VOLTAGE_RAMP_RATE);
+        driveTrainMotorLeftB.enableBrakeMode(true);
         
         driveTrainMotorLeftC = new CANTalon(18);
         LiveWindow.addActuator("DriveTrain", "MotorLeftC", driveTrainMotorLeftC);
         driveTrainMotorLeftC.setInverted(invertLeft);
         driveTrainMotorLeftC.changeControlMode(TalonControlMode.PercentVbus);
         driveTrainMotorLeftC.setVoltageRampRate(Constants.DRIVE_TRAIN_VOLTAGE_RAMP_RATE);
+        driveTrainMotorLeftC.enableBrakeMode(true);
         
         driveTrainMotorRightA = new CANTalon(17);
         LiveWindow.addActuator("DriveTrain", "MotorRightA", driveTrainMotorRightA);
         driveTrainMotorRightA.setInverted(invertRight);
         driveTrainMotorRightA.changeControlMode(TalonControlMode.PercentVbus);
         driveTrainMotorRightA.setVoltageRampRate(Constants.DRIVE_TRAIN_VOLTAGE_RAMP_RATE);
+        driveTrainMotorRightA.enableBrakeMode(true);
         
         driveTrainMotorRightB = new CANTalon(16);
         LiveWindow.addActuator("DriveTrain", "MotorRightB", driveTrainMotorRightB);
         driveTrainMotorRightB.setInverted(invertRight);
         driveTrainMotorRightB.changeControlMode(TalonControlMode.PercentVbus);
         driveTrainMotorRightB.setVoltageRampRate(Constants.DRIVE_TRAIN_VOLTAGE_RAMP_RATE);
+        driveTrainMotorRightB.enableBrakeMode(true);
         
         driveTrainMotorRightC = new CANTalon(15);
         LiveWindow.addActuator("DriveTrain", "MotorRightC", driveTrainMotorRightC);
         driveTrainMotorRightC.setInverted(invertRight);
         driveTrainMotorRightC.changeControlMode(TalonControlMode.PercentVbus);
         driveTrainMotorRightC.setVoltageRampRate(Constants.DRIVE_TRAIN_VOLTAGE_RAMP_RATE);
+        driveTrainMotorRightC.enableBrakeMode(true);
        
         
         driveTrainEncoderLeft = new Encoder(0, 1, false, EncodingType.k4X);
@@ -152,8 +158,8 @@ public class RobotMap {
         launcherMotorLeft.setFeedbackDevice(FeedbackDevice.QuadEncoder);
         launcherMotorLeft.changeControlMode(TalonControlMode.Speed);
 //        launcherMotorLeft.changeControlMode(TalonControlMode.PercentVbus);
-        launcherMotorLeft.setInverted(false);
-        launcherMotorLeft.reverseSensor(true);
+        launcherMotorLeft.setInverted(true);
+        launcherMotorLeft.reverseSensor(false);
 //        launcherMotorLeft.configEncoderCodesPerRev(4096);
         
         launcherMotorRight = new CANTalon(14);

@@ -53,7 +53,7 @@ public class ManualArms extends Command implements SmartdashBoardLoggable {
 	@Override
 	public void logData() {
 		putNumberSD("ArmValue", armVal);
-		putNumberSD("JoystickVal", joystickVal);
+		putNumberSD("JoystickValYOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO", joystickVal);
 		putNumberSD("ClimbMotorSetpoint", arms.getClimbSetpoint());
 	}
 
@@ -61,5 +61,5 @@ public class ManualArms extends Command implements SmartdashBoardLoggable {
 	public String getFormattedName() {
 		return "ManualArms_";
 	}
-
+	
 }
