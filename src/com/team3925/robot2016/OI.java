@@ -7,7 +7,7 @@ import com.team3925.robot2016.commands.FeedBall;
 import com.team3925.robot2016.commands.LaunchBallHigh;
 import com.team3925.robot2016.commands.LaunchBallLow;
 import com.team3925.robot2016.commands.ManualDrive;
-import com.team3925.robot2016.commands.ThrowBall;
+import com.team3925.robot2016.commands.VerticalAim;
 import com.team3925.robot2016.util.XboxHelper;
 
 import edu.wpi.first.wpilibj.Joystick;

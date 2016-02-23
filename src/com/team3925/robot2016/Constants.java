@@ -32,8 +32,8 @@ public class Constants {
 	
 	
 //	DRIVETRAIN CONSTANTS
-	public static final double GLOBAL_MAX_DRIVE_TRAIN_PWR = 0.8;//Robot.prefs.getDouble("Max DriveTrain Pwr", 1);
-	public static final double DRIVE_TRAIN_VOLTAGE_RAMP_RATE = 0.3;
+	public static final double GLOBAL_MAX_DRIVE_TRAIN_PWR = 1;//Robot.prefs.getDouble("Max DriveTrain Pwr", 1);
+	public static final double DRIVE_TRAIN_VOLTAGE_RAMP_RATE = 1.1;
 	
 //	Straight Gyro Drive PID Constants
 	//TODO: tune gyro straight drive pid
@@ -57,7 +57,7 @@ public class Constants {
 	public static final double LAUNCHER_AIM_RAMP_RATE = 5;//ramp rate is maximum acceleration in voltage/second
 	public static final int LAUNCHER_AIM_IZONE = 0; // izone eliminates
 	
-	public static final double LAUNCHER_WHEELS_KP = 0.4;
+	public static final double LAUNCHER_WHEELS_KP = 0.04;
 	public static final double LAUNCHER_WHEELS_KI = 0;
 	public static final double LAUNCHER_WHEELS_KD = 4;
 	public static final double LAUNCHER_WHEELS_KF = 0/*0.04092*/;
@@ -69,7 +69,7 @@ public class Constants {
 	
 //	Drivetrain PID Constants
 	// DRIVETRAIN CONSTANTS
-	public static final double MAX_DRIVETRAIN_ACCEL_PWR_PER_TICK = 0.1;
+	public static final double MAX_DRIVETRAIN_ACCEL_PWR_PER_TICK = 1;
 	
 	private static final int DRIVETRAIN_ENCODER_TICKS = 128 * 4;
 	public static final double DRIVETRAIN_ENCODER_FACTOR = Math.PI * WHEEL_DIAMETER / DRIVETRAIN_ENCODER_TICKS * (97d/77d);
@@ -106,6 +106,7 @@ public class Constants {
     public static final double CAMERA_FOV_PIX = 320;
     public static final double CAMERA_DEGS_PER_PX = CAMERA_FOV_DEG/CAMERA_FOV_PIX;
     public static final double CAMERA_TARGET_WIDTH = 5d/3d;//in feet
+    
     public static final double GYROTURN_POS_TOLERANCE = 3;
     public static final double GYROTURN_RATE_TOLERANCE = 0.1;
     

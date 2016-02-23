@@ -25,7 +25,7 @@ public class ManualArms extends Command implements SmartdashBoardLoggable {
 
 	@Override
 	protected void execute() {
-		joystickVal = XboxHelper.getShooterAxis(XboxHelper.AXIS_TRIGGER_LEFT);
+		joystickVal = XboxHelper.getShooterAxis(XboxHelper.AXIS_RIGHT_Y);
 		armVal = XboxHelper.getDriverAxis(2);
 		arms.setArm(armVal>0.5);
 		arms.setClimbMotor(joystickVal);

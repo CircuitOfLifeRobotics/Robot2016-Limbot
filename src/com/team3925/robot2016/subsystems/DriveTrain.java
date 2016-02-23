@@ -23,8 +23,10 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class DriveTrain extends Subsystem implements SmartdashBoardLoggable {
 
 	private final AHRS navx = Robot.navx;
+	//DELETE ON COMP BOT
 	private final CANTalon motorLeftA = RobotMap.driveTrainMotorLeftA;
 	private final CANTalon motorRightA = RobotMap.driveTrainMotorRightA;
+	//END DELETE ON COMP BOT
 	private final CANTalon motorLeftB = RobotMap.driveTrainMotorLeftB;
 	private final CANTalon motorRightB = RobotMap.driveTrainMotorRightB;
 	private final CANTalon motorLeftC = RobotMap.driveTrainMotorLeftC;
@@ -32,8 +34,10 @@ public class DriveTrain extends Subsystem implements SmartdashBoardLoggable {
     private final Encoder encoderLeft = RobotMap.driveTrainEncoderLeft;
     private final Encoder encoderRight = RobotMap.driveTrainEncoderRight;
     private final DoubleSolenoid shifterSolenoid = RobotMap.driveTrainShifterSolenoid;
+    //DELETE ON COMP BOT
     private final PIDController pidLeft = RobotMap.driveTrainPIDLeft;
     private final PIDController pidRight = RobotMap.driveTrainPIDRight;
+    //END DELETE ON COMP BOT
     
     private Pose cached_pose = new Pose(0, 0, 0, 0, 0, 0);
     private double maxErrorLeft = 0;
@@ -41,18 +45,20 @@ public class DriveTrain extends Subsystem implements SmartdashBoardLoggable {
     
     
     public void setMotorSpeeds(DriveTrainSignal input) {
+    	//DELETE ON COMP BOT
     	motorLeftA.set(MiscUtil.limit(input.left * GLOBAL_MAX_DRIVE_TRAIN_PWR));
     	motorRightA.set(MiscUtil.limit(input.right * GLOBAL_MAX_DRIVE_TRAIN_PWR));
+    	//END DELETE ON COMP BOT
     	motorLeftB.set(MiscUtil.limit(input.left * GLOBAL_MAX_DRIVE_TRAIN_PWR));
     	motorRightB.set(MiscUtil.limit(input.right * GLOBAL_MAX_DRIVE_TRAIN_PWR));
     	motorLeftC.set(MiscUtil.limit(input.left * GLOBAL_MAX_DRIVE_TRAIN_PWR));
     	motorRightC.set(MiscUtil.limit(input.right * GLOBAL_MAX_DRIVE_TRAIN_PWR));
     }
     
-    public void setSetpoint(DriveTrainSignal setpoints) {
-    	pidLeft.setSetpoint(setpoints.left);
-    	pidRight.setSetpoint(setpoints.right);
-    }
+//    public void setSetpoint(DriveTrainSignal setpoints) {
+//    	pidLeft.setSetpoint(setpoints.left);
+//    	pidRight.setSetpoint(setpoints.right);
+//    }
     
     public void setHighGear(boolean highGear) {
     	shifterSolenoid.set(highGear ? Value.kReverse : Value.kForward);
@@ -67,24 +73,24 @@ public class DriveTrain extends Subsystem implements SmartdashBoardLoggable {
     	return shifterSolenoid.get() == Value.kReverse;
     }
     
-    public void setPIDEnabled(boolean enabled) {
-    	if (enabled) {
-			pidLeft.reset();
-			pidRight.reset();
-			maxErrorLeft = maxErrorRight = 0;
-		} else {
-			pidLeft.disable();
-			pidRight.disable();
-		}
-    }
+//    public void setPIDEnabled(boolean enabled) {
+//    	if (enabled) {
+//			pidLeft.reset();
+//			pidRight.reset();
+//			maxErrorLeft = maxErrorRight = 0;
+//		} else {
+//			pidLeft.disable();
+//			pidRight.disable();
+//		}
+//    }
     
-    public boolean getPIDEnabled() {
-    	return pidLeft.isEnabled() == pidRight.isEnabled() == true;
-    }
+//    public boolean getPIDEnabled() {
+//    	return pidLeft.isEnabled() == pidRight.isEnabled() == true;
+//    }
     
-	public boolean onTarget() {
-		return pidLeft.onTarget() && pidRight.onTarget();
-	}
+//	public boolean onTarget() {
+//		return pidLeft.onTarget() && pidRight.onTarget();
+//	}
     
     public DriveTrainSignal getEncoderRates() {
     	return new DriveTrainSignal(encoderLeft.getRate(), encoderRight.getRate());
@@ -150,20 +156,20 @@ public class DriveTrain extends Subsystem implements SmartdashBoardLoggable {
 	
 	@Override
 	public void logData() {
-		putNumberSD("MotorLeft_Speed", motorLeftA.get());
-		putNumberSD("MotorRight_Speed", motorRightA.get());
+		putNumberSD("MotorLeft_Speed", motorLeftB.get());
+		putNumberSD("MotorRight_Speed", motorRightC.get());
 		
-		putNumberSD("MotorLeftA_V", motorLeftA.getOutputVoltage());
+//		putNumberSD("MotorLeftA_V", motorLeftA.getOutputVoltage());
 		putNumberSD("MotorLeftB_V", motorLeftB.getOutputVoltage());
 		putNumberSD("MotorLeftC_V", motorLeftC.getOutputVoltage());
-		putNumberSD("MotorRightA_V", motorRightA.getOutputVoltage());
+//		putNumberSD("MotorRightA_V", motorRightA.getOutputVoltage());
 		putNumberSD("MotorRightB_V", motorRightB.getOutputVoltage());
 		putNumberSD("MotorRightC_V", motorRightC.getOutputVoltage());
 		
-		putNumberSD("MotorLeftA_C", motorLeftA.getOutputCurrent());
+//		putNumberSD("MotorLeftA_C", motorLeftA.getOutputCurrent());
 		putNumberSD("MotorLeftB_C", motorLeftB.getOutputCurrent());
 		putNumberSD("MotorLeftC_C", motorLeftC.getOutputCurrent());
-		putNumberSD("MotorRightA_C", motorRightA.getOutputCurrent());
+//		putNumberSD("MotorRightA_C", motorRightA.getOutputCurrent());
 		putNumberSD("MotorRightB_C", motorRightB.getOutputCurrent());
 		putNumberSD("MotorRightC_C", motorRightC.getOutputCurrent());
 		

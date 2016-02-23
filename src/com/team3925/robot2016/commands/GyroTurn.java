@@ -16,6 +16,7 @@ public class GyroTurn extends PIDCommand implements SmartdashBoardLoggable {
 	private double startAngle, targetAngle, currentAngle, lastAngle, errorAngle, rotations, relativeSetpoint, deltaRotation;
 	private boolean isRunning = true;
 	private double fwdOutput = 0.3;
+	private double timeFromStart = 0;//for oscilation of fwdOutput
 	
 	public GyroTurn() {
 		super(Constants.GYROTURN_P, Constants.GYROTURN_I, Constants.GYROTURN_D);

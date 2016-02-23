@@ -31,17 +31,21 @@ import edu.wpi.first.wpilibj.livewindow.LiveWindow;
  */
 public class RobotMap {
 	
+	//DELETE ON COMP BOT
     public static CANTalon driveTrainMotorLeftA;
-    public static CANTalon driveTrainMotorLeftB;
-    public static CANTalon driveTrainMotorLeftC;
     public static CANTalon driveTrainMotorRightA;
+    //END DELETE ON COMP BOT
+    public static CANTalon driveTrainMotorLeftB;
     public static CANTalon driveTrainMotorRightB;
+    public static CANTalon driveTrainMotorLeftC;
     public static CANTalon driveTrainMotorRightC;
     public static Encoder driveTrainEncoderLeft;
     public static Encoder driveTrainEncoderRight;
     public static DoubleSolenoid driveTrainShifterSolenoid;
+    //DELETE ON COMP BOT
     public static PIDController driveTrainPIDLeft;
     public static PIDController driveTrainPIDRight;
+    //END DELETE ON COMP BOT
     
     public static CANTalon launcherMotorAim;
     public static CANTalon launcherMotorLeft;
@@ -49,7 +53,6 @@ public class RobotMap {
     public static DoubleSolenoid launcherPuncherSolenoid;
     
     public static DoubleSolenoid armsPlexiSolenoid;
-//    public static DoubleSolenoid armsCandyCaneSolenoid;
     public static CANTalon armsMotorClimb;
     
     public static PowerDistributionPanel pdp;
@@ -68,12 +71,14 @@ public class RobotMap {
     	boolean invertLeft = true;
     	boolean invertRight = false;
     	
+    	//DELETE ON COMP BOT
         driveTrainMotorLeftA = new CANTalon(20);
         LiveWindow.addActuator("DriveTrain", "MotorLeftA", driveTrainMotorLeftA);
         driveTrainMotorLeftA.setInverted(invertLeft);
         driveTrainMotorLeftA.changeControlMode(TalonControlMode.PercentVbus);
         driveTrainMotorLeftA.setVoltageRampRate(Constants.DRIVE_TRAIN_VOLTAGE_RAMP_RATE);
         driveTrainMotorLeftA.enableBrakeMode(true);
+    	//END DELETE ON COMP BOT
         
         driveTrainMotorLeftB = new CANTalon(19);
         LiveWindow.addActuator("DriveTrain", "MotorLeftB", driveTrainMotorLeftB);
@@ -89,12 +94,14 @@ public class RobotMap {
         driveTrainMotorLeftC.setVoltageRampRate(Constants.DRIVE_TRAIN_VOLTAGE_RAMP_RATE);
         driveTrainMotorLeftC.enableBrakeMode(true);
         
+        //DELETE ON COMP BOT
         driveTrainMotorRightA = new CANTalon(17);
         LiveWindow.addActuator("DriveTrain", "MotorRightA", driveTrainMotorRightA);
         driveTrainMotorRightA.setInverted(invertRight);
         driveTrainMotorRightA.changeControlMode(TalonControlMode.PercentVbus);
         driveTrainMotorRightA.setVoltageRampRate(Constants.DRIVE_TRAIN_VOLTAGE_RAMP_RATE);
         driveTrainMotorRightA.enableBrakeMode(true);
+        //END DELETE ON COMP BOT
         
         driveTrainMotorRightB = new CANTalon(16);
         LiveWindow.addActuator("DriveTrain", "MotorRightB", driveTrainMotorRightB);
@@ -126,15 +133,15 @@ public class RobotMap {
         LiveWindow.addActuator("DriveTrain", "ShifterSolenoid", driveTrainShifterSolenoid);
         
         
-        driveTrainPIDLeft = new PIDController(DRIVETRAIN_LEFT_KP, DRIVETRAIN_LEFT_KI,
-        		DRIVETRAIN_LEFT_KD, driveTrainEncoderLeft, driveTrainMotorLeftA, DELTA_TIME / 4);
-        LiveWindow.addActuator("DriveTrain", "PIDLeft", driveTrainPIDLeft);
-        driveTrainPIDLeft.setAbsoluteTolerance(DRIVETRAIN_ON_TARGET_ERROR);
+//        driveTrainPIDLeft = new PIDController(DRIVETRAIN_LEFT_KP, DRIVETRAIN_LEFT_KI,
+//        		DRIVETRAIN_LEFT_KD, driveTrainEncoderLeft, driveTrainMotorLeftA, DELTA_TIME / 4);
+//        LiveWindow.addActuator("DriveTrain", "PIDLeft", driveTrainPIDLeft);
+//        driveTrainPIDLeft.setAbsoluteTolerance(DRIVETRAIN_ON_TARGET_ERROR);
         
-        driveTrainPIDRight = new PIDController(DRIVETRAIN_RIGHT_KP, DRIVETRAIN_RIGHT_KI,
-        		DRIVETRAIN_RIGHT_KD, driveTrainEncoderRight, driveTrainMotorRightA, DELTA_TIME / 4);
-        LiveWindow.addActuator("DriveTrain", "PIDRight", driveTrainPIDRight);
-        driveTrainPIDLeft.setAbsoluteTolerance(DRIVETRAIN_ON_TARGET_ERROR);
+//        driveTrainPIDRight = new PIDController(DRIVETRAIN_RIGHT_KP, DRIVETRAIN_RIGHT_KI,
+//        		DRIVETRAIN_RIGHT_KD, driveTrainEncoderRight, driveTrainMotorRightA, DELTA_TIME / 4);
+//        LiveWindow.addActuator("DriveTrain", "PIDRight", driveTrainPIDRight);
+//        driveTrainPIDLeft.setAbsoluteTolerance(DRIVETRAIN_ON_TARGET_ERROR);
         
         //END DRIVETRAIN
         

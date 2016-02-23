@@ -8,6 +8,7 @@ import com.team3925.robot2016.commands.CandyCane;
 import com.team3925.robot2016.commands.LaunchBall;
 import com.team3925.robot2016.commands.ManualArms;
 import com.team3925.robot2016.commands.ManualDrive;
+import com.team3925.robot2016.commands.VerticalAim;
 import com.team3925.robot2016.commands.TrapzoidalMotionTest;
 import com.team3925.robot2016.subsystems.Arms;
 import com.team3925.robot2016.subsystems.DriveTrain;
@@ -59,7 +60,7 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 	Command manualDrive;
 	Command manualArms;
 	Command candyCaneRun;
-	Command launchBallTest;
+	Command visionTest;
 	SendableChooser autoChooser;
 	
 	
@@ -100,12 +101,12 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 		Preferences.getInstance();
 		pdp = RobotMap.pdp;
 		
-		table = NetworkTable.getTable("GRIP/contourReport");
-		try {
-			new ProcessBuilder("/home/lvuser/grip").inheritIO().start();
-		}catch (Exception e) {
-			e.printStackTrace();
-		}
+		table = NetworkTable.getTable("GRIP/Feb23");
+//		try {
+//			new ProcessBuilder("/home/lvuser/grip").inheritIO().start();
+//		}catch (Exception e) {
+//			e.printStackTrace();
+//		}
 		
 		// OI must be constructed after subsystems. If the OI creates Commands
 		//(which it very likely will), subsystems are not guaranteed to be
@@ -125,7 +126,7 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 		manualArms = new ManualArms();
 		trapMotionTest = new TrapzoidalMotionTest();
 		candyCaneRun = new CandyCane();
-		launchBallTest = new LaunchBall(30, 40);
+		visionTest = new VerticalAim();
 		
 		reset();
 	}
@@ -171,7 +172,7 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 		reset();
 //		autoWait.config(1);
 		
-		launchBallTest.start();
+//		launchBallTest.start();
 		
 		launcher.init();
 	}
@@ -202,8 +203,10 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 		
 		reset();
 		System.out.println("Robot has init! (Said through System.out.println)");
-		driveTrain.setPIDEnabled(false);
+//		driveTrain.setPIDEnabled(false);
 		candyCaneWait.config(55d);
+		
+		visionTest.start();
 		
 		launcher.init();
 	}

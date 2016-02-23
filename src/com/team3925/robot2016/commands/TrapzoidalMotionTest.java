@@ -35,7 +35,7 @@ public class TrapzoidalMotionTest extends Command implements SmartdashBoardLogga
 		pidPos = 0;
 		input.left = 0;
 		input.right = 0;
-		driveTrain.setPIDEnabled(true);
+//		driveTrain.setPIDEnabled(true);
 	}
 
 	// Called repeatedly when this Command is scheduled to run
@@ -47,7 +47,7 @@ public class TrapzoidalMotionTest extends Command implements SmartdashBoardLogga
 			input.left = pidVel + pidPos;
 			input.right = pidVel + pidPos;
 			pidPos += pidVel;
-			driveTrain.setSetpoint(input);
+//			driveTrain.setSetpoint(input);
 			pidCounter++;
 		}
 
@@ -60,7 +60,7 @@ public class TrapzoidalMotionTest extends Command implements SmartdashBoardLogga
 			input.left = pidVel + pidPos;
 			input.right = pidVel + pidPos;
 			pidPos += pidVel;
-			driveTrain.setSetpoint(input);
+//			driveTrain.setSetpoint(input);
 			pidCounter--;
 		}
 
@@ -73,14 +73,14 @@ public class TrapzoidalMotionTest extends Command implements SmartdashBoardLogga
 
 	// Called once after isFinished returns true
 	protected void end() {
-		driveTrain.setPIDEnabled(false);
+//		driveTrain.setPIDEnabled(false);
 		driveTrain.setMotorSpeeds(DriveTrainSignal.NEUTRAL);
 	}
 
 	// Called when another command which requires one or more of the same
 	// subsystems is scheduled to run
 	protected void interrupted() {
-		driveTrain.setPIDEnabled(false);
+//		driveTrain.setPIDEnabled(false);
 		driveTrain.setMotorSpeeds(DriveTrainSignal.NEUTRAL);
 	}
 
@@ -89,7 +89,7 @@ public class TrapzoidalMotionTest extends Command implements SmartdashBoardLogga
 		putNumberSD("CurrentVelocitySetpoint", pidVel);
 		putNumberSD("CurrentPositionSetpoint", pidPos);
 		putNumberSD("CurrentProfileCount", pidCounter);
-		putBooleanSD("PIDPathDone", driveTrain.onTarget());
+//		putBooleanSD("PIDPathDone", driveTrain.onTarget());
 		putBooleanSD("GoingUpProfile", pidGoingUp);
 	}
 
