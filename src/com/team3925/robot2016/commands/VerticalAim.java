@@ -75,7 +75,11 @@ public class VerticalAim extends Command implements SmartdashBoardLoggable{
 		height = table.getNumberArray("height", new double[0]);
 		isData = centerX.length>0;
 		
-		aimDist = (Constants.CAMERA_TARGET_WIDTH * Constants.CAMERA_FOV_PIX)/(width[0] * Math.tan(Constants.CAMERA_FOV_DEG));
+		if (isData) {
+			//units = (      feet                    *        pixels           )/( pixels  *   tan(degrees)                   ))
+			aimDist = (Constants.CAMERA_TARGET_WIDTH * Constants.CAMERA_FOV_PIX)/((width[0]-2) * Math.tan(Constants.CAMERA_FOV_DEG));
+			aimDist = (14 * 320) / (2*height[0]*Math.tan(45/2));
+		}
 	}
 	
 	@Override

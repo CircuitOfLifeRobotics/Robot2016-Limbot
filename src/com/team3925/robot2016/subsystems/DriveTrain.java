@@ -29,8 +29,8 @@ public class DriveTrain extends Subsystem implements SmartdashBoardLoggable {
 	//END DELETE ON COMP BOT
 	private final CANTalon motorLeftB = RobotMap.driveTrainMotorLeftB;
 	private final CANTalon motorRightB = RobotMap.driveTrainMotorRightB;
-	private final CANTalon motorLeftC = RobotMap.driveTrainMotorLeftC;
-	private final CANTalon motorRightC = RobotMap.driveTrainMotorRightC;
+//	private final CANTalon motorLeftC = RobotMap.driveTrainMotorLeftC;
+//	private final CANTalon motorRightC = RobotMap.driveTrainMotorRightC;
     private final Encoder encoderLeft = RobotMap.driveTrainEncoderLeft;
     private final Encoder encoderRight = RobotMap.driveTrainEncoderRight;
     private final DoubleSolenoid shifterSolenoid = RobotMap.driveTrainShifterSolenoid;
@@ -51,8 +51,8 @@ public class DriveTrain extends Subsystem implements SmartdashBoardLoggable {
     	//END DELETE ON COMP BOT
     	motorLeftB.set(MiscUtil.limit(input.left * GLOBAL_MAX_DRIVE_TRAIN_PWR));
     	motorRightB.set(MiscUtil.limit(input.right * GLOBAL_MAX_DRIVE_TRAIN_PWR));
-    	motorLeftC.set(MiscUtil.limit(input.left * GLOBAL_MAX_DRIVE_TRAIN_PWR));
-    	motorRightC.set(MiscUtil.limit(input.right * GLOBAL_MAX_DRIVE_TRAIN_PWR));
+//    	motorLeftC.set(MiscUtil.limit(input.left * GLOBAL_MAX_DRIVE_TRAIN_PWR));
+//    	motorRightC.set(MiscUtil.limit(input.right * GLOBAL_MAX_DRIVE_TRAIN_PWR));
     }
     
 //    public void setSetpoint(DriveTrainSignal setpoints) {
@@ -156,22 +156,22 @@ public class DriveTrain extends Subsystem implements SmartdashBoardLoggable {
 	
 	@Override
 	public void logData() {
-		putNumberSD("MotorLeft_Speed", motorLeftB.get());
-		putNumberSD("MotorRight_Speed", motorRightC.get());
+		putNumberSD("MotorLeft_Speed", motorLeftA.get());
+		putNumberSD("MotorRight_Speed", motorRightA.get());
 		
-//		putNumberSD("MotorLeftA_V", motorLeftA.getOutputVoltage());
+		putNumberSD("MotorLeftA_V", motorLeftA.getOutputVoltage());
 		putNumberSD("MotorLeftB_V", motorLeftB.getOutputVoltage());
-		putNumberSD("MotorLeftC_V", motorLeftC.getOutputVoltage());
-//		putNumberSD("MotorRightA_V", motorRightA.getOutputVoltage());
+//		putNumberSD("MotorLeftC_V", motorLeftC.getOutputVoltage());
+		putNumberSD("MotorRightA_V", motorRightA.getOutputVoltage());
 		putNumberSD("MotorRightB_V", motorRightB.getOutputVoltage());
-		putNumberSD("MotorRightC_V", motorRightC.getOutputVoltage());
+//		putNumberSD("MotorRightC_V", motorRightC.getOutputVoltage());
 		
-//		putNumberSD("MotorLeftA_C", motorLeftA.getOutputCurrent());
+		putNumberSD("MotorLeftA_C", motorLeftA.getOutputCurrent());
 		putNumberSD("MotorLeftB_C", motorLeftB.getOutputCurrent());
-		putNumberSD("MotorLeftC_C", motorLeftC.getOutputCurrent());
-//		putNumberSD("MotorRightA_C", motorRightA.getOutputCurrent());
+//		putNumberSD("MotorLeftC_C", motorLeftC.getOutputCurrent());
+		putNumberSD("MotorRightA_C", motorRightA.getOutputCurrent());
 		putNumberSD("MotorRightB_C", motorRightB.getOutputCurrent());
-		putNumberSD("MotorRightC_C", motorRightC.getOutputCurrent());
+//		putNumberSD("MotorRightC_C", motorRightC.getOutputCurrent());
 		
 		//Commented out due to not using PID with drive train yet
 //		putDataSD("PIDControllerLeft", pidLeft);

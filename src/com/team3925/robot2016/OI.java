@@ -1,19 +1,14 @@
 package com.team3925.robot2016;
 
-import com.team3925.robot2016.commands.AutoRoutineCenter;
-import com.team3925.robot2016.commands.AutoRoutineCourtyard;
+import javax.sound.midi.ControllerEventListener;
+
 import com.team3925.robot2016.commands.CollectBall;
-import com.team3925.robot2016.commands.FeedBall;
-import com.team3925.robot2016.commands.LaunchBallHigh;
-import com.team3925.robot2016.commands.LaunchBallLow;
-import com.team3925.robot2016.commands.ManualDrive;
-import com.team3925.robot2016.commands.VerticalAim;
 import com.team3925.robot2016.util.XboxHelper;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.Button;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.command.Command;
 
 
 /**
@@ -51,25 +46,22 @@ public class OI {
     public Joystick xboxDriver;
     public Joystick xboxShooter;
     public Button startCollectBall;
-    public Button startLaunchBallLow;
-    public Button startLaunchBallHigh;
+    public Button cancelCommands;
+    public Command collectBall;
     
     public OI() {
-
+    	
     	xboxDriver = new Joystick(0);
     	xboxShooter = new Joystick(1);
     	
+    	collectBall = new CollectBall();
+    	
 //    	startCollectBall = new JoystickButton(xboxDriver, XboxHelper.A);
-//    	startCollectBall.whenPressed(new FeedBall());
+//    	startCollectBall.whenPressed(collectBall);
 		
-//    	startLaunchBallLow = new JoystickButton(xboxShooter, XboxHelper.BACK);
-//    	startLaunchBallLow.whenPressed(new LaunchBallLow());
     	
-//    	startLaunchBallHigh = new JoystickButton(xboxDriver, XboxHelper.Y);
-//    	startLaunchBallHigh.whenPressed(new ThrowBall());
-    	
-    	
-    	
+    	cancelCommands = new JoystickButton(xboxDriver, XboxHelper.START);
+    	cancelCommands.cancelWhenPressed(collectBall);
     	
         // SmartDashboard Buttons
 //        SmartDashboard.putData("ManualDrive", new ManualDrive());

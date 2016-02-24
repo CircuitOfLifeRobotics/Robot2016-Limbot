@@ -1,5 +1,7 @@
 package com.team3925.robot2016;
 
+
+import static com.team3925.robot2016.Constants.*;
 import com.kauailabs.navx.frc.AHRS;
 import com.team3925.robot2016.commands.AutoRoutineCenter;
 import com.team3925.robot2016.commands.AutoRoutineCourtyard;
@@ -23,6 +25,7 @@ import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.SPI;
+import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
@@ -73,11 +76,8 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 	private static double maxVel = 0;
 	private static double maxRotationVel = 0;
 	private static double maxRotationAccel = 0;
-	private double[] defaultVal;
+	private double[] defaultVal  = new double[0];
 	
-	private static TimeoutAction autoWait = new TimeoutAction();
-	
-
 	public Robot() {
 		try {
 			//Alternatively:  I2C.Port.kMXP, SerialPort.Port.kMXP or SerialPort.Port.kUSB
@@ -170,7 +170,6 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 		
 		driveTrain.setHighGear(false);
 		reset();
-//		autoWait.config(1);
 		
 //		launchBallTest.start();
 		
@@ -183,9 +182,6 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 	public void autonomousPeriodic() {
 		Scheduler.getInstance().run();
 		logData();
-//		if (autoWait.isFinished()) {
-//			trapMotionTest.start();
-//		}
 		
 		launcher.update();
 	}
@@ -206,7 +202,7 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 //		driveTrain.setPIDEnabled(false);
 		candyCaneWait.config(55d);
 		
-		visionTest.start();
+//		visionTest.start();
 		
 		launcher.init();
 	}
@@ -219,7 +215,7 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 		
 		if (XboxHelper.getShooterButton(XboxHelper.START)) {
 			if (candyCaneWait.isFinished() && !candyCaneRun.isRunning()) {
-				candyCaneRun.start();
+//				candyCaneRun.start();
 			} else {
 				XboxHelper.setShooterRumble(1f);
 			}
@@ -274,29 +270,29 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 //		putDataSD("Autonomous Chooser", autoChooser);
 //		putNamedDataSD(Scheduler.getInstance());
 		
-		if (Constants.DO_LOG_AHRS_VALUES) {
+		if (DO_LOG_AHRS_VALUES) {
 			if (navx != null) {
-				logNavXData();
+//				logNavXData();
 			} else {
 				putStringSD("NavXLogger", "Cannot log NavX values while null!");
 			}
 		}
-//		
-//		if (DO_LOG_PDP_VALUES) {
-//			if (pdp != null) {
+		
+		if (DO_LOG_PDP_VALUES) {
+			if (pdp != null) {
 //				logPDPData();
-//			} else {
-//				putStringSD("PDPLogger", "Cannot log PDP values while null!");
-//			}
-//		}
-//		
-//		if (DO_LOG_GRIP_VALUES) {
-//			if (table.isConnected()) {
+			} else {
+				putStringSD("PDPLogger", "Cannot log PDP values while null!");
+			}
+		}
+		
+		if (DO_LOG_GRIP_VALUES) {
+			if (table.isConnected()) {
 //				logGRIPData();
-//			}else {
-//				putStringSD("GRIPLogger", "Cannot log GRIP values while unconnected!");
-//			}
-//		}
+			}else {
+				putStringSD("GRIPLogger", "Cannot log GRIP values while unconnected!");
+			}
+		}
 	}
 
 	@Override

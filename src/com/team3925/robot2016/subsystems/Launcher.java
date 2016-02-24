@@ -7,6 +7,7 @@ import com.team3925.robot2016.RobotMap;
 import com.team3925.robot2016.util.LimitPIDController;
 import com.team3925.robot2016.util.MiscUtil;
 import com.team3925.robot2016.util.SmartdashBoardLoggable;
+import com.team3925.robot2016.util.SynchronousPID;
 import com.team3925.robot2016.util.TimeoutAction;
 import com.team3925.robot2016.util.XboxHelper;
 
@@ -40,6 +41,11 @@ public class Launcher extends Subsystem implements SmartdashBoardLoggable {
 	public void init() {
 		pidLoop.setPID(Constants.LAUNCHER_AIM_KP, Constants.LAUNCHER_AIM_KI, Constants.LAUNCHER_AIM_KD);
 		pidLoop.setPIDLimits(10000, 10000, 10000, 10000, -10000, -10000, -10000, -10000);
+		
+		motorLeft.setPID(Constants.LAUNCHER_WHEELS_KP, Constants.LAUNCHER_WHEELS_KI, Constants.LAUNCHER_WHEELS_KD, Constants.LAUNCHER_WHEELS_KF, Constants.LAUNCHER_WHEELS_IZONE, Constants.LAUNCHER_WHEELS_RAMP_RATE, 0);
+		motorRight.setPID(Constants.LAUNCHER_WHEELS_KP, Constants.LAUNCHER_WHEELS_KI, Constants.LAUNCHER_WHEELS_KD, Constants.LAUNCHER_WHEELS_KF, Constants.LAUNCHER_WHEELS_IZONE, Constants.LAUNCHER_WHEELS_RAMP_RATE, 0);
+		motorLeft.setProfile(0);
+		motorRight.setProfile(0);
 		
 		setIntakeProfile(0);
 		setAimSetpoint(0);
@@ -140,7 +146,7 @@ public class Launcher extends Subsystem implements SmartdashBoardLoggable {
 		hasBall = false; //TODO add sensor for ball
 		
 		if (aimEnabled) {
-//			aimSetpoint = XboxHelper.getShooterButton(XboxHelper.TRIGGER_LT) ? MiscUtil.joystickToDegrees(XboxHelper.getShooterAxis(XboxHelper.AXIS_LEFT_Y)):aimSetpoint;
+			aimSetpoint = XboxHelper.getShooterButton(XboxHelper.TRIGGER_LT) ? MiscUtil.joystickToDegrees(XboxHelper.getShooterAxis(XboxHelper.AXIS_LEFT_Y)):aimSetpoint;
 			aimLimitedSetpoint = aimSetpoint;
 			aimPosition = MiscUtil.aimEncoderTicksToDegrees(getAimMotorPosition());
 			aimDifference = aimLimitedSetpoint - aimPosition;
@@ -174,10 +180,10 @@ public class Launcher extends Subsystem implements SmartdashBoardLoggable {
 //		intakeSpeedLeft = getIntakeSpeedLeft();
 //		intakeSpeedRight = getIntakeSpeedRight();
 		
-		double tempIntakeDiffLeft = Math.abs(getIntakeLeftError());
-		double tempIntakeDiffRight = Math.abs(getIntakeRightError());
-		intakeOnTarget = tempIntakeDiffLeft<Constants.LAUNCHER_WHEELS_TOLERANCE &&
-				tempIntakeDiffRight<Constants.LAUNCHER_WHEELS_TOLERANCE;
+		double intakeDiffLeft = Math.abs(getIntakeLeftError());
+		double intakeDiffRight = Math.abs(getIntakeRightError());
+		intakeOnTarget = intakeDiffLeft<Constants.LAUNCHER_WHEELS_TOLERANCE &&
+				intakeDiffRight<Constants.LAUNCHER_WHEELS_TOLERANCE;
 		
 		/* TODO: get the acutal number of encoder counts per rev
 		 * Encoder counts per rev?
@@ -190,14 +196,14 @@ public class Launcher extends Subsystem implements SmartdashBoardLoggable {
 		
 		if (intakeEnabled) {
 			if (XboxHelper.getShooterButton(XboxHelper.START)) {intakeSetpoint = 0;}
-//			else if (XboxHelper.getShooterButton(XboxHelper.Y)) {intakeOutput = 1;}
-//			else if (XboxHelper.getShooterButton(XboxHelper.X)) {intakeOutput = 0.2;}
-//			else if (XboxHelper.getShooterButton(XboxHelper.B)) {intakeOutput = -0.2;}
-//			else if (XboxHelper.getShooterButton(XboxHelper.A)) {intakeOutput = -1;}
-//			else if (XboxHelper.getShooterButton(XboxHelper.Y)) {intakeSetpoint = 25000;}
-//			else if (XboxHelper.getShooterButton(XboxHelper.X)) {intakeSetpoint = 4000;}
-//			else if (XboxHelper.getShooterButton(XboxHelper.B)) {intakeSetpoint = -4000;}
-//			else if (XboxHelper.getShooterButton(XboxHelper.A)) {intakeSetpoint = -25000;}
+//			else if (XboxHelper.getShooterButton(XboxHelper.Y)) {intakeSetpoint = 1;}
+//			else if (XboxHelper.getShooterButton(XboxHelper.X)) {intakeSetpoint = 0.2;}
+//			else if (XboxHelper.getShooterButton(XboxHelper.B)) {intakeSetpoint = -0.2;}
+//			else if (XboxHelper.getShooterButton(XboxHelper.A)) {intakeSetpoint = -1;}
+			else if (XboxHelper.getShooterButton(XboxHelper.Y)) {intakeSetpoint = 25000;}
+			else if (XboxHelper.getShooterButton(XboxHelper.X)) {intakeSetpoint = 4000;}
+			else if (XboxHelper.getShooterButton(XboxHelper.B)) {intakeSetpoint = -4000;}
+			else if (XboxHelper.getShooterButton(XboxHelper.A)) {intakeSetpoint = -25000;}
 			
 			intakeLimitedSetpoint = intakeSetpoint;
 			intakeSetpointDiff = intakeSetpoint - intakeLastSetpoint;
@@ -206,19 +212,12 @@ public class Launcher extends Subsystem implements SmartdashBoardLoggable {
 				intakeLimitedSetpoint = intakeLastSetpoint + Constants.LAUNCHER_INTAKE_INCREMENT * (intakeSetpointDiff>0 ? 1:-1);
 			}
 			
-			setIntake(intakeLimitedSetpoint);
+			setLeftIntakeSetpoint(intakeSetpoint);
+			setRightIntakeSetpoint(intakeSetpoint);
 		} else {
-			setIntake(0);
+			setLeftIntakeSetpoint(0);
+			setRightIntakeSetpoint(0);
 			//launcher.setIntake(on vacation);
-		}
-		
-		if (XboxHelper.getDriverButton(XboxHelper.B)) {
-			setPuncher(true);
-			manualPuncherWait.config(0.1);
-		}
-		if (manualPuncherWait.isFinished()) {
-			setPuncher(false);
-			manualPuncherWait.config(99999);
 		}
 		
 		logData();
@@ -249,13 +248,16 @@ public class Launcher extends Subsystem implements SmartdashBoardLoggable {
 	
 	public void setPuncher(boolean isHigh) {
 		//reverse isHigh for practice bot
-		puncherSolenoid.set(!isHigh ? Value.kReverse:Value.kForward);
+		puncherSolenoid.set(isHigh ? Value.kReverse:Value.kForward);
 	}
 	
-    private void setIntake(double speed) {
-    	motorLeft.set(speed);
-    	motorRight.set(speed);
-    }
+	public void setLeftIntakeSetpoint(double setpoint) {
+		motorLeft.setSetpoint(setpoint);
+	}
+	
+	public void setRightIntakeSetpoint(double setpoint) {
+		motorRight.setSetpoint(setpoint);
+	}
     
     private void changeAimControlMode(TalonControlMode mode) {
     	motorAim.changeControlMode(mode);
@@ -320,8 +322,8 @@ public class Launcher extends Subsystem implements SmartdashBoardLoggable {
     	putNumberSD("MotorLeftSetpoint", motorLeft.getSetpoint());
     	putNumberSD("IntakeSetpointDiff", intakeSetpointDiff);
     	
-//    	putNumberSD("MotorRightEncPos", motorRight.getEncPosition());
-//    	putNumberSD("MotorLeftEncPos", motorLeft.getEncPosition());
+    	putNumberSD("MotorRightEncPos", motorRight.getEncPosition());
+    	putNumberSD("MotorLeftEncPos", motorLeft.getEncPosition());
     	
     	putNumberSD("MotorRightEncVeloctiy", motorRight.getEncVelocity());
     	putNumberSD("MotorLeftEncVeloctiy", motorLeft.getEncVelocity());
@@ -331,6 +333,11 @@ public class Launcher extends Subsystem implements SmartdashBoardLoggable {
     	
     	putNumberSD("MotorRightError", motorRight.getError());
     	putNumberSD("MotorLeftError", motorLeft.getError());
+    	
+    	putNumberSD("MotorRightOutputC", motorRight.getOutputCurrent());
+    	putNumberSD("MotorRightOutputV", motorRight.getOutputVoltage());
+    	putNumberSD("MotorLeftOutputC", motorLeft.getOutputCurrent());
+    	putNumberSD("MotorLeftOutputV", motorLeft.getOutputVoltage());
     	
 //    	putNumberSD("MotorRightOutV", motorRight.getOutputVoltage());
 //    	putNumberSD("MotorRightOutC", motorRight.getOutputCurrent());

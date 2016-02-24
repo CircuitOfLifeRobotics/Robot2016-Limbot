@@ -10,7 +10,8 @@ import edu.wpi.first.wpilibj.command.Command;
 public class ManualArms extends Command implements SmartdashBoardLoggable {
 	
 	Arms arms = Robot.arms;
-	double joystickVal, armVal;
+	private double climberVal;
+	private boolean armVal, lastArmVal, armsEngaged = false;
 	
 	public ManualArms() {
 		requires(arms);
@@ -20,15 +21,20 @@ public class ManualArms extends Command implements SmartdashBoardLoggable {
 	protected void initialize() {
 		arms.setArm(false);
 		arms.setClimbMotor(0);
-		joystickVal = 0;
+		climberVal = 0;
 	}
 
 	@Override
 	protected void execute() {
-		joystickVal = XboxHelper.getShooterAxis(XboxHelper.AXIS_RIGHT_Y);
-		armVal = XboxHelper.getDriverAxis(2);
-		arms.setArm(armVal>0.5);
-		arms.setClimbMotor(joystickVal);
+		climberVal = XboxHelper.getShooterAxis(XboxHelper.AXIS_RIGHT_Y);
+		armVal = XboxHelper.getDriverAxis(XboxHelper.AXIS_TRIGGER_LEFT)>0.5 || XboxHelper.getDriverAxis(XboxHelper.AXIS_TRIGGER_RIGHT)>0.5;
+		if (armVal && !lastArmVal) {
+			armsEngaged = !armsEngaged;
+		}
+		arms.setArm(armsEngaged);
+//		arms.setClimbMotor(climberVal);
+		
+		lastArmVal = armVal;
 		
 		logData();
 	}
@@ -52,8 +58,7 @@ public class ManualArms extends Command implements SmartdashBoardLoggable {
 
 	@Override
 	public void logData() {
-		putNumberSD("ArmValue", armVal);
-		putNumberSD("JoystickValYOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO", joystickVal);
+		putNumberSD("JoystickValYOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO", climberVal);
 		putNumberSD("ClimbMotorSetpoint", arms.getClimbSetpoint());
 	}
 

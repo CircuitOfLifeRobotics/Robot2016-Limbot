@@ -30,7 +30,7 @@ public class Arms extends Subsystem implements SmartdashBoardLoggable {
 //	}
 	
 	public void setArm(boolean engaged) {
-		armsSolenoid.set(engaged ? Value.kForward:Value.kReverse);
+		armsSolenoid.set(!engaged ? Value.kForward:Value.kReverse);
 	}
 	
 	public void setClimbMotor(double output) {

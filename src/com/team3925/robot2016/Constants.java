@@ -1,8 +1,5 @@
 package com.team3925.robot2016;
 
-import java.util.HashMap;
-import java.util.Map;
-
 /**
  *	A class holding all the constants of the project
  */
@@ -14,11 +11,11 @@ public class Constants {
 	
 	public static final String AXIS_CAMERA_IP = "192.168.0.90";
 	
-	public static final boolean DO_LOG_AHRS_VALUES = true;//Robot.prefs.getBoolean("Do Log AHRS Vals", false);
+	public static final boolean DO_LOG_AHRS_VALUES = false;//Robot.prefs.getBoolean("Do Log AHRS Vals", false);
 	public static final boolean DO_LOG_PDP_VALUES = false;//Robot.prefs.getBoolean("Do Log PDP Vals", false);
 	public static final boolean DO_LOG_GRIP_VALUES = false;//Robot.prefs.getBoolean("Do Log GRIP Vals", false);
 	
-	public static final double XBOX_AXIS_TOLERANCE = 0.1;
+	public static final double XBOX_AXIS_TOLERANCE = 0.05;
 	
 	public static final double GLOBAL_MAX_SHOOTER_PWR = 1;//Robot.prefs.getDouble("Max Shooter Pwr", 1);
 	public static final double LAUNCHER_AIM_MOTOR_SPEED_MULTIPLIED = 1;
@@ -32,8 +29,8 @@ public class Constants {
 	
 	
 //	DRIVETRAIN CONSTANTS
-	public static final double GLOBAL_MAX_DRIVE_TRAIN_PWR = 1;//Robot.prefs.getDouble("Max DriveTrain Pwr", 1);
-	public static final double DRIVE_TRAIN_VOLTAGE_RAMP_RATE = 1.1;
+	public static final double GLOBAL_MAX_DRIVE_TRAIN_PWR = 0.8;//Robot.prefs.getDouble("Max DriveTrain Pwr", 1);
+	public static final double DRIVE_TRAIN_VOLTAGE_RAMP_RATE = 1;
 	
 //	Straight Gyro Drive PID Constants
 	//TODO: tune gyro straight drive pid
@@ -47,8 +44,8 @@ public class Constants {
 	
 	public static final double LAUNCHER_AIM_TOLERANCE = 10;
 	public static final double LAUNCHER_AIM_SLOWDOWN = 40;
-	public static final double LAUNCHER_AIM_INCREMENT = 2;
-	public static final double LAUNCHER_INTAKE_INCREMENT = 300;
+	public static final double LAUNCHER_AIM_INCREMENT = 6;
+	public static final double LAUNCHER_INTAKE_INCREMENT = 1000;
 	//TODO: tune shooter pid
 	public static final double LAUNCHER_AIM_KP = 1200d/10000d;   //200d/10000d
 	public static final double LAUNCHER_AIM_KI = 16d/10000d;     //8d/10000d; 
@@ -57,9 +54,9 @@ public class Constants {
 	public static final double LAUNCHER_AIM_RAMP_RATE = 5;//ramp rate is maximum acceleration in voltage/second
 	public static final int LAUNCHER_AIM_IZONE = 0; // izone eliminates
 	
-	public static final double LAUNCHER_WHEELS_KP = 0.04;
+	public static final double LAUNCHER_WHEELS_KP = 0.03;
 	public static final double LAUNCHER_WHEELS_KI = 0;
-	public static final double LAUNCHER_WHEELS_KD = 4;
+	public static final double LAUNCHER_WHEELS_KD = 0.00000000;
 	public static final double LAUNCHER_WHEELS_KF = 0/*0.04092*/;
 	public static final double LAUNCHER_WHEELS_RAMP_RATE = 1;//ramp rate is maximum acceleration in voltage/second
 	public static final int LAUNCHER_WHEELS_IZONE = 0; // izone eliminates

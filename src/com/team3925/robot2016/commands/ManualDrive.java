@@ -20,6 +20,7 @@ public class ManualDrive extends Command implements SmartdashBoardLoggable {
 	private DriveTrain driveTrain = Robot.driveTrain;
 	
 	private double fwdSet, turnSet, lastFwdSet, lastTurnSet, deltaFwd, deltaTurn;
+	private boolean lowGear = true, shiftPressed, shiftWasPressed;
 	
 	public ManualDrive() {
 		requires(Robot.driveTrain);
@@ -44,16 +45,16 @@ public class ManualDrive extends Command implements SmartdashBoardLoggable {
 		}
 		
 		driveTrain.arcadeDrive(fwdSet, turnSet, true);
-		boolean left = XboxHelper.getDriverButton(XboxHelper.TRIGGER_LT);
-		boolean right = XboxHelper.getDriverButton(XboxHelper.TRIGGER_RT);
-		if (right || left) {
-			driveTrain.setHighGear(true);
-		} else {
-			driveTrain.setHighGear(false);
+		
+		shiftPressed = XboxHelper.getDriverButton(XboxHelper.TRIGGER_LT) || XboxHelper.getDriverButton(XboxHelper.TRIGGER_RT);
+		if (shiftPressed && !shiftWasPressed) {
+			lowGear = !lowGear;
 		}
+		driveTrain.setHighGear(lowGear);
 		
 		lastFwdSet = fwdSet;
 		lastTurnSet = turnSet;
+		shiftWasPressed = shiftPressed;
 		
 		logData();
 	}
