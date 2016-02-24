@@ -13,7 +13,7 @@ import com.team3925.robot2016.util.XboxHelper;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.networktables.NetworkTable;
 
-enum Mode {
+enum VerticalAimMode {
 	WAIT_LOW, CHECK_LOW, WAIT_HIGH, CHECK_HIGH, AIM, DONE;
 }
 
@@ -21,7 +21,7 @@ public class VerticalAim extends Command implements SmartdashBoardLoggable{
 	
 	Launcher launcher = Robot.launcher;
 	NetworkTable table = Robot.table;
-	Mode mode;
+	VerticalAimMode mode;
 	
 	private double[] centerX = null, centerY = null, area = null, width = null, height = null;
 	private double aimDist;
@@ -29,7 +29,7 @@ public class VerticalAim extends Command implements SmartdashBoardLoggable{
 	
 	@Override
 	protected void initialize() {
-		mode = Mode.WAIT_LOW;
+		mode = VerticalAimMode.WAIT_LOW;
 		
 		launcher.setPuncher(false);
 		launcher.enableAim(true);
