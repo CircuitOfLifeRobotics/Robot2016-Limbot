@@ -1,17 +1,19 @@
 package com.team3925.robot2016;
 
 
-import static com.team3925.robot2016.Constants.*;
+import static com.team3925.robot2016.Constants.DO_LOG_AHRS_VALUES;
+import static com.team3925.robot2016.Constants.DO_LOG_GRIP_VALUES;
+import static com.team3925.robot2016.Constants.DO_LOG_PDP_VALUES;
+
 import com.kauailabs.navx.frc.AHRS;
 import com.team3925.robot2016.commands.AutoRoutineCenter;
 import com.team3925.robot2016.commands.AutoRoutineCourtyard;
 import com.team3925.robot2016.commands.AutoRoutineDoNothing;
 import com.team3925.robot2016.commands.CandyCane;
-import com.team3925.robot2016.commands.LaunchBall;
 import com.team3925.robot2016.commands.ManualArms;
 import com.team3925.robot2016.commands.ManualDrive;
-import com.team3925.robot2016.commands.VerticalAim;
 import com.team3925.robot2016.commands.TrapzoidalMotionTest;
+import com.team3925.robot2016.commands.VerticalAim;
 import com.team3925.robot2016.subsystems.Arms;
 import com.team3925.robot2016.subsystems.DriveTrain;
 import com.team3925.robot2016.subsystems.Launcher;
@@ -25,7 +27,6 @@ import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.SPI;
-import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
@@ -102,11 +103,12 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 		pdp = RobotMap.pdp;
 		
 		table = NetworkTable.getTable("GRIP/Feb23");
-//		try {
-//			new ProcessBuilder("/home/lvuser/grip").inheritIO().start();
-//		}catch (Exception e) {
-//			e.printStackTrace();
-//		}
+		try {
+			new ProcessBuilder("/home/lvuser/grip").inheritIO().start();
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		table.putBoolean("run", false);
 		
 		// OI must be constructed after subsystems. If the OI creates Commands
 		//(which it very likely will), subsystems are not guaranteed to be
@@ -237,7 +239,7 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 	
 	@Override
 	public void logData() {
-		driveTrain.logData();
+//		driveTrain.logData();
 		launcher.logData();
 //		arms.logData();
 		
@@ -265,7 +267,7 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 //		putNumberSD("MaxRotationAccel", maxRotationAccel);
 //		
 //		putNumberSD("CurrentTime", Timer.getFPGATimestamp());
-//		putNumberSD("DeltaTime", deltaTime);
+		putNumberSD("DeltaTime", deltaTime);
 //		
 //		putDataSD("Autonomous Chooser", autoChooser);
 //		putNamedDataSD(Scheduler.getInstance());

@@ -9,38 +9,38 @@ import com.team3925.robot2016.util.XboxHelper;
 import edu.wpi.first.wpilibj.command.Command;
 
 enum Mode {
-	AIM, SHOOT, DONE;
+	WAIT_FOR_AIM, SHOOT, DONE;
 }
 
 public class ThrowBall extends Command implements SmartdashBoardLoggable{
 	
-//	LauncherPID launcherPID = Robot.launcherPID;
 	Launcher launcher = Robot.launcher;
 	TimeoutAction timer = new TimeoutAction();
+	TimeoutAction buttonTimer = new TimeoutAction();
 	Mode mode;
 	
 	@Override
 	protected void initialize() {
-		mode = Mode.AIM;
+		mode = Mode.WAIT_FOR_AIM;
 		
 		launcher.setPuncher(false);
 		launcher.enableAim(true);
 		launcher.enableIntake(true);
-		launcher.setAimSetpoint(65);
-//		launcher.setIntakeSetpoint(-18000);
-		launcher.setIntakeSetpoint(1);
+		launcher.setAimSetpoint(75);
+		launcher.setIntakeSetpoint(15000);
 		
-		timer.config(2);
+		buttonTimer.config(0.5);
+		timer.config(3);
 	}
 
 	@Override
 	protected void execute() {
 		switch (mode) {
-		case AIM:
-			if (launcher.isAimOnSetpoint()/* && launcher.isIntakeOnSetpoint()*/ && timer.isFinished()) {
+		case WAIT_FOR_AIM:
+			if ((launcher.isAimOnSetpoint()/* && launcher.isIntakeOnSetpoint()*/ || timer.isFinished() || XboxHelper.getDriverButton(XboxHelper.STICK_RIGHT))&&buttonTimer.isFinished()) {
 				launcher.setPuncher(true);
 				mode = Mode.SHOOT;
-				timer.config(0.2);
+				timer.config(0.1);
 			}
 			break;
 		case SHOOT:

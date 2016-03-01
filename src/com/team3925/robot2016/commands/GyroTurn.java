@@ -21,11 +21,13 @@ public class GyroTurn extends PIDCommand implements SmartdashBoardLoggable {
 	public GyroTurn() {
 		super(Constants.GYROTURN_P, Constants.GYROTURN_I, Constants.GYROTURN_D);
 		relativeSetpoint = 0;
+		requires(driveTrain);
 	}
 	
 	public GyroTurn(double turnAngle) {
 		super(Constants.GYROTURN_P, Constants.GYROTURN_I, Constants.GYROTURN_D);
 		relativeSetpoint = turnAngle;
+		requires(driveTrain);
 	}
 	
 	@Override

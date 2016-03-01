@@ -22,7 +22,6 @@ public class LaunchBallHigh extends Command implements SmartdashBoardLoggable {
 	private NetworkTable table;
 	private TableListener tableListener = new TableListener();
 	
-	
 	private double[] centerX, centerY, area, width, height;
 	private boolean isData = true;
 	private double xOffset, xSize, yawOffset;
@@ -34,14 +33,13 @@ public class LaunchBallHigh extends Command implements SmartdashBoardLoggable {
 	// Called just before this Command runs the first time
 	protected void initialize() {
 		table = Robot.table;
+		table.putBoolean("run", true);
 		table.addTableListener(tableListener, true);
 		calcData();
 	}
 	
 	// Called repeatedly when this Command is scheduled to run
 	protected void execute() {
-		
-		
 		logData();
 	}
 
@@ -51,11 +49,15 @@ public class LaunchBallHigh extends Command implements SmartdashBoardLoggable {
 	}
 
 	// Called once after isFinished returns true
-	protected void end() {}
+	protected void end() {
+		table.putBoolean("run", false);
+	}
 
 	// Called when another command which requires one or more of the same
 	// subsystems is scheduled to run
-	protected void interrupted() {}
+	protected void interrupted() {
+		table.putBoolean("run", false);
+	}
 
 	private void calcData() {
 		centerX = table.getNumberArray("centerX", new double[0]);

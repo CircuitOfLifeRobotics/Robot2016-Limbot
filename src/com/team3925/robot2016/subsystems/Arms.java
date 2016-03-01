@@ -1,3 +1,4 @@
+
 package com.team3925.robot2016.subsystems;
 
 import com.team3925.robot2016.RobotMap;
@@ -54,6 +55,9 @@ public class Arms extends Subsystem implements SmartdashBoardLoggable {
 		putStringSD("ArmsValue", armsSolenoid.get().toString());
 		putNumberSD("ClimbEncPos", getClimbEncPos());
 		putNumberSD("ClimbEncVel", getClimbEncSpeed());
+		putNumberSD("ClimbMotorGet===============================", climbMotor.get());
+		putNumberSD("ClimbMotorVoltage=========================", climbMotor.getOutputVoltage());
+		putNumberSD("ClimbMotorCurrent=========================", climbMotor.getOutputCurrent());
 	}
 
 	@Override

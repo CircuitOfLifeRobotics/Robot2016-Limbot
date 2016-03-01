@@ -37,9 +37,9 @@ public class CollectBall extends Command {
 		switch (mode) {
 		case WAIT_FOR_DOWN:
 			if (launcher.isAimOnSetpoint() || timeout.isFinished()) {
-				launcher.setIntakeSetpoint(-20000);
+				launcher.setIntakeSetpoint(-1);
 				mode = CollectMode.INTAKE;
-				timeout.config(10);
+				timeout.config(4);
 			}
 			break;
 		case INTAKE:

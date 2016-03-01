@@ -3,6 +3,8 @@ package com.team3925.robot2016;
 import javax.sound.midi.ControllerEventListener;
 
 import com.team3925.robot2016.commands.CollectBall;
+import com.team3925.robot2016.commands.GyroTurn;
+import com.team3925.robot2016.commands.ThrowBall;
 import com.team3925.robot2016.util.XboxHelper;
 
 import edu.wpi.first.wpilibj.Joystick;
@@ -46,8 +48,12 @@ public class OI {
     public Joystick xboxDriver;
     public Joystick xboxShooter;
     public Button startCollectBall;
+    public Button startThrowBall;
+    public Button startGyroTurn;
     public Button cancelCommands;
     public Command collectBall;
+    public Command throwBall;
+    public Command gyroTurn;
     
     public OI() {
     	
@@ -55,13 +61,28 @@ public class OI {
     	xboxShooter = new Joystick(1);
     	
     	collectBall = new CollectBall();
+    	throwBall = new ThrowBall();
+    	gyroTurn = new GyroTurn(45);
     	
-//    	startCollectBall = new JoystickButton(xboxDriver, XboxHelper.A);
-//    	startCollectBall.whenPressed(collectBall);
+    	startCollectBall = new JoystickButton(xboxDriver, XboxHelper.A);
+    	startCollectBall.whenPressed(collectBall);
+    	startCollectBall.cancelWhenPressed(throwBall);
+    	startCollectBall.cancelWhenPressed(gyroTurn);
 		
+    	startThrowBall = new JoystickButton(xboxDriver, XboxHelper.Y);
+    	startThrowBall.whenPressed(throwBall);
+    	startThrowBall.cancelWhenPressed(collectBall);
+    	startThrowBall.cancelWhenPressed(gyroTurn);
+    	
+    	startGyroTurn = new JoystickButton(xboxDriver, XboxHelper.X);
+    	startGyroTurn.whenPressed(gyroTurn);
+    	startGyroTurn.cancelWhenActive(throwBall);
+    	startGyroTurn.cancelWhenActive(collectBall);
     	
     	cancelCommands = new JoystickButton(xboxDriver, XboxHelper.START);
     	cancelCommands.cancelWhenPressed(collectBall);
+    	cancelCommands.cancelWhenPressed(throwBall);
+    	cancelCommands.cancelWhenActive(gyroTurn);
     	
         // SmartDashboard Buttons
 //        SmartDashboard.putData("ManualDrive", new ManualDrive());
