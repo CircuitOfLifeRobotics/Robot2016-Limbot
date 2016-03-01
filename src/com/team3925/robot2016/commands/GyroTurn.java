@@ -19,14 +19,17 @@ public class GyroTurn extends PIDCommand implements SmartdashBoardLoggable {
 	private double timeFromStart = 0;//for oscilation of fwdOutput
 	
 	public GyroTurn() {
-		super(Constants.GYROTURN_P, Constants.GYROTURN_I, Constants.GYROTURN_D);
-		relativeSetpoint = 0;
-		requires(driveTrain);
+		this(0, 0.3);
 	}
 	
 	public GyroTurn(double turnAngle) {
+		this(turnAngle, 0.3);
+	}
+	
+	public GyroTurn(double turnAngle, double forwardSpeed) {
 		super(Constants.GYROTURN_P, Constants.GYROTURN_I, Constants.GYROTURN_D);
 		relativeSetpoint = turnAngle;
+		fwdOutput = forwardSpeed;
 		requires(driveTrain);
 	}
 	
@@ -102,7 +105,7 @@ public class GyroTurn extends PIDCommand implements SmartdashBoardLoggable {
 
 	@Override
 	public String getFormattedName() {
-		return "Gyro_Turn_";
+		return "GyroTurn_";
 	}
 	
 	public void setSetpointRelative(double relativeAngle) {

@@ -11,7 +11,6 @@ import com.team3925.robot2016.util.SmartdashBoardLoggable;
 import com.team3925.robot2016.util.XboxHelper;
 
 import edu.wpi.first.wpilibj.command.Command;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  *
@@ -33,7 +32,8 @@ public class ManualDrive extends Command implements SmartdashBoardLoggable {
 
 	// Called repeatedly when this Command is scheduled to run
 	protected void execute() {
-		fwdSet = XboxHelper.getDriverAxis(AXIS_LEFT_Y);
+		// negate fwd on practice robot
+		fwdSet = -XboxHelper.getDriverAxis(AXIS_LEFT_Y);
 		turnSet = XboxHelper.getDriverAxis(AXIS_RIGHT_X);
 		deltaFwd = fwdSet - lastFwdSet;
 		deltaTurn = turnSet - lastTurnSet;

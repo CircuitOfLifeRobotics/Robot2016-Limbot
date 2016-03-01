@@ -27,7 +27,7 @@ public class ThrowBall extends Command implements SmartdashBoardLoggable{
 		launcher.enableAim(true);
 		launcher.enableIntake(true);
 		launcher.setAimSetpoint(75);
-		launcher.setIntakeSetpoint(15000);
+		launcher.setIntakeSetpoint(30000);
 		
 		buttonTimer.config(0.5);
 		timer.config(3);

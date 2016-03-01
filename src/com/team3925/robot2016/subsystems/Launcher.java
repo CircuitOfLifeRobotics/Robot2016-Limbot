@@ -83,9 +83,8 @@ public class Launcher extends Subsystem implements SmartdashBoardLoggable {
 	
 	/**
 	 * Sets the setpoint of the aim motor
-	 * In degrees
 	 * 
-	 * @param setpoint
+	 * @param setpoint in degrees
 	 */
 	public void setAimSetpoint(double setpoint) {
 //		setpoint = Math.max(0, Math.min(Constants.LAUNCHER_MAX_HEIGHT, setpoint));
@@ -95,13 +94,11 @@ public class Launcher extends Subsystem implements SmartdashBoardLoggable {
 	
 	/**
 	 * Sets the setpoint of the intake motors
-	 * TODO: change to easier units
-	 * In native units per 100 ms
 	 * 
-	 * @param setpoint
+	 * @param setpoint in native units per 100ms
 	 */
 	public void setIntakeSetpoint(double setpoint) {
-		intakeSetpoint = Math.max(-26000, Math.min(26000, setpoint));
+		intakeSetpoint = Math.max(-26000, Math.min(26000, setpoint)); //TODO change to easier units
 	}
 	
 	public double getIntakeSetpointLeft() {

@@ -58,13 +58,15 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 	public static Arms arms;
 	
 	//Commands
-//	public static LauncherPID launcherPID;
+	// why polymorphism? change to direct data type?
 	Command autoCommandGroup;
 	Command trapMotionTest;
 	Command manualDrive;
 	Command manualArms;
 	Command candyCaneRun;
 	Command visionTest;
+	
+	
 	SendableChooser autoChooser;
 	
 	
@@ -240,7 +242,7 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 	@Override
 	public void logData() {
 //		driveTrain.logData();
-		launcher.logData();
+//		launcher.logData();
 //		arms.logData();
 		
 		double now = Timer.getFPGATimestamp();

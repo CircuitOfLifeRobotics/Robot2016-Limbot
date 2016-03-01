@@ -11,7 +11,6 @@ import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.PIDSourceType;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
-import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 
 /**
@@ -91,7 +90,7 @@ public class RobotMap {
 //        driveTrainMotorLeftC.reverseOutput(invertLeft);
         driveTrainMotorLeftC.changeControlMode(TalonControlMode.Follower);
         driveTrainMotorLeftC.setVoltageRampRate(Constants.DRIVE_TRAIN_VOLTAGE_RAMP_RATE);
-        driveTrainMotorLeftC.enableBrakeMode(true);
+        driveTrainMotorLeftC.enableBrakeMode(false);
         
         //DELETE ON COMP BOT
         driveTrainMotorRightA = new CANTalon(15); // was 17
@@ -120,7 +119,7 @@ public class RobotMap {
         driveTrainMotorRightC.changeControlMode(TalonControlMode.Follower);
         driveTrainMotorRightC.set(driveTrainMotorRightA.getDeviceID());
         driveTrainMotorRightC.setVoltageRampRate(Constants.DRIVE_TRAIN_VOLTAGE_RAMP_RATE);
-        driveTrainMotorRightC.enableBrakeMode(true);
+        driveTrainMotorRightC.enableBrakeMode(false);
        
         
         driveTrainEncoderLeft = new Encoder(0, 1, false, EncodingType.k4X);

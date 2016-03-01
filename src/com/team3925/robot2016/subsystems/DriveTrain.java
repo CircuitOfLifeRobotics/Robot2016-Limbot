@@ -94,10 +94,6 @@ public class DriveTrain extends Subsystem implements SmartdashBoardLoggable {
 //		return pidLeft.onTarget() && pidRight.onTarget();
 //	}
     
-    public DriveTrainSignal getEncoderRates() {
-    	return new DriveTrainSignal(encoderLeft.getRate(), encoderRight.getRate());
-    }
-    
     /**
      * @return The pose according to the current sensor state
      */

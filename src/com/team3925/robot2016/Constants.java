@@ -38,6 +38,10 @@ public class Constants {
 	public static final double GYRO_DRIVE_KI = 0;
 	public static final double GYRO_DRIVE_KD = 0;
 	
+	
+	
+	public static final double MAX_INTAKE_SPEED = 25000; //TODO get actual max speed
+	
 //	Launcher PID Constants
 	public static final double LAUNCHER_MAX_HEIGHT = 700; // in encoder ticks
 	public static final double LAUNCHER_MIN_HEIGHT = 50; // in encoder ticks
