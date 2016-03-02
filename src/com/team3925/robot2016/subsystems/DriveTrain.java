@@ -9,7 +9,7 @@ import com.team3925.robot2016.commands.ManualDrive;
 import com.team3925.robot2016.util.CheesySpeedController;
 import com.team3925.robot2016.util.DriveTrainSignal;
 import com.team3925.robot2016.util.MiscUtil;
-import com.team3925.robot2016.util.Pose;
+import com.team3925.robot2016.util.DrivetrainPose;
 import com.team3925.robot2016.util.SmartdashBoardLoggable;
 
 import edu.wpi.first.wpilibj.CANTalon;
@@ -24,14 +24,12 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class DriveTrain extends Subsystem implements SmartdashBoardLoggable {
 
 	private final AHRS navx = Robot.navx;
-	//DELETE ON COMP BOT
 	private final CANTalon motorLeftA = RobotMap.driveTrainMotorLeftA;
 	private final CANTalon motorRightA = RobotMap.driveTrainMotorRightA;
-	//END DELETE ON COMP BOT
 	private final CANTalon motorLeftB = RobotMap.driveTrainMotorLeftB;
 	private final CANTalon motorRightB = RobotMap.driveTrainMotorRightB;
-	private final CANTalon motorLeftC = RobotMap.driveTrainMotorLeftC;
-	private final CANTalon motorRightC = RobotMap.driveTrainMotorRightC;
+//	private final CANTalon motorLeftC = RobotMap.driveTrainMotorLeftC;
+//	private final CANTalon motorRightC = RobotMap.driveTrainMotorRightC;
     private final Encoder encoderLeft = RobotMap.driveTrainEncoderLeft;
     private final Encoder encoderRight = RobotMap.driveTrainEncoderRight;
     private final DoubleSolenoid shifterSolenoid = RobotMap.driveTrainShifterSolenoid;
@@ -40,7 +38,7 @@ public class DriveTrain extends Subsystem implements SmartdashBoardLoggable {
     private final PIDController pidRight = RobotMap.driveTrainPIDRight;
     //END DELETE ON COMP BOT
     
-    private Pose cached_pose = new Pose(0, 0, 0, 0, 0, 0);
+    private DrivetrainPose cached_pose = new DrivetrainPose(0, 0, 0, 0, 0, 0);
     private double maxErrorLeft = 0;
     private double maxErrorRight = 0;
     
@@ -53,8 +51,8 @@ public class DriveTrain extends Subsystem implements SmartdashBoardLoggable {
     	//END DELETE ON COMP BOT
     	motorLeftB.set(MiscUtil.limit(input.left * GLOBAL_MAX_DRIVE_TRAIN_PWR));
     	motorRightB.set(MiscUtil.limit(input.right * GLOBAL_MAX_DRIVE_TRAIN_PWR));
-    	motorLeftC.set(MiscUtil.limit(input.left * GLOBAL_MAX_DRIVE_TRAIN_PWR));
-    	motorRightC.set(MiscUtil.limit(input.right * GLOBAL_MAX_DRIVE_TRAIN_PWR));
+//    	motorLeftC.set(MiscUtil.limit(input.left * GLOBAL_MAX_DRIVE_TRAIN_PWR));
+//    	motorRightC.set(MiscUtil.limit(input.right * GLOBAL_MAX_DRIVE_TRAIN_PWR));
     }
     
 //    public void setSetpoint(DriveTrainSignal setpoints) {
@@ -97,7 +95,7 @@ public class DriveTrain extends Subsystem implements SmartdashBoardLoggable {
     /**
      * @return The pose according to the current sensor state
      */
-    public Pose getPhysicalPose() {
+    public DrivetrainPose getPhysicalPose() {
     	cached_pose.reset(encoderLeft.getDistance(), encoderRight.getDistance(),
     			encoderLeft.getRate(), encoderRight.getRate(),
     			Math.toRadians(navx.getFusedHeading()),
@@ -159,10 +157,10 @@ public class DriveTrain extends Subsystem implements SmartdashBoardLoggable {
 		
 		putNumberSD("MotorLeftA_V", motorLeftA.getOutputVoltage());
 		putNumberSD("MotorLeftB_V", motorLeftB.getOutputVoltage());
-		putNumberSD("MotorLeftC_V", motorLeftC.getOutputVoltage());
+//		putNumberSD("MotorLeftC_V", motorLeftC.getOutputVoltage());
 		putNumberSD("MotorRightA_V", motorRightA.getOutputVoltage());
 		putNumberSD("MotorRightB_V", motorRightB.getOutputVoltage());
-		putNumberSD("MotorRightC_V", motorRightC.getOutputVoltage());
+//		putNumberSD("MotorRightC_V", motorRightC.getOutputVoltage());
 		
 //		putNumberSD("MotorLeftA_C", motorLeftA.getOutputCurrent());
 //		putNumberSD("MotorLeftB_C", motorLeftB.getOutputCurrent());

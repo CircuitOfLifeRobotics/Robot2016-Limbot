@@ -4,7 +4,6 @@ import com.team3925.robot2016.Robot;
 import com.team3925.robot2016.subsystems.Launcher;
 import com.team3925.robot2016.util.SmartdashBoardLoggable;
 import com.team3925.robot2016.util.TimeoutAction;
-import com.team3925.robot2016.util.XboxHelper;
 
 import edu.wpi.first.wpilibj.command.Command;
 
@@ -27,17 +26,17 @@ public class ThrowBall extends Command implements SmartdashBoardLoggable{
 		launcher.enableAim(true);
 		launcher.enableIntake(true);
 		launcher.setAimSetpoint(75);
-		launcher.setIntakeSetpoint(30000);
+		launcher.setIntakeSetpoint(35000);
 		
 		buttonTimer.config(0.5);
-		timer.config(3);
+		timer.config(2);
 	}
 
 	@Override
 	protected void execute() {
 		switch (mode) {
 		case WAIT_FOR_AIM:
-			if ((launcher.isAimOnSetpoint()/* && launcher.isIntakeOnSetpoint()*/ || timer.isFinished() || XboxHelper.getDriverButton(XboxHelper.STICK_RIGHT))&&buttonTimer.isFinished()) {
+			if ((launcher.isAimOnSetpoint() && launcher.isIntakeOnSetpoint() || timer.isFinished() || Robot.oi.getThrowBall_LaunchBallOverride())&&buttonTimer.isFinished()) {
 				launcher.setPuncher(true);
 				mode = Mode.SHOOT;
 				timer.config(0.1);
@@ -60,7 +59,7 @@ public class ThrowBall extends Command implements SmartdashBoardLoggable{
 	
 	@Override
 	protected boolean isFinished() {
-		return XboxHelper.getShooterButton(XboxHelper.START) || mode == Mode.DONE;
+		return mode == Mode.DONE;
 	}
 	
 	@Override

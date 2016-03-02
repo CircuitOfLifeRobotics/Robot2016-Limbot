@@ -1,5 +1,7 @@
 package com.team3925.robot2016;
 
+import static com.team3925.robot2016.util.XboxHelper.*;
+
 import javax.sound.midi.ControllerEventListener;
 
 import com.team3925.robot2016.commands.CollectBall;
@@ -17,7 +19,7 @@ import edu.wpi.first.wpilibj.command.Command;
  * This class is the glue that binds the controls on the physical operator
  * interface to the commands and command groups that allow control of the robot.
  */
-public class OI {
+public final class OI {
     /* CREATING BUTTONS
      One type of button is a joystick button which is any button on a joystick.
      You create one by telling it which joystick it's on and which button
@@ -95,6 +97,50 @@ public class OI {
 //    	SmartDashboard.putData("FeedBall", new FeedBall());
     	
     }
+    
+    
+    
+    // ROBOT BEHAVIOR
+    
+    public double getManualDrive_ForwardValue() {
+    	return XboxHelper.getDriverAxis(AXIS_LEFT_Y);
+    }
 
+	public double getManualDrive_RotateValue() {
+		return XboxHelper.getDriverAxis(AXIS_RIGHT_X);
+	}
+	
+	public boolean getManualDrive_HighGearToggle() {
+		return XboxHelper.getDriverButton(XboxHelper.TRIGGER_LT) || XboxHelper.getDriverButton(XboxHelper.TRIGGER_RT);
+	}
+	
+	public boolean getStartCandyCanes() {
+		return XboxHelper.getShooterButton(XboxHelper.START);
+	}
+	
+	public boolean getLauncher_ResetIntakeSetpoint() {
+		return XboxHelper.getShooterButton(START);
+	}
+	
+	public boolean getThrowBall_LaunchBallOverride() {
+		return XboxHelper.getDriverButton(XboxHelper.STICK_RIGHT);
+	}
+	
+	public double getManualArms_ClimberValue() {
+		return XboxHelper.getShooterAxis(XboxHelper.AXIS_RIGHT_Y);
+	}
+	
+	public boolean getCandyCanes_GoUp() { // TODO check
+		return XboxHelper.getShooterPOV()>270 || XboxHelper.getShooterPOV()<90;
+	}
+	
+	public boolean getCandyCanes_GoDown() {
+		return XboxHelper.getShooterPOV()>90 && XboxHelper.getShooterPOV()<270;
+	}
+	
+	public boolean getManualArms_GetArmValue() {
+		return XboxHelper.getDriverAxis(XboxHelper.AXIS_TRIGGER_LEFT)>0.5 || XboxHelper.getDriverAxis(XboxHelper.AXIS_TRIGGER_RIGHT)>0.5;
+	}
+	
 }
 

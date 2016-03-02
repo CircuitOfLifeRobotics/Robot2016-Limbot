@@ -1,14 +1,11 @@
 package com.team3925.robot2016.commands;
 
-import static com.team3925.robot2016.util.XboxHelper.AXIS_LEFT_Y;
-import static com.team3925.robot2016.util.XboxHelper.AXIS_RIGHT_X;
-
 import com.team3925.robot2016.Constants;
+import com.team3925.robot2016.OI;
 import com.team3925.robot2016.Robot;
 import com.team3925.robot2016.subsystems.DriveTrain;
 import com.team3925.robot2016.util.DriveTrainSignal;
 import com.team3925.robot2016.util.SmartdashBoardLoggable;
-import com.team3925.robot2016.util.XboxHelper;
 
 import edu.wpi.first.wpilibj.command.Command;
 
@@ -16,7 +13,8 @@ import edu.wpi.first.wpilibj.command.Command;
  *
  */
 public class ManualDrive extends Command implements SmartdashBoardLoggable {
-	private DriveTrain driveTrain = Robot.driveTrain;
+	private final DriveTrain driveTrain = Robot.driveTrain;
+	private final OI oi = Robot.oi;
 	
 	private double fwdSet, turnSet, lastFwdSet, lastTurnSet, deltaFwd, deltaTurn;
 	private boolean lowGear = true, shiftPressed, shiftWasPressed;
@@ -33,8 +31,8 @@ public class ManualDrive extends Command implements SmartdashBoardLoggable {
 	// Called repeatedly when this Command is scheduled to run
 	protected void execute() {
 		// negate fwd on practice robot
-		fwdSet = -XboxHelper.getDriverAxis(AXIS_LEFT_Y);
-		turnSet = XboxHelper.getDriverAxis(AXIS_RIGHT_X);
+		fwdSet = oi.getManualDrive_ForwardValue();
+		turnSet = oi.getManualDrive_RotateValue();
 		deltaFwd = fwdSet - lastFwdSet;
 		deltaTurn = turnSet - lastTurnSet;
 		
@@ -46,7 +44,7 @@ public class ManualDrive extends Command implements SmartdashBoardLoggable {
 		
 		driveTrain.arcadeDrive(fwdSet, turnSet, true);
 		
-		shiftPressed = XboxHelper.getDriverButton(XboxHelper.TRIGGER_LT) || XboxHelper.getDriverButton(XboxHelper.TRIGGER_RT);
+		shiftPressed = oi.getManualDrive_HighGearToggle();
 		if (shiftPressed && !shiftWasPressed) {
 			lowGear = !lowGear;
 		}

@@ -26,7 +26,7 @@ public class MiscUtil {
         return (Math.abs(value) < limit) ? value : limit * (value < 0 ? -1 : 1);
     }
 	
-	public static void putPoseSD(String prefix, Pose pose) {
+	public static void putPoseSD(String prefix, DrivetrainPose pose) {
 		SmartDashboard.putNumber(prefix + "LeftDistance", pose.getLeftDistance());
 		SmartDashboard.putNumber(prefix + "RightDistance", pose.getRightDistance());
 		SmartDashboard.putNumber(prefix + "LeftVelocity", pose.getLeftVelocity());

@@ -9,14 +9,15 @@ import com.kauailabs.navx.frc.AHRS;
 import com.team3925.robot2016.commands.AutoRoutineCenter;
 import com.team3925.robot2016.commands.AutoRoutineCourtyard;
 import com.team3925.robot2016.commands.AutoRoutineDoNothing;
-import com.team3925.robot2016.commands.CandyCane;
+import com.team3925.robot2016.commands.Climb;
 import com.team3925.robot2016.commands.ManualArms;
 import com.team3925.robot2016.commands.ManualDrive;
 import com.team3925.robot2016.commands.TrapzoidalMotionTest;
 import com.team3925.robot2016.commands.VerticalAim;
-import com.team3925.robot2016.subsystems.Arms;
+import com.team3925.robot2016.subsystems.CandyCanes;
 import com.team3925.robot2016.subsystems.DriveTrain;
 import com.team3925.robot2016.subsystems.Launcher;
+import com.team3925.robot2016.subsystems.PlexiArms;
 import com.team3925.robot2016.util.DriveTrainSignal;
 import com.team3925.robot2016.util.SmartdashBoardLoggable;
 import com.team3925.robot2016.util.TimeoutAction;
@@ -55,15 +56,14 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 	//Subsystems
 	public static DriveTrain driveTrain;
 	public static Launcher launcher;
-	public static Arms arms;
+	public static CandyCanes candyCanes;
+	public static PlexiArms plexiArms;
 	
 	//Commands
-	// why polymorphism? change to direct data type?
 	Command autoCommandGroup;
 	Command trapMotionTest;
 	Command manualDrive;
-	Command manualArms;
-	Command candyCaneRun;
+	Command manualCandyCanes;
 	Command visionTest;
 	
 	
@@ -100,7 +100,7 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 		//Creating Subsystems and Related Processes
 		driveTrain = new DriveTrain();
 		launcher = new Launcher();
-		arms = new Arms();
+		candyCanes = new CandyCanes();
 		Preferences.getInstance();
 		pdp = RobotMap.pdp;
 		
@@ -127,9 +127,8 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 		
 		//Creating Commands
 		manualDrive = new ManualDrive();
-		manualArms = new ManualArms();
 		trapMotionTest = new TrapzoidalMotionTest();
-		candyCaneRun = new CandyCane();
+		manualCandyCanes = new Climb();
 		visionTest = new VerticalAim();
 		
 		reset();
@@ -199,7 +198,6 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 		if (autoCommandGroup != null) autoCommandGroup.cancel();
 		
 		manualDrive.start();
-		manualArms.start();
 		
 		reset();
 		System.out.println("Robot has init! (Said through System.out.println)");
@@ -217,8 +215,8 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 	public void teleopPeriodic() {
 		Scheduler.getInstance().run();
 		
-		if (XboxHelper.getShooterButton(XboxHelper.START)) {
-			if (candyCaneWait.isFinished() && !candyCaneRun.isRunning()) {
+		if (oi.getStartCandyCanes()) {
+			if (candyCaneWait.isFinished() && !manualCandyCanes.isRunning()) {
 //				candyCaneRun.start();
 			} else {
 				XboxHelper.setShooterRumble(1f);

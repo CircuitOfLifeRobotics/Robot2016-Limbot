@@ -21,21 +21,17 @@ import edu.wpi.first.wpilibj.livewindow.LiveWindow;
  */
 public class RobotMap {
 	
-	//DELETE ON COMP BOT
     public static CANTalon driveTrainMotorLeftA;
     public static CANTalon driveTrainMotorRightA;
-    //END DELETE ON COMP BOT
     public static CANTalon driveTrainMotorLeftB;
     public static CANTalon driveTrainMotorRightB;
-    public static CANTalon driveTrainMotorLeftC;
-    public static CANTalon driveTrainMotorRightC;
+//    public static CANTalon driveTrainMotorLeftC;
+//    public static CANTalon driveTrainMotorRightC;
     public static Encoder driveTrainEncoderLeft;
     public static Encoder driveTrainEncoderRight;
     public static DoubleSolenoid driveTrainShifterSolenoid;
-    //DELETE ON COMP BOT
     public static PIDController driveTrainPIDLeft;
     public static PIDController driveTrainPIDRight;
-    //END DELETE ON COMP BOT
     
     public static CANTalon launcherMotorAim;
     /** spinning in is positive, spinning out is negative **/
@@ -52,6 +48,39 @@ public class RobotMap {
     
     public static PowerDistributionPanel pdp;
     
+    
+    /*
+    Practice Robot CAN Configurations (What was IN code)
+    
+    LeftDriveA = 20
+    LeftDriveB = 19
+    LeftDriveC = 18
+    RightDriveA = 17
+    RightDriveB = 16
+    RightDriveC = 15
+    
+    LauncherAimMotor = 13
+    LauncherIntakeLeft = 12
+    LauncherIntakeRight = 14
+    
+    */
+    
+    /*
+    Competition Robot CAN Configurations (What was IN code)
+    
+    LeftDriveA = 18
+    LeftDriveB = 19
+    LeftDriveC = removed
+    RightDriveA = 15
+    RightDriveB = 16
+    RightDriveC = removed
+    
+    LauncherAimMotor = 13
+    LauncherIntakeLeft = 12
+    LauncherIntakeRight = 14
+    
+     */
+    
     public static void init() {
     	
     	
@@ -66,33 +95,30 @@ public class RobotMap {
     	boolean invertLeft = true;
     	boolean invertRight = false;
     	
-    	//DELETE ON COMP BOT
         driveTrainMotorLeftA = new CANTalon(18); // was 20
         LiveWindow.addActuator("DriveTrain", "MotorLeftA", driveTrainMotorLeftA);
         driveTrainMotorLeftA.setInverted(invertLeft);
         driveTrainMotorLeftA.changeControlMode(TalonControlMode.PercentVbus);
         driveTrainMotorLeftA.setVoltageRampRate(Constants.DRIVE_TRAIN_VOLTAGE_RAMP_RATE);
         driveTrainMotorLeftA.enableBrakeMode(false);
-    	//END DELETE ON COMP BOT
         
         driveTrainMotorLeftB = new CANTalon(19);
         LiveWindow.addActuator("DriveTrain", "MotorLeftB", driveTrainMotorLeftB);
         driveTrainMotorLeftB.setInverted(invertLeft);
 //        driveTrainMotorLeftB.reverseOutput(invertLeft);
         driveTrainMotorLeftB.changeControlMode(TalonControlMode.PercentVbus);
-        driveTrainMotorLeftB.set(driveTrainMotorLeftA.getDeviceID());
+//        driveTrainMotorLeftB.set(driveTrainMotorLeftA.getDeviceID());
         driveTrainMotorLeftB.setVoltageRampRate(Constants.DRIVE_TRAIN_VOLTAGE_RAMP_RATE);
         driveTrainMotorLeftB.enableBrakeMode(false);
         
-        driveTrainMotorLeftC = new CANTalon(20);
-        LiveWindow.addActuator("DriveTrain", "MotorLeftC", driveTrainMotorLeftC);
-        driveTrainMotorLeftC.setInverted(invertLeft);
-//        driveTrainMotorLeftC.reverseOutput(invertLeft);
-        driveTrainMotorLeftC.changeControlMode(TalonControlMode.Follower);
-        driveTrainMotorLeftC.setVoltageRampRate(Constants.DRIVE_TRAIN_VOLTAGE_RAMP_RATE);
-        driveTrainMotorLeftC.enableBrakeMode(false);
+//        driveTrainMotorLeftC = new CANTalon(18);
+//        LiveWindow.addActuator("DriveTrain", "MotorLeftC", driveTrainMotorLeftC);
+//        driveTrainMotorLeftC.setInverted(invertLeft);
+////        driveTrainMotorLeftC.reverseOutput(invertLeft);
+//        driveTrainMotorLeftC.changeControlMode(TalonControlMode.Follower);
+//        driveTrainMotorLeftC.setVoltageRampRate(Constants.DRIVE_TRAIN_VOLTAGE_RAMP_RATE);
+//        driveTrainMotorLeftC.enableBrakeMode(false);
         
-        //DELETE ON COMP BOT
         driveTrainMotorRightA = new CANTalon(15); // was 17
         LiveWindow.addActuator("DriveTrain", "MotorRightA", driveTrainMotorRightA);
 //        driveTrainMotorRightA.setInverted(invertRight);
@@ -100,26 +126,25 @@ public class RobotMap {
         driveTrainMotorRightA.changeControlMode(TalonControlMode.PercentVbus);
         driveTrainMotorRightA.setVoltageRampRate(Constants.DRIVE_TRAIN_VOLTAGE_RAMP_RATE);
         driveTrainMotorRightA.enableBrakeMode(false);
-        //END DELETE ON COMP BOT
         
         driveTrainMotorRightB = new CANTalon(16);
         LiveWindow.addActuator("DriveTrain", "MotorRightB", driveTrainMotorRightB);
-//        driveTrainMotorRightB.setInverted(invertRight);
+        driveTrainMotorRightB.setInverted(invertRight);
 //        driveTrainMotorRightB.reverseOutput(invertRight);
 //        driveTrainMotorRightB.reverseSensor(invertRight);
         driveTrainMotorRightB.changeControlMode(TalonControlMode.PercentVbus);
-        driveTrainMotorRightB.set(driveTrainMotorRightA.getDeviceID());
+//        driveTrainMotorRightB.set(driveTrainMotorRightA.getDeviceID());
         driveTrainMotorRightB.setVoltageRampRate(Constants.DRIVE_TRAIN_VOLTAGE_RAMP_RATE);
         driveTrainMotorRightB.enableBrakeMode(false);
         
-        driveTrainMotorRightC = new CANTalon(15);
-        LiveWindow.addActuator("DriveTrain", "MotorRightC", driveTrainMotorRightC);
-//        driveTrainMotorRightC.reverseOutput(invertRight);
-//        driveTrainMotorRightC.reverseSensor(invertRight);
-        driveTrainMotorRightC.changeControlMode(TalonControlMode.Follower);
-        driveTrainMotorRightC.set(driveTrainMotorRightA.getDeviceID());
-        driveTrainMotorRightC.setVoltageRampRate(Constants.DRIVE_TRAIN_VOLTAGE_RAMP_RATE);
-        driveTrainMotorRightC.enableBrakeMode(false);
+//        driveTrainMotorRightC = new CANTalon(15);
+//        LiveWindow.addActuator("DriveTrain", "MotorRightC", driveTrainMotorRightC);
+////        driveTrainMotorRightC.reverseOutput(invertRight);
+////        driveTrainMotorRightC.reverseSensor(invertRight);
+//        driveTrainMotorRightC.changeControlMode(TalonControlMode.Follower);
+//        driveTrainMotorRightC.set(driveTrainMotorRightA.getDeviceID());
+//        driveTrainMotorRightC.setVoltageRampRate(Constants.DRIVE_TRAIN_VOLTAGE_RAMP_RATE);
+//        driveTrainMotorRightC.enableBrakeMode(false);
        
         
         driveTrainEncoderLeft = new Encoder(0, 1, false, EncodingType.k4X);
@@ -169,6 +194,7 @@ public class RobotMap {
         launcherMotorLeft.setFeedbackDevice(FeedbackDevice.QuadEncoder);
         launcherMotorLeft.changeControlMode(TalonControlMode.Speed);
 //        launcherMotorLeft.changeControlMode(TalonControlMode.PercentVbus);
+        launcherMotorLeft.reverseOutput(true);
         launcherMotorLeft.reverseSensor(true);
 //        launcherMotorLeft.configEncoderCodesPerRev(4096);
         

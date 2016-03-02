@@ -1,42 +1,38 @@
 package com.team3925.robot2016.commands;
 
+import com.team3925.robot2016.OI;
 import com.team3925.robot2016.Robot;
-import com.team3925.robot2016.subsystems.Arms;
-import com.team3925.robot2016.util.SmartdashBoardLoggable;
-import com.team3925.robot2016.util.XboxHelper;
+import com.team3925.robot2016.subsystems.PlexiArms;
 
 import edu.wpi.first.wpilibj.command.Command;
 
-public class ManualArms extends Command implements SmartdashBoardLoggable {
-	
-	Arms arms = Robot.arms;
-	private double climberVal;
+public class ManualArms extends Command {
+	private final OI oi = Robot.oi;
+	private final PlexiArms plexiArms = Robot.plexiArms;
+
 	private boolean armVal, lastArmVal, armsEngaged = false;
 	
 	public ManualArms() {
-		requires(arms);
+		requires(Robot.plexiArms);
 	}
 	
 	@Override
 	protected void initialize() {
-		arms.setArm(false);
-		arms.setClimbMotor(0);
-		climberVal = 0;
+		plexiArms.setArmUp(false);
+
 	}
 
 	@Override
 	protected void execute() {
-		climberVal = XboxHelper.getShooterAxis(XboxHelper.AXIS_RIGHT_Y);
-		armVal = XboxHelper.getDriverAxis(XboxHelper.AXIS_TRIGGER_LEFT)>0.5 || XboxHelper.getDriverAxis(XboxHelper.AXIS_TRIGGER_RIGHT)>0.5;
+		armVal = oi.getManualArms_GetArmValue();
 		if (armVal && !lastArmVal) {
 			armsEngaged = !armsEngaged;
 		}
-		arms.setArm(armsEngaged);
+		plexiArms.setArmUp(armsEngaged);
 //		arms.setClimbMotor(climberVal);
 		
 		lastArmVal = armVal;
 		
-		logData();
 	}
 
 	@Override
@@ -46,25 +42,12 @@ public class ManualArms extends Command implements SmartdashBoardLoggable {
 
 	@Override
 	protected void end() {
-		arms.setArm(false);
-		arms.setClimbMotor(0);
+		plexiArms.setArmUp(true);
 	}
 
 	@Override
 	protected void interrupted() {
-		arms.setArm(false);
-		arms.setClimbMotor(0);
+		plexiArms.setArmUp(true);
 	}
 
-	@Override
-	public void logData() {
-		putNumberSD("JoystickValYOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO", climberVal);
-		putNumberSD("ClimbMotorSetpoint", arms.getClimbSetpoint());
-	}
-
-	@Override
-	public String getFormattedName() {
-		return "ManualArms_";
-	}
-	
 }

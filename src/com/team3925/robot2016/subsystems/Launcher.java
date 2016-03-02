@@ -3,6 +3,7 @@ package com.team3925.robot2016.subsystems;
 import static com.team3925.robot2016.Constants.LAUNCHER_AIM_MOTOR_SPEED_MULTIPLIED;
 
 import com.team3925.robot2016.Constants;
+import com.team3925.robot2016.Robot;
 import com.team3925.robot2016.RobotMap;
 import com.team3925.robot2016.util.LimitPIDController;
 import com.team3925.robot2016.util.MiscUtil;
@@ -14,6 +15,7 @@ import com.team3925.robot2016.util.XboxHelper;
 import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.CANTalon.TalonControlMode;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -109,20 +111,58 @@ public class Launcher extends Subsystem implements SmartdashBoardLoggable {
 		return motorRight.getSetpoint();
 	}
 	
-	public double getIntakeSpeedRight() {
-		return motorRight.getEncVelocity();
+	public double getIntakeVelRight() {
+		try {
+			return motorRight.getEncVelocity();
+		} catch (Exception e) {
+			DriverStation.reportError(motorRight.getDeviceID() + " says " + e.getMessage(), true);
+			return 0;
+		}
 	}
 	
-	public double getIntakeSpeedLeft() {
-		return motorLeft.getEncVelocity();
+	public double getIntakeVelLeft() {
+		try {
+			return motorLeft.getEncVelocity();
+		} catch (Exception e) {
+			DriverStation.reportError(motorLeft.getDeviceID() + " says " + e.getMessage(), true);
+			return 0;
+		}
 	}
 	
 	public double getIntakePosLeft() {
-		return motorLeft.getEncPosition();
+		try {
+			return motorLeft.getEncPosition();
+		} catch (Exception e) {
+			DriverStation.reportError(motorLeft.getDeviceID() + " says " + e.getMessage(), true);
+			return 0;
+		}
 	}
 	
 	public double getIntakePosRight() {
-		return motorRight.getEncPosition();
+		try {
+			return motorRight.getEncPosition();
+		} catch (Exception e) {
+			DriverStation.reportError(motorRight.getDeviceID() + " says " + e.getMessage(), true);
+			return 0;
+		}
+	}
+	
+	public double getIntakeSpeedLeft() {
+		try {
+			return motorLeft.getSpeed();
+		} catch (Exception e) {
+			DriverStation.reportError(motorLeft.getDeviceID() + " says " + e.getMessage(), true);
+			return 0;
+		}
+	}
+	
+	public double getIntakeSpeedRight() {
+		try {
+			return motorRight.getSpeed();
+		} catch (Exception e) {
+			DriverStation.reportError(motorRight.getDeviceID() + " says " + e.getMessage(), true);
+			return 0;
+		}
 	}
 	
 	public void enableAim(boolean isEnable) {
@@ -194,11 +234,11 @@ public class Launcher extends Subsystem implements SmartdashBoardLoggable {
 		 */
 		
 		if (intakeEnabled) {
-			if (XboxHelper.getShooterButton(XboxHelper.START)) {intakeSetpoint = 0;}
-//			else if (XboxHelper.getShooterButton(XboxHelper.Y)) {intakeSetpoint = 1;}
-//			else if (XboxHelper.getShooterButton(XboxHelper.X)) {intakeSetpoint = 0.2;}
-//			else if (XboxHelper.getShooterButton(XboxHelper.B)) {intakeSetpoint = -0.2;}
-//			else if (XboxHelper.getShooterButton(XboxHelper.A)) {intakeSetpoint = -1;}
+			if (Robot.oi.getLauncher_ResetIntakeSetpoint()) {intakeSetpoint = 0;}
+			else if (XboxHelper.getShooterButton(XboxHelper.Y)) {intakeSetpoint = 1;}
+			else if (XboxHelper.getShooterButton(XboxHelper.X)) {intakeSetpoint = 0.2;}
+			else if (XboxHelper.getShooterButton(XboxHelper.B)) {intakeSetpoint = -0.2;}
+			else if (XboxHelper.getShooterButton(XboxHelper.A)) {intakeSetpoint = -1;}
 //			else if (XboxHelper.getShooterButton(XboxHelper.Y)) {intakeSetpoint = 25000;}
 //			else if (XboxHelper.getShooterButton(XboxHelper.X)) {intakeSetpoint = 4000;}
 //			else if (XboxHelper.getShooterButton(XboxHelper.B)) {intakeSetpoint = -4000;}
@@ -321,14 +361,14 @@ public class Launcher extends Subsystem implements SmartdashBoardLoggable {
     	putNumberSD("MotorLeftSetpoint", motorLeft.getSetpoint());
     	putNumberSD("IntakeSetpointDiff", intakeSetpointDiff);
     	
-    	putNumberSD("MotorRightEncPos", motorRight.getEncPosition());
-    	putNumberSD("MotorLeftEncPos", motorLeft.getEncPosition());
+    	putNumberSD("MotorRightEncPos", getIntakePosRight());
+    	putNumberSD("MotorLeftEncPos", getIntakePosLeft());
     	
-    	putNumberSD("MotorRightEncVeloctiy", motorRight.getEncVelocity());
-    	putNumberSD("MotorLeftEncVeloctiy", motorLeft.getEncVelocity());
+    	putNumberSD("MotorRightEncVeloctiy", getIntakeVelRight());
+    	putNumberSD("MotorLeftEncVeloctiy", getIntakeVelLeft());
     	
-    	putNumberSD("MotorRightSpeed", motorRight.getSpeed());
-    	putNumberSD("MotorLeftSpeed", motorLeft.getSpeed());
+    	putNumberSD("MotorRightSpeed", getIntakeSpeedRight());
+    	putNumberSD("MotorLeftSpeed", getIntakeSpeedLeft());
     	
     	putNumberSD("MotorRightError", motorRight.getError());
     	putNumberSD("MotorLeftError", motorLeft.getError());
