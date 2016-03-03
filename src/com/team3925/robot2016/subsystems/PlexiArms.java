@@ -1,6 +1,7 @@
 package com.team3925.robot2016.subsystems;
 
 import com.team3925.robot2016.RobotMap;
+import com.team3925.robot2016.commands.ManualPlexiArms;
 import com.team3925.robot2016.util.SmartdashBoardLoggable;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
@@ -8,13 +9,13 @@ import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.command.Subsystem;
 
 /**
- *
+ *  Subsystem for the plexiglass arms (karate choppers) in the front of the robot.
+ *  <p>
+ *  Not to be confused with <code>CandyCanes</code>,
+ *  the subsystem for the climbing mechanism.
  */
 public class PlexiArms extends Subsystem implements SmartdashBoardLoggable {
-	private DoubleSolenoid armsSolenoid = RobotMap.armsPlexiSolenoid;
-
-    // Put methods for controlling this subsystem
-    // here. Call these from Commands.
+	private DoubleSolenoid armsSolenoid = RobotMap.plexiArmsSolenoid;
 
 	
 	public void setArmUp(boolean engaged) {
@@ -24,6 +25,7 @@ public class PlexiArms extends Subsystem implements SmartdashBoardLoggable {
     public void initDefaultCommand() {
         // Set the default command for a subsystem here.
         //setDefaultCommand(new MySpecialCommand());
+    	setDefaultCommand(new ManualPlexiArms());
     }
 
 	@Override

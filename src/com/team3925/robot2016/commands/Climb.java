@@ -1,46 +1,53 @@
 package com.team3925.robot2016.commands;
 
 import com.team3925.robot2016.Robot;
-import com.team3925.robot2016.subsystems.CandyCanes;
+import static com.team3925.robot2016.Constants.DO_MANUAL_CLIMBER;
+import com.team3925.robot2016.subsystems.Climber;
 import com.team3925.robot2016.util.SmartdashBoardLoggable;
+import com.team3925.robot2016.util.XboxHelper;
 
 import edu.wpi.first.wpilibj.command.Command;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * Controls the candy cane arms on the robot for
  * lifting up at end of match
- * 
- * @author Adam C
  */
 public class Climb extends Command implements SmartdashBoardLoggable {
 	
-	private final CandyCanes arms = Robot.candyCanes;
+	private final Climber climber = Robot.candyCanes;
 	
 	@Override
 	protected void initialize() {
-		arms.setClimbMotor(0);
+		climber.setClimbMotor(0);
 	}
 	
 	@Override
 	protected void execute() {
-//		arms.setCandyCaneSolenoid(true);
+		climber.setClimberSolenoid(true);
 		
-		if (Robot.oi.getCandyCanes_GoUp()) {
-			arms.setClimbMotor(1d);
-		} else if (Robot.oi.getCandyCanes_GoDown()) {
-			arms.setClimbMotor(-1d);
+		if (DO_MANUAL_CLIMBER) {
+			
+			if (Robot.oi.getCandyCanes_GoUp()) {
+				XboxHelper.setShooterRumble(!climber.isEnabled() ? 1f : 0f);
+				climber.setClimbMotor(1d);
+			} else if (Robot.oi.getCandyCanes_GoDown()) {
+				XboxHelper.setShooterRumble(!climber.isEnabled() ? 1f : 0f);
+				climber.setClimbMotor(-1d);
+			}
+			
+		} else {
+			// routine goes here
 		}
 	}
 	
 	@Override
 	protected void end() {
-		arms.setClimbMotor(0);
+		climber.setClimbMotor(0);
 	}
 	
 	@Override
 	protected void interrupted() {
-		arms.setClimbMotor(0);
+		climber.setClimbMotor(0);
 	}
 	
 	@Override

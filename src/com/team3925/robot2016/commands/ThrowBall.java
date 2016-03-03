@@ -59,7 +59,7 @@ public class ThrowBall extends Command implements SmartdashBoardLoggable{
 	
 	@Override
 	protected boolean isFinished() {
-		return mode == Mode.DONE;
+		return mode == Mode.DONE || Robot.oi.getCommandCancel();
 	}
 	
 	@Override

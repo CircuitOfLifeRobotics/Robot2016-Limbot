@@ -2,7 +2,7 @@ package com.team3925.robot2016;
 
 import static com.team3925.robot2016.util.XboxHelper.*;
 
-import javax.sound.midi.ControllerEventListener;
+import javax.sound.midi.ControllerEventListener; // Too Legit 4 Me
 
 import com.team3925.robot2016.commands.CollectBall;
 import com.team3925.robot2016.commands.GyroTurn;
@@ -140,6 +140,10 @@ public final class OI {
 	
 	public boolean getManualArms_GetArmValue() {
 		return XboxHelper.getDriverAxis(XboxHelper.AXIS_TRIGGER_LEFT)>0.5 || XboxHelper.getDriverAxis(XboxHelper.AXIS_TRIGGER_RIGHT)>0.5;
+	}
+	
+	public boolean getCommandCancel() {
+		return XboxHelper.getShooterButton(START) || XboxHelper.getDriverButton(START);
 	}
 	
 }

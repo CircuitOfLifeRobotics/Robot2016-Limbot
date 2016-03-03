@@ -1,57 +1,60 @@
 package com.team3925.robot2016.util;
 
-public class LauncherPose {
+public final class LauncherPose {
 	public LauncherPose(double leftEncPos, double rightEncPos, double leftEncVel, double rightEncVel,
 			double aimEncPos, double aimEncVel) {
-		this.leftEncPos = leftEncPos;
-		this.rightEncPos = rightEncPos;
-		this.leftEncVel = leftEncVel;
-		this.rightEncVel = rightEncVel;
+		this.intakeLeftEncPos = leftEncPos;
+		this.intakeRightEncPos = rightEncPos;
+		this.intakeLeftEncVel = leftEncVel;
+		this.intakeRightEncVel = rightEncVel;
 		this.aimEncPos = aimEncPos;
 		this.aimEncVel = aimEncVel;
 	}
 	
-	public double leftEncPos;
-	public double rightEncPos;
-	public double leftEncVel;
-	public double rightEncVel;
-	public double aimEncPos;
-	public double aimEncVel;
+	private double intakeLeftEncPos;
+	private double intakeRightEncPos;
+	private double intakeLeftEncVel;
+	private double intakeRightEncVel;
+	private double aimEncPos;
+	private double aimEncVel;
 	
 	public void reset(double leftEncPos, double rightEncPos, double leftEncVel, double rightEncVel,
 			double aimEncPos, double aimEncVel) {
-		this.leftEncPos = leftEncPos;
-		this.rightEncPos = rightEncPos;
-		this.leftEncVel = leftEncVel;
-		this.rightEncVel = rightEncVel;
+		this.intakeLeftEncPos = leftEncPos;
+		this.intakeRightEncPos = rightEncPos;
+		this.intakeLeftEncVel = leftEncVel;
+		this.intakeRightEncVel = rightEncVel;
 		this.aimEncPos = aimEncPos;
 		this.aimEncVel = aimEncVel;
 	}
 	
-	public double getLeftEncPos() {
-		return leftEncPos;
+	public double getIntakeLeftEncPos() {
+		return intakeLeftEncPos;
 	}
 	
-	public double getRightEncPos() {
-		return rightEncPos;
+	public double getIntakeRightEncPos() {
+		return intakeRightEncPos;
 	}
 	
-	public double getLeftEncVel() {
-		return leftEncVel;
+	public double getIntakeLeftEncVel() {
+		return intakeLeftEncVel;
 	}
-	
-	public double getRightEncVel() {
-		return rightEncVel;
+
+	public double getIntakeRightEncVel() {
+		return intakeRightEncVel;
 	}
-	
+
 	public double getAimEncPos() {
 		return aimEncPos;
 	}
-	
+
 	public double getAimEncVel() {
 		return aimEncVel;
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (!(obj instanceof LauncherPose))
@@ -59,8 +62,8 @@ public class LauncherPose {
 		if (obj == this)
 			return true;
 		LauncherPose otherPose = (LauncherPose) obj;
-		return otherPose.getLeftEncPos() == getLeftEncPos() && otherPose.getRightEncPos() == getRightEncPos();
-//				&& otherPose.getLeftEncVel() == getLeftEncVel() && otherPose.getRightVelocity() == getRightVelocity() &&
-//				otherPose.getHeading() == getHeading() && otherPose.getHeadingVelocity() == getHeadingVelocity();
+		return otherPose.getIntakeLeftEncPos() == getIntakeLeftEncPos() && otherPose.getIntakeRightEncPos() == getIntakeRightEncPos() &&
+				otherPose.getIntakeLeftEncVel() == getIntakeLeftEncVel() && otherPose.getIntakeRightEncVel() == getIntakeRightEncVel() &&
+				otherPose.getAimEncPos() == getAimEncPos() && otherPose.getAimEncVel() == getAimEncVel();
 	}
 }

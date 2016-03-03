@@ -13,6 +13,9 @@ public class TimeoutAction {
         return Timer.getFPGATimestamp() >= m_time_start + m_timeout;
     }
 
+    /**
+     * @param timeOut a double in seconds
+     */
     public void config(double timeOut) {
     	m_timeout = timeOut;
         m_time_start = Timer.getFPGATimestamp();

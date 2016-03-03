@@ -6,13 +6,13 @@ import com.team3925.robot2016.subsystems.PlexiArms;
 
 import edu.wpi.first.wpilibj.command.Command;
 
-public class ManualArms extends Command {
+public class ManualPlexiArms extends Command {
 	private final OI oi = Robot.oi;
 	private final PlexiArms plexiArms = Robot.plexiArms;
 
 	private boolean armVal, lastArmVal, armsEngaged = false;
 	
-	public ManualArms() {
+	public ManualPlexiArms() {
 		requires(Robot.plexiArms);
 	}
 	

@@ -1,14 +1,9 @@
 package com.team3925.robot2016.commands;
 
-import static com.team3925.robot2016.Constants.CAMERA_AIMED_X;
-import static com.team3925.robot2016.Constants.CAMERA_DEGS_PER_PX;
-
 import com.team3925.robot2016.Constants;
 import com.team3925.robot2016.Robot;
 import com.team3925.robot2016.subsystems.Launcher;
 import com.team3925.robot2016.util.SmartdashBoardLoggable;
-import com.team3925.robot2016.util.TimeoutAction;
-import com.team3925.robot2016.util.XboxHelper;
 
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.networktables.NetworkTable;
@@ -52,7 +47,7 @@ public class VerticalAim extends Command implements SmartdashBoardLoggable{
 	
 	@Override
 	protected boolean isFinished() {
-		return XboxHelper.getShooterButton(XboxHelper.START);
+		return Robot.oi.getCommandCancel();
 	}
 	
 	@Override

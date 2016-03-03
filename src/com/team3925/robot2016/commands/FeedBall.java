@@ -3,7 +3,6 @@ package com.team3925.robot2016.commands;
 import com.team3925.robot2016.Robot;
 import com.team3925.robot2016.subsystems.Launcher;
 import com.team3925.robot2016.util.TimeoutAction;
-import com.team3925.robot2016.util.XboxHelper;
 
 import edu.wpi.first.wpilibj.command.Command;
 
@@ -35,7 +34,7 @@ public class FeedBall extends Command {
 
 	@Override
 	protected boolean isFinished() {
-		return XboxHelper.getShooterButton(XboxHelper.START) || timer.isFinished();
+		return timer.isFinished() || Robot.oi.getCommandCancel();
 	}
 
 	@Override

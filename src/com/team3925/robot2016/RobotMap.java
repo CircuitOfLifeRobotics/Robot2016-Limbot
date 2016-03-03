@@ -34,14 +34,14 @@ public class RobotMap {
     public static PIDController driveTrainPIDRight;
     
     public static CANTalon launcherMotorAim;
-    /** spinning in is positive, spinning out is negative **/
     public static CANTalon launcherMotorLeft;
-    /** spinning in is positive, spinning out is negative **/
     public static CANTalon launcherMotorRight;
     public static DoubleSolenoid launcherPuncherSolenoid;
     
-    public static DoubleSolenoid armsPlexiSolenoid;
-    public static CANTalon armsMotorClimb;
+    public static DoubleSolenoid plexiArmsSolenoid;
+    
+    public static CANTalon climberArmsMotor;
+    public static DoubleSolenoid climberSolenoid;
     
 //    public static Solenoid blueLedStrip;
 //    public static Solenoid redLedStrip;
@@ -212,19 +212,27 @@ public class RobotMap {
         //2, 3 puncher
         //0, 1 arms
         
-        //ARMS
         
-        armsPlexiSolenoid = new DoubleSolenoid(0, 1);
+        
+        // PLEXI ARMS
+        
+        plexiArmsSolenoid = new DoubleSolenoid(0, 1);
         //TODO: correct ports for candy cane solenoid
-//        armsCandyCaneSolenoid = new DoubleSolenoid();
         
-        armsMotorClimb = new CANTalon(11);
-        LiveWindow.addActuator("Arms", "MotorClimb", armsMotorClimb);
-        armsMotorClimb.setFeedbackDevice(FeedbackDevice.QuadEncoder);
-        armsMotorClimb.changeControlMode(TalonControlMode.PercentVbus);
+        
+        
+        // CLIMBER
+        
+        climberArmsMotor = new CANTalon(11);
+        LiveWindow.addActuator("Arms", "MotorClimb", climberArmsMotor);
+        climberArmsMotor.setFeedbackDevice(FeedbackDevice.QuadEncoder);
+        climberArmsMotor.changeControlMode(TalonControlMode.PercentVbus);
 //        armsMotorClimb.configEncoderCodesPerRev(4096);
         
-        //END ARMS
+//        climberSolenoid = new DoubleSolenoid(0, 0); TODO Get ports
+        
+
+        // LEDS
         
 //        blueLedStrip = new Solenoid(7);
 //        blueLedStrip.set(true);

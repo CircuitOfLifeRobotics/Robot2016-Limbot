@@ -4,9 +4,7 @@ import static com.team3925.robot2016.Constants.CAMERA_AIMED_X;
 import static com.team3925.robot2016.Constants.CAMERA_DEGS_PER_PX;
 
 import com.team3925.robot2016.Robot;
-import com.team3925.robot2016.subsystems.Launcher;
 import com.team3925.robot2016.util.SmartdashBoardLoggable;
-import com.team3925.robot2016.util.XboxHelper;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.command.Command;
@@ -45,7 +43,7 @@ public class LaunchBallHigh extends Command implements SmartdashBoardLoggable {
 
 	// Make this return true when this Command no longer needs to run execute()
 	protected boolean isFinished() {
-		return XboxHelper.getShooterButton(XboxHelper.START);
+		return Robot.oi.getCommandCancel();
 	}
 
 	// Called once after isFinished returns true

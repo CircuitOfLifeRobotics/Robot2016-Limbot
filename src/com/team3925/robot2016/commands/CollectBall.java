@@ -1,9 +1,9 @@
 package com.team3925.robot2016.commands;
 
+import com.team3925.robot2016.Constants;
 import com.team3925.robot2016.Robot;
 import com.team3925.robot2016.subsystems.Launcher;
 import com.team3925.robot2016.util.TimeoutAction;
-import com.team3925.robot2016.util.XboxHelper;
 
 import edu.wpi.first.wpilibj.command.Command;
 
@@ -36,7 +36,7 @@ public class CollectBall extends Command {
 	protected void execute() {
 		switch (mode) {
 		case WAIT_FOR_DOWN:
-			launcher.setIntakeSetpoint(-30000);
+			launcher.setIntakeSetpoint(-Constants.LAUNCHER_MAX_INTAKE_SPEED);
 			if (launcher.isAimOnSetpoint() || timeout.isFinished()) {
 				mode = CollectMode.INTAKE;
 				timeout.config(4);
@@ -49,7 +49,7 @@ public class CollectBall extends Command {
 
 	// Make this return true when this Command no longer needs to run execute()
 	protected boolean isFinished() {
-		return launcher.hasBall() || XboxHelper.getDriverButton(XboxHelper.START) || (timeout.isFinished() && mode==CollectMode.INTAKE);
+		return launcher.hasBall() || (timeout.isFinished() && mode==CollectMode.INTAKE) || Robot.oi.getCommandCancel();
 	}
 
 	// Called once after isFinished returns true

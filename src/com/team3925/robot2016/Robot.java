@@ -10,11 +10,10 @@ import com.team3925.robot2016.commands.AutoRoutineCenter;
 import com.team3925.robot2016.commands.AutoRoutineCourtyard;
 import com.team3925.robot2016.commands.AutoRoutineDoNothing;
 import com.team3925.robot2016.commands.Climb;
-import com.team3925.robot2016.commands.ManualArms;
 import com.team3925.robot2016.commands.ManualDrive;
 import com.team3925.robot2016.commands.TrapzoidalMotionTest;
 import com.team3925.robot2016.commands.VerticalAim;
-import com.team3925.robot2016.subsystems.CandyCanes;
+import com.team3925.robot2016.subsystems.Climber;
 import com.team3925.robot2016.subsystems.DriveTrain;
 import com.team3925.robot2016.subsystems.Launcher;
 import com.team3925.robot2016.subsystems.PlexiArms;
@@ -51,12 +50,11 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 	public static NetworkTable table;
 	public static OI oi;
 	public static Preferences prefs;
-	private TimeoutAction candyCaneWait = new TimeoutAction();
 	
 	//Subsystems
 	public static DriveTrain driveTrain;
 	public static Launcher launcher;
-	public static CandyCanes candyCanes;
+	public static Climber candyCanes;
 	public static PlexiArms plexiArms;
 	
 	//Commands
@@ -100,7 +98,7 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 		//Creating Subsystems and Related Processes
 		driveTrain = new DriveTrain();
 		launcher = new Launcher();
-		candyCanes = new CandyCanes();
+		candyCanes = new Climber();
 		Preferences.getInstance();
 		pdp = RobotMap.pdp;
 		
@@ -200,9 +198,8 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 		manualDrive.start();
 		
 		reset();
-		System.out.println("Robot has init! (Said through System.out.println)");
 //		driveTrain.setPIDEnabled(false);
-		candyCaneWait.config(55d);
+		candyCanes.startTimeOut();
 		
 //		visionTest.start();
 		
@@ -214,16 +211,6 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 	 */
 	public void teleopPeriodic() {
 		Scheduler.getInstance().run();
-		
-		if (oi.getStartCandyCanes()) {
-			if (candyCaneWait.isFinished() && !manualCandyCanes.isRunning()) {
-//				candyCaneRun.start();
-			} else {
-				XboxHelper.setShooterRumble(1f);
-			}
-		}else {
-			XboxHelper.setShooterRumble(0);
-		}
 		
 		launcher.update();
 		
