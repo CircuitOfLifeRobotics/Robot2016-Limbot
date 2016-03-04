@@ -41,6 +41,7 @@ public class Constants {
     public static final double CLIMBER_ACTIVE_TIME = 20d; // the 20 seconds at end of match
     
     
+    
 	// LAUNCHER CONSTANTS
 	
     public static final double LAUNCHER_GLOBAL_MAX_POWER = 1;//Robot.prefs.getDouble("Max Shooter Pwr", 1);
@@ -63,7 +64,7 @@ public class Constants {
 	public static final double LAUNCHER_AIM_RAMP_RATE = 5;//ramp rate is maximum acceleration in voltage/second
 	public static final int LAUNCHER_AIM_IZONE = 0; // izone eliminates
 	
-	public static final double LAUNCHER_WHEELS_KP = 0.06;
+	public static final double LAUNCHER_WHEELS_KP = 0.03;
 	public static final double LAUNCHER_WHEELS_KI = 0.000000;
 	public static final double LAUNCHER_WHEELS_KD = 0.6;
 	public static final double LAUNCHER_WHEELS_KF = 0/*0.04092*/;

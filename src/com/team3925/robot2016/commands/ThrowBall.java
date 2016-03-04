@@ -1,5 +1,6 @@
 package com.team3925.robot2016.commands;
 
+import com.team3925.robot2016.Constants;
 import com.team3925.robot2016.Robot;
 import com.team3925.robot2016.subsystems.Launcher;
 import com.team3925.robot2016.util.SmartdashBoardLoggable;
@@ -26,7 +27,7 @@ public class ThrowBall extends Command implements SmartdashBoardLoggable{
 		launcher.enableAim(true);
 		launcher.enableIntake(true);
 		launcher.setAimSetpoint(75);
-		launcher.setIntakeSetpoint(35000);
+		launcher.setIntakeSetpoint(Constants.LAUNCHER_MAX_INTAKE_SPEED);
 		
 		buttonTimer.config(0.5);
 		timer.config(2);

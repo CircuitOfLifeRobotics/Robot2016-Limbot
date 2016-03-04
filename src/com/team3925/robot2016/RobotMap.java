@@ -81,6 +81,20 @@ public class RobotMap {
     
      */
     
+    /*
+    Practice Robot CAN Configurations (What is ON ROBOT as of March 3)
+    LeftDriveA = 13
+    LeftDriveB = 12
+    RightDriveA = 18
+    RightDriveB = 19
+    
+    LauncherAim = 15
+    LauncherRight = 10
+    LauncherLeft = 11
+    
+    Unused = 14
+    */
+    
     public static void init() {
     	
     	
@@ -95,14 +109,14 @@ public class RobotMap {
     	boolean invertLeft = true;
     	boolean invertRight = false;
     	
-        driveTrainMotorLeftA = new CANTalon(18); // was 20
+        driveTrainMotorLeftA = new CANTalon(13);
         LiveWindow.addActuator("DriveTrain", "MotorLeftA", driveTrainMotorLeftA);
         driveTrainMotorLeftA.setInverted(invertLeft);
         driveTrainMotorLeftA.changeControlMode(TalonControlMode.PercentVbus);
         driveTrainMotorLeftA.setVoltageRampRate(Constants.DRIVE_TRAIN_VOLTAGE_RAMP_RATE);
         driveTrainMotorLeftA.enableBrakeMode(false);
         
-        driveTrainMotorLeftB = new CANTalon(19);
+        driveTrainMotorLeftB = new CANTalon(12);
         LiveWindow.addActuator("DriveTrain", "MotorLeftB", driveTrainMotorLeftB);
         driveTrainMotorLeftB.setInverted(invertLeft);
 //        driveTrainMotorLeftB.reverseOutput(invertLeft);
@@ -119,7 +133,7 @@ public class RobotMap {
 //        driveTrainMotorLeftC.setVoltageRampRate(Constants.DRIVE_TRAIN_VOLTAGE_RAMP_RATE);
 //        driveTrainMotorLeftC.enableBrakeMode(false);
         
-        driveTrainMotorRightA = new CANTalon(15); // was 17
+        driveTrainMotorRightA = new CANTalon(18); // was 17
         LiveWindow.addActuator("DriveTrain", "MotorRightA", driveTrainMotorRightA);
 //        driveTrainMotorRightA.setInverted(invertRight);
 //        driveTrainMotorRightA.reverseSensor(invertRight);
@@ -127,7 +141,7 @@ public class RobotMap {
         driveTrainMotorRightA.setVoltageRampRate(Constants.DRIVE_TRAIN_VOLTAGE_RAMP_RATE);
         driveTrainMotorRightA.enableBrakeMode(false);
         
-        driveTrainMotorRightB = new CANTalon(16);
+        driveTrainMotorRightB = new CANTalon(19);
         LiveWindow.addActuator("DriveTrain", "MotorRightB", driveTrainMotorRightB);
         driveTrainMotorRightB.setInverted(invertRight);
 //        driveTrainMotorRightB.reverseOutput(invertRight);
@@ -181,7 +195,7 @@ public class RobotMap {
         launcherPuncherSolenoid = new DoubleSolenoid(2, 3);
         LiveWindow.addActuator("Launcher", "PuncherSolenoid", launcherPuncherSolenoid);
         
-        launcherMotorAim = new CANTalon(13);
+        launcherMotorAim = new CANTalon(15);
         LiveWindow.addActuator("Launcher", "AimMotor", launcherMotorAim);
         launcherMotorAim.setFeedbackDevice(FeedbackDevice.PulseWidth);
         launcherMotorAim.changeControlMode(TalonControlMode.PercentVbus);
@@ -189,7 +203,7 @@ public class RobotMap {
         launcherMotorAim.reverseSensor(true);
 //        launcherMotorAim.reverseSensor(true); doesn't work, sensor value is still negative
         
-        launcherMotorLeft = new CANTalon(12);
+        launcherMotorLeft = new CANTalon(11);
         LiveWindow.addActuator("Launcher", "MotorLeft", launcherMotorLeft);
         launcherMotorLeft.setFeedbackDevice(FeedbackDevice.QuadEncoder);
         launcherMotorLeft.changeControlMode(TalonControlMode.Speed);
@@ -198,12 +212,13 @@ public class RobotMap {
         launcherMotorLeft.reverseSensor(true);
 //        launcherMotorLeft.configEncoderCodesPerRev(4096);
         
-        launcherMotorRight = new CANTalon(14);
+        launcherMotorRight = new CANTalon(10);
         LiveWindow.addActuator("Launcher", "MotorRight", launcherMotorRight);
         launcherMotorRight.setFeedbackDevice(FeedbackDevice.QuadEncoder);
         launcherMotorRight.changeControlMode(TalonControlMode.Speed);
 //        launcherMotorRight.changeControlMode(TalonControlMode.PercentVbus);
-        launcherMotorRight.reverseSensor(true);
+        launcherMotorLeft.reverseOutput(false);
+        launcherMotorRight.reverseSensor(false);
 //        launcherMotorRight.configEncoderCodesPerRev(4096);
         
         //END LAUNCHER

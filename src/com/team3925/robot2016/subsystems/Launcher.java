@@ -43,7 +43,7 @@ public final class Launcher extends Subsystem implements SmartdashBoardLoggable 
     private TimeoutAction manualPuncherWait = new TimeoutAction();
 //    Sensor for ball goes here
     
-    private boolean aimEnabled = false, intakeEnabled = true, doRunAim = true, aimOnTarget = false, intakeOnTarget = false;
+    private boolean aimEnabled = true, intakeEnabled = true, doRunAim = true, aimOnTarget = false, intakeOnTarget = false;
 	private double aimSetpoint, aimSetpointDiff, aimLastSetpoint, aimLimitedSetpoint, aimPosition, aimDifference, aimOutput, aimAngleMultiplier;
 	private double intakeSetpoint, intakeLimitedSetpoint, intakeSetpointDiff, intakeLastSetpoint/*, intakeSpeedLeft, intakeSpeedRight*/;
 	private LauncherPose cachedPose = new LauncherPose(0d, 0d, 0d, 0d, 0d, 0d);
@@ -195,7 +195,7 @@ public final class Launcher extends Subsystem implements SmartdashBoardLoggable 
 	}
 	
 	public void setLeftIntakeSetpoint(double setpoint) {
-		motorLeft.setSetpoint(-setpoint);
+		motorLeft.setSetpoint(setpoint);
 	}
 	
 	public void setRightIntakeSetpoint(double setpoint) {

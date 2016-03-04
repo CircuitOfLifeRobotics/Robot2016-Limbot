@@ -19,7 +19,6 @@ import com.team3925.robot2016.subsystems.Launcher;
 import com.team3925.robot2016.subsystems.PlexiArms;
 import com.team3925.robot2016.util.DriveTrainSignal;
 import com.team3925.robot2016.util.SmartdashBoardLoggable;
-import com.team3925.robot2016.util.TimeoutAction;
 import com.team3925.robot2016.util.XboxHelper;
 
 import edu.wpi.first.wpilibj.DriverStation;
@@ -27,6 +26,7 @@ import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.SPI;
+import edu.wpi.first.wpilibj.Sendable;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
@@ -34,6 +34,7 @@ import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.networktables.NetworkTable;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.tables.ITable;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -44,18 +45,18 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  */
 public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 	
-	//Other
-	public static AHRS navx = null;
-	public static PowerDistributionPanel pdp;
-	public static NetworkTable table;
-	public static OI oi;
-	public static Preferences prefs;
-	
 	//Subsystems
 	public static DriveTrain driveTrain;
 	public static Launcher launcher;
 	public static Climber candyCanes;
 	public static PlexiArms plexiArms;
+	
+	//Other
+	public static Preferences prefs;
+	public static AHRS navx = null;
+	public static PowerDistributionPanel pdp;
+	public static NetworkTable table;
+	public static OI oi;
 	
 	//Commands
 	Command autoCommandGroup;
@@ -227,7 +228,7 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 	@Override
 	public void logData() {
 //		driveTrain.logData();
-//		launcher.logData();
+		launcher.logData();
 //		arms.logData();
 		
 		double now = Timer.getFPGATimestamp();

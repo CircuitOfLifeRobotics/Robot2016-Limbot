@@ -16,6 +16,10 @@ public class Climb extends Command implements SmartdashBoardLoggable {
 	
 	private final Climber climber = Robot.candyCanes;
 	
+	public Climb () {
+		requires(climber);
+	}
+	
 	@Override
 	protected void initialize() {
 		climber.setClimbMotor(0);
