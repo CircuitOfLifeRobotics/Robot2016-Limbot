@@ -21,8 +21,8 @@ public class Constants {
 	
 	
 	// MECHANICAL CONSTANTS
-	public static final double WHEEL_DIAMETER = 6.0; // inches (inflated)
-	
+	public static final double DRIVE_WHEEL_DIAMETER = 6.0; // inches (inflated)
+	public static final double LAUNCHER_WHEEL_CIRCUM = 12.5 / 12.0;//feet
 	
 	
     // CAMERA CONSTANTS
@@ -33,12 +33,17 @@ public class Constants {
     public static final double CAMERA_FOV_PIX = 320;
     public static final double CAMERA_DEGS_PER_PX = CAMERA_FOV_DEG/CAMERA_FOV_PIX;
     public static final double CAMERA_TARGET_WIDTH = 5d/3d;//in feet
-	
+    public static final double CAMERA_TARGET_HEIGHT_GROUND = 83.5d;
+    public static final double CAMERA_PIVOT_HEIGHT_GROUND = (7d / 12d);
+    public static final double CAMERA_PIVOT_DIST = (18d / 12d);
+    public static final double CAMERA_MID_OFFSET = (6.5d / 12d);
+	//carpet to pivot 7 in
+    //cam to pivot 18 in
     
     
     // CLIMBER CONSTANTS
     public static final double CLIMBER_MAX_VALUE = 20_000; // TODO Get true limit
-    public static final double CLIMBER_ACTIVE_TIME = 20d; // the 20 seconds at end of match
+    public static final double CLIMBER_ACTIVE_TIME = 125d; // the 20 seconds at end of match
     
     
     
@@ -52,21 +57,21 @@ public class Constants {
 	public static final double LAUNCHER_MAX_HEIGHT = 700; // in encoder ticks
 	public static final double LAUNCHER_MIN_HEIGHT = 50; // in encoder ticks
 	
-	public static final double LAUNCHER_AIM_TOLERANCE = 10;
+	public static final double LAUNCHER_AIM_TOLERANCE = 1;
 	public static final double LAUNCHER_AIM_SLOWDOWN = 40;
-	public static final double LAUNCHER_AIM_INCREMENT = 6;
+	public static final double LAUNCHER_AIM_INCREMENT = 18;
 	public static final double LAUNCHER_INTAKE_INCREMENT = 1000;
 	//TODO: tune shooter pid
-	public static final double LAUNCHER_AIM_KP = 1400d/10_000d;   //200d/10000d
+	public static final double LAUNCHER_AIM_KP = 6400d/10_000d;   //1400d/10000d
 	public static final double LAUNCHER_AIM_KI = 16d/10_000d;     //8d/10000d; 
 	public static final double LAUNCHER_AIM_KD = 950d/10_000d;   //250d/10000d
 	public static final double LAUNCHER_AIM_KF = 0.0;
 	public static final double LAUNCHER_AIM_RAMP_RATE = 5;//ramp rate is maximum acceleration in voltage/second
 	public static final int LAUNCHER_AIM_IZONE = 0; // izone eliminates
 	
-	public static final double LAUNCHER_WHEELS_KP = 0.03;
-	public static final double LAUNCHER_WHEELS_KI = 0.000000;
-	public static final double LAUNCHER_WHEELS_KD = 0.6;
+	public static final double LAUNCHER_WHEELS_KP = 0.000004;
+	public static final double LAUNCHER_WHEELS_KI = 0.000000000;
+	public static final double LAUNCHER_WHEELS_KD = 0.00;
 	public static final double LAUNCHER_WHEELS_KF = 0/*0.04092*/;
 	public static final double LAUNCHER_WHEELS_RAMP_RATE = 1;//ramp rate is maximum acceleration in voltage/second
 	public static final int LAUNCHER_WHEELS_IZONE = 0; // izone eliminates
@@ -92,7 +97,7 @@ public class Constants {
 	private static final double MAX_VALUE_MULTIPLIER = 0.8;
 	
 	private static final int DRIVETRAIN_ENCODER_TICKS = 128 * 4;
-	public static final double DRIVETRAIN_ENCODER_FACTOR = Math.PI * WHEEL_DIAMETER / DRIVETRAIN_ENCODER_TICKS * (97d/77d);
+	public static final double DRIVETRAIN_ENCODER_FACTOR = Math.PI * DRIVE_WHEEL_DIAMETER / DRIVETRAIN_ENCODER_TICKS * (97d/77d);
 	
 	
 	public static final double MAX_ACCEL_M_SEC2 = 0.923;
@@ -118,7 +123,7 @@ public class Constants {
 	public static final double DRIVETRAIN_RIGHT_KD = 0;
     
 	//Gyro turn constants
-	public static final double GYROTURN_P = 0.05;
+	public static final double GYROTURN_P = 0.03;
 	public static final double GYROTURN_I = 0.0;
 	public static final double GYROTURN_D = 0.001;
 	
@@ -231,4 +236,6 @@ public class Constants {
     		{0,	0,	10},
     		{0,	0,	10},
     };
+
+
 }

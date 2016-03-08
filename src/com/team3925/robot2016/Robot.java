@@ -10,6 +10,8 @@ import com.team3925.robot2016.commands.AutoRoutineCenter;
 import com.team3925.robot2016.commands.AutoRoutineCourtyard;
 import com.team3925.robot2016.commands.AutoRoutineDoNothing;
 import com.team3925.robot2016.commands.Climb;
+import com.team3925.robot2016.commands.GyroTurn;
+import com.team3925.robot2016.commands.LaunchBallHigh;
 import com.team3925.robot2016.commands.ManualDrive;
 import com.team3925.robot2016.commands.TrapzoidalMotionTest;
 import com.team3925.robot2016.commands.VerticalAim;
@@ -64,6 +66,8 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 	Command manualDrive;
 	Command manualCandyCanes;
 	Command visionTest;
+	Command launchBallHigh;
+	Command gyroTurn;
 	
 	
 	SendableChooser autoChooser;
@@ -103,7 +107,7 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 		Preferences.getInstance();
 		pdp = RobotMap.pdp;
 		
-		table = NetworkTable.getTable("GRIP/Feb23");
+		table = NetworkTable.getTable("GRIP/Mar4");
 		try {
 			new ProcessBuilder("/home/lvuser/grip").inheritIO().start();
 		}catch (Exception e) {
@@ -129,6 +133,9 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 		trapMotionTest = new TrapzoidalMotionTest();
 		manualCandyCanes = new Climb();
 		visionTest = new VerticalAim();
+		launchBallHigh = new LaunchBallHigh();
+		gyroTurn = new GyroTurn(45);
+		
 		
 		reset();
 	}
@@ -174,6 +181,8 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 		reset();
 		
 //		launchBallTest.start();
+		launchBallHigh.start();
+//		gyroTurn.start();
 		
 		launcher.init();
 	}
@@ -230,6 +239,7 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 //		driveTrain.logData();
 		launcher.logData();
 //		arms.logData();
+//		candyCanes.logData();
 		
 		double now = Timer.getFPGATimestamp();
 		deltaTime = now - lastTimestamp;
@@ -270,7 +280,7 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 		
 		if (DO_LOG_PDP_VALUES) {
 			if (pdp != null) {
-//				logPDPData();
+				logPDPData();
 			} else {
 				putStringSD("PDPLogger", "Cannot log PDP values while null!");
 			}

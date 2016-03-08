@@ -206,17 +206,16 @@ public class RobotMap {
         launcherMotorLeft = new CANTalon(11);
         LiveWindow.addActuator("Launcher", "MotorLeft", launcherMotorLeft);
         launcherMotorLeft.setFeedbackDevice(FeedbackDevice.QuadEncoder);
-        launcherMotorLeft.changeControlMode(TalonControlMode.Speed);
-//        launcherMotorLeft.changeControlMode(TalonControlMode.PercentVbus);
-        launcherMotorLeft.reverseOutput(true);
+//        launcherMotorLeft.changeControlMode(TalonControlMode.Speed);
+        launcherMotorLeft.changeControlMode(TalonControlMode.PercentVbus);
+        launcherMotorLeft.reverseOutput(false);
         launcherMotorLeft.reverseSensor(true);
 //        launcherMotorLeft.configEncoderCodesPerRev(4096);
         
         launcherMotorRight = new CANTalon(10);
         LiveWindow.addActuator("Launcher", "MotorRight", launcherMotorRight);
         launcherMotorRight.setFeedbackDevice(FeedbackDevice.QuadEncoder);
-        launcherMotorRight.changeControlMode(TalonControlMode.Speed);
-//        launcherMotorRight.changeControlMode(TalonControlMode.PercentVbus);
+        launcherMotorRight.changeControlMode(TalonControlMode.PercentVbus);
         launcherMotorLeft.reverseOutput(false);
         launcherMotorRight.reverseSensor(false);
 //        launcherMotorRight.configEncoderCodesPerRev(4096);

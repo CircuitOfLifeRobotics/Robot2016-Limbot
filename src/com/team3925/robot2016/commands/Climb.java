@@ -29,7 +29,7 @@ public class Climb extends Command implements SmartdashBoardLoggable {
 	protected void execute() {
 		climber.setClimberSolenoid(true);
 		
-		if (DO_MANUAL_CLIMBER) {
+		if (!DO_MANUAL_CLIMBER) {
 			
 			if (Robot.oi.getCandyCanes_GoUp()) {
 				XboxHelper.setShooterRumble(!climber.isEnabled() ? 1f : 0f);

@@ -15,15 +15,15 @@ public class GyroTurn extends PIDCommand implements SmartdashBoardLoggable {
 	AHRS navx = Robot.navx;
 	private double startAngle, targetAngle, currentAngle, lastAngle, errorAngle, rotations, relativeSetpoint, deltaRotation;
 	private boolean isRunning = true;
-	private double fwdOutput = 0.3;
+	private double fwdOutput = 0;
 	private double timeFromStart = 0;//for oscilation of fwdOutput
 	
 	public GyroTurn() {
-		this(0, 0.3);
+		this(0, 0);
 	}
 	
 	public GyroTurn(double turnAngle) {
-		this(turnAngle, 0.3);
+		this(turnAngle, 0);
 	}
 	
 	public GyroTurn(double turnAngle, double forwardSpeed) {

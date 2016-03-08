@@ -63,7 +63,8 @@ public final class Climber extends Subsystem implements SmartdashBoardLoggable {
 	}
 	
 	public double getClimbEncPos() {
-		return climbMotor.getEncPosition();
+//		return climbMotor.getEncPosition();
+		return Double.NaN;
 	}
 	
 	public double getClimbEncSpeed() {
@@ -80,3 +81,92 @@ public final class Climber extends Subsystem implements SmartdashBoardLoggable {
 	}
 	
 }
+
+
+
+
+
+
+
+
+
+//CTRE CAN Recieve Timeout at edu.wpi.first.wpilibj.hal.CanTalonJNI.GetEncPosition(Native Method)
+//edu.wpi.first.wpilibj.CANTalon.getEncPosition(CANTalon.java:588)
+//com.team3925.robot2016.subsystems.Launcher.getIntakePosLeft(Launcher.java:431)
+//com.team3925.robot2016.subsystems.Launcher.update(Launcher.java:112)
+//com.team3925.robot2016.Robot.teleopPeriodic(Robot.java:217)
+//edu.wpi.first.wpilibj.IterativeRobot.startCompetition(IterativeRobot.java:143)
+//edu.wpi.first.wpilibj.RobotBase.main(RobotBase.java:241)
+//CTRE CAN Recieve Timeout at edu.wpi.first.wpilibj.hal.CanTalonJNI.GetEncPosition(Native Method)
+//edu.wpi.first.wpilibj.CANTalon.getEncPosition(CANTalon.java:588)
+//com.team3925.robot2016.subsystems.Launcher.getIntakePosLeft(Launcher.java:431)
+//com.team3925.robot2016.subsystems.Launcher.update(Launcher.java:112)
+//com.team3925.robot2016.Robot.teleopPeriodic(Robot.java:217)
+//edu.wpi.first.wpilibj.IterativeRobot.startCompetition(IterativeRobot.java:143)
+//edu.wpi.first.wpilibj.RobotBase.main(RobotBase.java:241)
+//CTRE CAN Recieve Timeout at edu.wpi.first.wpilibj.hal.CanTalonJNI.GetEncPosition(Native Method)
+//edu.wpi.first.wpilibj.CANTalon.getEncPosition(CANTalon.java:588)
+//com.team3925.robot2016.subsystems.Launcher.getIntakePosLeft(Launcher.java:431)
+//com.team3925.robot2016.subsystems.Launcher.update(Launcher.java:112)
+//com.team3925.robot2016.Robot.teleopPeriodic(Robot.java:217)
+//edu.wpi.first.wpilibj.IterativeRobot.startCompetition(IterativeRobot.java:143)
+//edu.wpi.first.wpilibj.RobotBase.main(RobotBase.java:241)
+//CTRE CAN Recieve Timeout at edu.wpi.first.wpilibj.hal.CanTalonJNI.GetEncPosition(Native Method)
+//edu.wpi.first.wpilibj.CANTalon.getEncPosition(CANTalon.java:588)
+//com.team3925.robot2016.subsystems.Launcher.getIntakePosLeft(Launcher.java:431)
+//com.team3925.robot2016.subsystems.Launcher.update(Launcher.java:112)
+//com.team3925.robot2016.Robot.teleopPeriodic(Robot.java:217)
+//edu.wpi.first.wpilibj.IterativeRobot.startCompetition(IterativeRobot.java:143)
+//edu.wpi.first.wpilibj.RobotBase.main(RobotBase.java:241)
+//CTRE CAN Recieve Timeout at edu.wpi.first.wpilibj.hal.CanTalonJNI.GetEncPosition(Native Method)
+//edu.wpi.first.wpilibj.CANTalon.getEncPosition(CANTalon.java:588)
+//com.team3925.robot2016.subsystems.Launcher.getIntakePosLeft(Launcher.java:431)
+//com.team3925.robot2016.subsystems.Launcher.update(Launcher.java:112)
+//com.team3925.robot2016.Robot.teleopPeriodic(Robot.java:217)
+//edu.wpi.first.wpilibj.IterativeRobot.startCompetition(IterativeRobot.java:143)
+//edu.wpi.first.wpilibj.RobotBase.main(RobotBase.java:241)
+//CTRE CAN Recieve Timeout at edu.wpi.first.wpilibj.hal.CanTalonJNI.GetEncPosition(Native Method)
+//edu.wpi.first.wpilibj.CANTalon.getEncPosition(CANTalon.java:588)
+//com.team3925.robot2016.subsystems.Launcher.getIntakePosLeft(Launcher.java:431)
+//com.team3925.robot2016.subsystems.Launcher.update(Launcher.java:112)
+//com.team3925.robot2016.Robot.teleopPeriodic(Robot.java:217)
+//edu.wpi.first.wpilibj.IterativeRobot.startCompetition(IterativeRobot.java:143)
+//edu.wpi.first.wpilibj.RobotBase.main(RobotBase.java:241)
+//CTRE CAN Recieve Timeout at edu.wpi.first.wpilibj.hal.CanTalonJNI.GetEncPosition(Native Method)
+//edu.wpi.first.wpilibj.CANTalon.getEncPosition(CANTalon.java:588)
+//com.team3925.robot2016.subsystems.Launcher.getIntakePosLeft(Launcher.java:431)
+//com.team3925.robot2016.subsystems.Launcher.update(Launcher.java:112)
+//com.team3925.robot2016.Robot.teleopPeriodic(Robot.java:217)
+//edu.wpi.first.wpilibj.IterativeRobot.startCompetition(IterativeRobot.java:143)
+//edu.wpi.first.wpilibj.RobotBase.main(RobotBase.java:241)
+//CTRE CAN Recieve Timeout at edu.wpi.first.wpilibj.hal.CanTalonJNI.GetEncPosition(Native Method)
+//edu.wpi.first.wpilibj.CANTalon.getEncPosition(CANTalon.java:588)
+//com.team3925.robot2016.subsystems.Launcher.getIntakePosLeft(Launcher.java:431)
+//com.team3925.robot2016.subsystems.Launcher.update(Launcher.java:112)
+//com.team3925.robot2016.Robot.teleopPeriodic(Robot.java:217)
+//edu.wpi.first.wpilibj.IterativeRobot.startCompetition(IterativeRobot.java:143)
+//edu.wpi.first.wpilibj.RobotBase.main(RobotBase.java:241)
+//CTRE CAN Recieve Timeout at edu.wpi.first.wpilibj.hal.CanTalonJNI.GetEncPosition(Native Method)
+//edu.wpi.first.wpilibj.CANTalon.getEncPosition(CANTalon.java:588)
+//com.team3925.robot2016.subsystems.Launcher.getIntakePosLeft(Launcher.java:431)
+//com.team3925.robot2016.subsystems.Launcher.update(Launcher.java:112)
+//com.team3925.robot2016.Robot.teleopPeriodic(Robot.java:217)
+//edu.wpi.first.wpilibj.IterativeRobot.startCompetition(IterativeRobot.java:143)
+//edu.wpi.first.wpilibj.RobotBase.main(RobotBase.java:241)
+//CTRE CAN Recieve Timeout at edu.wpi.first.wpilibj.hal.CanTalonJNI.GetEncPosition(Native Method)
+//edu.wpi.first.wpilibj.CANTalon.getEncPosition(CANTalon.java:588)
+//com.team3925.robot2016.subsystems.Launcher.getIntakePosLeft(Launcher.java:431)
+//com.team3925.robot2016.subsystems.Launcher.update(Launcher.java:112)
+//com.team3925.robot2016.Robot.teleopPeriodic(Robot.java:217)
+//edu.wpi.first.wpilibj.IterativeRobot.startCompetition(IterativeRobot.java:143)
+//edu.wpi.first.wpilibj.RobotBase.main(RobotBase.java:241)
+//CTRE CAN Recieve Timeout at edu.wpi.first.wpilibj.hal.CanTalonJNI.GetEncPosition(Native Method)
+//edu.wpi.first.wpilibj.CANTalon.getEncPosition(CANTalon.java:588)
+//com.team3925.robot2016.subsystems.Climber.getClimbEncPos(Climber.java:66)
+//com.team3925.robot2016.subsystems.Climber.setClimbMotor(Climber.java:45)
+//com.team3925.robot2016.commands.Climb.execute(Climb.java:36)
+//edu.wpi.first.wpilibj.command.Command.run(Command.java:240)
+//edu.wpi.first.wpilibj.command.Scheduler.run(Scheduler.java:222)
+//com.team3925.robot2016.Robot.teleopPeriodic(Robot.java:215)
+//edu.wpi.first.wpilibj.IterativeRobot.startCompetition(IterativeRobot.java:143)
+//edu.wpi.first.wpilibj.RobotBase.main(RobotBase.java:241)
