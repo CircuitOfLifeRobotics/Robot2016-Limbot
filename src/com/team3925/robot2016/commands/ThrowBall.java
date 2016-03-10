@@ -14,6 +14,29 @@ enum Mode {
 
 public class ThrowBall extends Command implements SmartdashBoardLoggable{
 	
+
+	public ThrowBall() {
+		this(Constants.LAUNCHER_MAX_INTAKE_SPEED);
+	}
+	
+	/**
+	 * @param intakeSpeed in native units of encoder ticks/100ms
+	 */
+	public ThrowBall(double intakeSpeed) {
+		this(80d, intakeSpeed);
+	}
+	
+	/**
+	 * @param angle in degrees
+	 * @param intakeSpeed in native units of encoder ticks/100ms
+	 */
+	public ThrowBall(double angle, double intakeSpeed) {
+		this.intakeSpeed = -intakeSpeed;
+		this.angle = angle;
+	}
+	
+	private double intakeSpeed;
+	private double angle;
 	Launcher launcher = Robot.launcher;
 	TimeoutAction timer = new TimeoutAction();
 	TimeoutAction buttonTimer = new TimeoutAction();
@@ -28,10 +51,8 @@ public class ThrowBall extends Command implements SmartdashBoardLoggable{
 		launcher.setPuncher(false);
 		launcher.enableAim(true);
 		launcher.enableIntake(true);
-		launcher.setAimSetpoint(75);
-		launcher.setIntakeSetpoint(24_000);
-//		launcher.setLeftIntake(-1);
-//		launcher.setRightIntake(-1);
+		launcher.setAimSetpoint(angle);
+		launcher.setIntakeSetpoint(20000);
 		
 		buttonTimer.config(0.5);
 		timer.config(10);
@@ -43,8 +64,8 @@ public class ThrowBall extends Command implements SmartdashBoardLoggable{
 		case WAIT_FOR_AIM:
 			if (((launcher.isAimOnSetpoint() && launcher.isIntakeOnSetpoint()) || 
 					timer.isFinished() || Robot.oi.getThrowBall_LaunchBallOverride()) && buttonTimer.isFinished()) {
-				launcher.setPuncher(true);
 				mode = Mode.SHOOT;
+				launcher.setPuncher(true);
 				timer.config(0.1);
 			}
 			break;
@@ -84,6 +105,8 @@ public class ThrowBall extends Command implements SmartdashBoardLoggable{
 
 	@Override
 	public void logData() {
+		putNumberSD("IntakeSpeed", intakeSpeed);
+		putNumberSD("Angle", angle);
 		putBooleanSD("AimOnSetpoint", launcher.isAimOnSetpoint());
 		putBooleanSD("IntakeOnSetpoint", launcher.isIntakeOnSetpoint());
 		putNumberSD("AimOnSetpoint", launcher.isAimOnSetpoint() ? 1:0);

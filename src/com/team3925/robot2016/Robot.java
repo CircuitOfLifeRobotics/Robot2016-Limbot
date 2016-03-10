@@ -6,15 +6,13 @@ import static com.team3925.robot2016.Constants.DO_LOG_GRIP_VALUES;
 import static com.team3925.robot2016.Constants.DO_LOG_PDP_VALUES;
 
 import com.kauailabs.navx.frc.AHRS;
-import com.team3925.robot2016.commands.AutoRoutineCenter;
-import com.team3925.robot2016.commands.AutoRoutineCourtyard;
-import com.team3925.robot2016.commands.AutoRoutineDoNothing;
 import com.team3925.robot2016.commands.Climb;
 import com.team3925.robot2016.commands.GyroTurn;
 import com.team3925.robot2016.commands.LaunchBallHigh;
 import com.team3925.robot2016.commands.ManualDrive;
 import com.team3925.robot2016.commands.TrapzoidalMotionTest;
 import com.team3925.robot2016.commands.VerticalAim;
+import com.team3925.robot2016.commands.defensecommands.CrossLowBar;
 import com.team3925.robot2016.subsystems.Climber;
 import com.team3925.robot2016.subsystems.DriveTrain;
 import com.team3925.robot2016.subsystems.Launcher;
@@ -28,15 +26,13 @@ import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.SPI;
-import edu.wpi.first.wpilibj.Sendable;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.command.CommandGroup;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.networktables.NetworkTable;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj.tables.ITable;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -61,16 +57,14 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 	public static OI oi;
 	
 	//Commands
-	Command autoCommandGroup;
+	CommandGroup autoRoutine;
 	Command trapMotionTest;
 	Command manualDrive;
 	Command manualCandyCanes;
 	Command visionTest;
 	Command launchBallHigh;
 	Command gyroTurn;
-	
-	
-	SendableChooser autoChooser;
+	Command gyroDrive;
 	
 	
 	//Variables
@@ -98,6 +92,7 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 	 * used for any initialization code.
 	 */
 	public void robotInit() {
+		Constants.initLauncherIntakeTable();
 		RobotMap.init();
 		
 		//Creating Subsystems and Related Processes
@@ -122,12 +117,6 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 		oi = new OI();
 		XboxHelper.init();
 		
-		//Creating Autonomous
-		autoChooser = new SendableChooser();
-		autoChooser.addDefault("Nothing Auto", new AutoRoutineDoNothing());
-		autoChooser.addObject("Center Auto", new AutoRoutineCenter());
-		autoChooser.addObject("Courtyard Auto", new AutoRoutineCourtyard());
-		
 		//Creating Commands
 		manualDrive = new ManualDrive();
 		trapMotionTest = new TrapzoidalMotionTest();
@@ -135,6 +124,7 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 		visionTest = new VerticalAim();
 		launchBallHigh = new LaunchBallHigh();
 		gyroTurn = new GyroTurn(45);
+		gyroDrive = new CrossLowBar();
 		
 		
 		reset();
@@ -161,6 +151,7 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 	 * You can use it to reset subsystems before shutting down.
 	 */
 	public void disabledInit(){
+		if (autoRoutine != null) { autoRoutine.cancel(); }
 		driveTrain.setMotorSpeeds(DriveTrainSignal.NEUTRAL);
 //		launcher.setIntakeSpeeds(0);
 		
@@ -174,15 +165,22 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 	}
 	
 	public void autonomousInit() {
-		// schedule the autonomous command (example)
-		if (autoCommandGroup != null) autoCommandGroup.start();
+		Object selected = oi.autoChooser.getSelected();
+		if (selected instanceof Command) {
+			autoRoutine = (CommandGroup) selected;
+			autoRoutine.start();
+		} else {
+			DriverStation.reportError("Could not get selected autonomous routine!", true);
+		}
 		
+		launcher.init();
 		driveTrain.setHighGear(false);
 		reset();
 		
 //		launchBallTest.start();
-		launchBallHigh.start();
+//		launchBallHigh.start();
 //		gyroTurn.start();
+		gyroDrive.start();
 		
 		launcher.init();
 	}
@@ -198,12 +196,11 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 	}
 
 	public void teleopInit() {
-		
+		if (autoRoutine != null) { autoRoutine.cancel(); }
 		// This makes sure that the autonomous stops running when
 		// teleop starts running. If you want the autonomous to
 		// continue until interrupted by another command, remove
 		// this line or comment it out.
-		if (autoCommandGroup != null) autoCommandGroup.cancel();
 		
 		manualDrive.start();
 		
@@ -221,6 +218,15 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 	 */
 	public void teleopPeriodic() {
 		Scheduler.getInstance().run();
+		if (XboxHelper.getShooterButton(XboxHelper.STICK_RIGHT)) {
+			Object selected = oi.throwBallTesting.getSelected();
+			if (selected instanceof Command) {
+				Command c = (Command) selected;
+				c.start();
+			} else {
+				DriverStation.reportError("Tried to start a throwballtest but it could not be cast to a command!", true);
+			}
+		}
 		
 		launcher.update();
 		
@@ -270,9 +276,12 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 //		putDataSD("Autonomous Chooser", autoChooser);
 //		putNamedDataSD(Scheduler.getInstance());
 		
+    	putDataSD("Autonomous Routing Choose", oi.autoChooser);
+		putDataSD("Throw Ball Testing", oi.throwBallTesting);
+		
 		if (DO_LOG_AHRS_VALUES) {
 			if (navx != null) {
-//				logNavXData();
+				logNavXData();
 			} else {
 				putStringSD("NavXLogger", "Cannot log NavX values while null!");
 			}

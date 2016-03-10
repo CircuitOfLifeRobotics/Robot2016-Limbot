@@ -1,5 +1,7 @@
 package com.team3925.robot2016;
 
+import com.team3925.robot2016.trajectory.LauncherTrajectoryTable;
+
 /**
  *	A class holding all the constants of the project
  */
@@ -9,7 +11,7 @@ public class Constants {
 	// Loop time of the program
 	public static final double DELTA_TIME = 0.020; // 20 ms TODO Will be bigger due to GRIP
 	
-	public static final boolean DO_LOG_AHRS_VALUES = false;//Robot.prefs.getBoolean("Do Log AHRS Vals", false);
+	public static final boolean DO_LOG_AHRS_VALUES = true;//Robot.prefs.getBoolean("Do Log AHRS Vals", false);
 	public static final boolean DO_LOG_PDP_VALUES = false;//Robot.prefs.getBoolean("Do Log PDP Vals", false);
 	public static final boolean DO_LOG_GRIP_VALUES = false;//Robot.prefs.getBoolean("Do Log GRIP Vals", false);
 	
@@ -48,7 +50,12 @@ public class Constants {
     
     
 	// LAUNCHER CONSTANTS
-	
+	public static final double LAUNCHER_TESTING_ANGLE = 45d; // degrees
+    
+	public static final LauncherTrajectoryTable TABLE = new LauncherTrajectoryTable(11, LAUNCHER_TESTING_ANGLE);
+	public static final void initLauncherIntakeTable() {
+		// TODO Add implementation and get debug values
+	}
     public static final double LAUNCHER_GLOBAL_MAX_POWER = 1;//Robot.prefs.getDouble("Max Shooter Pwr", 1);
     public static final double LAUNCHER_AIM_MOTOR_SPEED_MULTIPLIED = 1;
 	public static final double LAUNCHER_MAX_INTAKE_SPEED = 25_000; //TODO get actual max speed
@@ -57,22 +64,22 @@ public class Constants {
 	public static final double LAUNCHER_MAX_HEIGHT = 700; // in encoder ticks
 	public static final double LAUNCHER_MIN_HEIGHT = 50; // in encoder ticks
 	
-	public static final double LAUNCHER_AIM_TOLERANCE = 1;
+	public static final double LAUNCHER_AIM_TOLERANCE = 3;
 	public static final double LAUNCHER_AIM_SLOWDOWN = 40;
 	public static final double LAUNCHER_AIM_INCREMENT = 18;
 	public static final double LAUNCHER_INTAKE_INCREMENT = 1000;
 	//TODO: tune shooter pid
-	public static final double LAUNCHER_AIM_KP = 6400d/10_000d;   //1400d/10000d
+	public static final double LAUNCHER_AIM_KP = 400d/10_000d;   //1400d/10000d
 	public static final double LAUNCHER_AIM_KI = 16d/10_000d;     //8d/10000d; 
 	public static final double LAUNCHER_AIM_KD = 950d/10_000d;   //250d/10000d
 	public static final double LAUNCHER_AIM_KF = 0.0;
 	public static final double LAUNCHER_AIM_RAMP_RATE = 5;//ramp rate is maximum acceleration in voltage/second
 	public static final int LAUNCHER_AIM_IZONE = 0; // izone eliminates
 	
-	public static final double LAUNCHER_WHEELS_KP = 0.000004;
+	public static final double LAUNCHER_WHEELS_KP = 8e-7;
 	public static final double LAUNCHER_WHEELS_KI = 0.000000000;
 	public static final double LAUNCHER_WHEELS_KD = 0.00;
-	public static final double LAUNCHER_WHEELS_KF = 0/*0.04092*/;
+	public static final double LAUNCHER_WHEELS_KF = -0.9;
 	public static final double LAUNCHER_WHEELS_RAMP_RATE = 1;//ramp rate is maximum acceleration in voltage/second
 	public static final int LAUNCHER_WHEELS_IZONE = 0; // izone eliminates
 	public static final double LAUNCHER_WHEELS_TOLERANCE = 50;
@@ -236,6 +243,7 @@ public class Constants {
     		{0,	0,	10},
     		{0,	0,	10},
     };
+
 
 
 }

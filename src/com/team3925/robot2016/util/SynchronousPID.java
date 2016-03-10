@@ -1,5 +1,10 @@
 package com.team3925.robot2016.util;
 
+import edu.wpi.first.wpilibj.PIDController;
+import edu.wpi.first.wpilibj.command.PIDSubsystem;
+import edu.wpi.first.wpilibj.livewindow.LiveWindowSendable;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.tables.ITable;
 import edu.wpi.first.wpilibj.util.BoundaryException;
 
 /**
@@ -8,7 +13,7 @@ import edu.wpi.first.wpilibj.util.BoundaryException;
  * Does all computation synchronously (i.e. the calculate() function must be
  * called by the user from his own thread)
  */
-public class SynchronousPID {
+public class SynchronousPID implements LiveWindowSendable {
     private double m_P;            // factor for "proportional" control
     private double m_I;            // factor for "integral" control
     private double m_D;            // factor for "derivative" control
@@ -23,7 +28,9 @@ public class SynchronousPID {
     private double m_error = 0.0;
     private double m_result = 0.0;
     private double m_last_input = Double.NaN;
-
+    
+    private ITable m_table;
+    
     public SynchronousPID() {
     }
 
@@ -255,4 +262,39 @@ public class SynchronousPID {
     public String getType() {
         return "PIDController";
     }
+
+	@Override
+	public void initTable(ITable subtable) {
+		m_table = subtable;
+		m_table.putNumber("P_Constant", m_P);
+		m_table.putNumber("I_Constant", m_I);
+		m_table.putNumber("D_Constant", m_D);
+		m_table.putNumber("Setpoint", m_setpoint);
+		updateTable();
+	}
+
+	@Override
+	public ITable getTable() {
+		return m_table;
+	}
+
+	@Override
+	public String getSmartDashboardType() {
+		return "SynchronousPID";
+	}
+
+	@Override
+	public void updateTable() {
+		if (m_table != null) {
+			m_P = m_table.getNumber("P_Constant", 0);
+			m_I = m_table.getNumber("I_Constant", 0);
+			m_D = m_table.getNumber("D_Constant", 0);
+		}
+	}
+
+	@Override
+	public void startLiveWindowMode() {}
+
+	@Override
+	public void stopLiveWindowMode() {}
 }

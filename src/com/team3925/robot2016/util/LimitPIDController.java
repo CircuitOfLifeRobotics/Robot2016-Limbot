@@ -1,11 +1,13 @@
 package com.team3925.robot2016.util;
 
+import edu.wpi.first.wpilibj.livewindow.LiveWindowSendable;
+import edu.wpi.first.wpilibj.tables.ITable;
 import edu.wpi.first.wpilibj.util.BoundaryException;
 
-public class LimitPIDController {
+public class LimitPIDController implements LiveWindowSendable {
 	private double m_P; // factor for "proportional" control
 	private double m_I; // factor for "integral" control
-	private double m_D; // factor for "derivative" control
+	private double m_D; // factor for "derivative" contro
 	private double m_P_max;
 	private double m_I_max;
 	private double m_D_max;
@@ -35,7 +37,9 @@ public class LimitPIDController {
 	private double avg_m_D_value;
 	private double m_result = 0.0;
 	private double m_last_input = Double.NaN;
-
+	
+	private ITable m_table;
+	
 	public LimitPIDController() {
     }
 
@@ -375,4 +379,42 @@ public class LimitPIDController {
 	public String getType() {
 		return "PIDController";
 	}
+	
+	@Override
+	public void initTable(ITable subtable) {
+		m_table = subtable;
+		m_table.putNumber("P_Constant", m_P);
+		m_table.putNumber("I_Constant", m_I);
+		m_table.putNumber("D_Constant", m_D);
+		m_table.putNumber("Setpoint", m_setpoint);
+		updateTable();
+	}
+
+	@Override
+	public ITable getTable() {
+		return m_table;
+	}
+
+	@Override
+	public String getSmartDashboardType() {
+		return "SynchronousPID";
+	}
+
+	@Override
+	public void updateTable() {
+		if (m_table != null) {
+			m_table.putNumber("P_Constant", m_P);
+			m_table.putNumber("I_Constant", m_I);
+			m_table.putNumber("D_Constant", m_D);
+			m_P = m_table.getNumber("P_Constant", 0);
+			m_I = m_table.getNumber("I_Constant", 0);
+			m_D = m_table.getNumber("D_Constant", 0);
+		}
+	}
+
+	@Override
+	public void startLiveWindowMode() {}
+
+	@Override
+	public void stopLiveWindowMode() {}
 }

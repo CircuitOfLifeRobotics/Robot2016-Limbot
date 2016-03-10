@@ -6,6 +6,7 @@ import com.team3925.robot2016.subsystems.DriveTrain;
 import com.team3925.robot2016.subsystems.PlexiArms;
 import com.team3925.robot2016.util.DriveTrainSignal;
 import com.team3925.robot2016.util.SmartdashBoardLoggable;
+import com.team3925.robot2016.util.TimeoutAction;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.command.Command;
@@ -19,9 +20,11 @@ public abstract class DefenseCrossBase extends Command implements SmartdashBoard
 	protected final DriveTrain driveTrain = Robot.driveTrain;
 	protected final PlexiArms arms = Robot.plexiArms;
 	protected final AHRS navx = Robot.navx;
-	private State state = State.START;
+	protected State state = State.START;
+	protected double currentRoll, lastRoll, deltaRoll;
+	private final TimeoutAction timeout;
 	
-	private enum State {
+	enum State {
 		START, CROSSING, CROSSED;
 	}
 	
@@ -30,38 +33,53 @@ public abstract class DefenseCrossBase extends Command implements SmartdashBoard
         // eg. requires(chassis);
     	requires(Robot.driveTrain);
     	requires(Robot.candyCanes);
+    	timeout = new TimeoutAction();
     }
 
     // Called just before this Command runs the first time
     protected void initialize() {
     	state = State.START;
     	driveTrain.setMotorSpeeds(DriveTrainSignal.NEUTRAL);
+    	navx.resetDisplacement();
+    	currentRoll = lastRoll = navx.getRoll();
+    	deltaRoll = 0;
     }
 
     // Called repeatedly when this Command is scheduled to run
     protected final void execute() {
     	routine();
-    	
+		
+		currentRoll = navx.getRoll();
+		deltaRoll = currentRoll - lastRoll;
+		
     	switch (state) {
 		case START:
-			if (Math.abs(navx.getPitch()) > 10) { //TODO fine tune values
+			if (Math.abs(currentRoll) > 3) { //TODO fine tune values
 				state = State.CROSSING;
+				timeout.config(0.2);
 			}
 			break;
 		case CROSSING:
-			if (Math.abs(navx.getPitch()) < 0 && Math.abs(navx.getDisplacementY()) > 0.6) { //TODO Check axes and fine tune values
+			if (Math.abs(currentRoll) < 2.5 /*&& Math.abs(navx.getDisplacementY()) > 0.06*/ && Math.abs(deltaRoll) < 0.05 && timeout.isFinished()) { //TODO Check axes and fine tune values
 				state = State.CROSSED;
 			}
 			
 			break;
 		case CROSSED:
+			end();
 			break;
-
 		default:
 			DriverStation.reportError("Defense crossing command defaulted!", true);
 			state = State.START;
 			break;
 		}
+    	
+    	putStringSD("State", state.toString());
+    	putNumberSD("Roll", currentRoll);
+    	putNumberSD("DeltaRoll", deltaRoll);
+    	putNumberSD("Displacement", navx.getDisplacementY());
+    	
+    	lastRoll = navx.getRoll();
     }
     
     protected abstract void routine();
@@ -73,6 +91,14 @@ public abstract class DefenseCrossBase extends Command implements SmartdashBoard
     @Override
     public void logData() {
     	putStringSD("State", state.toString());
+    	putNumberSD("Roll", currentRoll);
+    	putNumberSD("DeltaRoll", deltaRoll);
+    	putNumberSD("Displacement", navx.getDisplacementY());
+    }
+    
+    @Override
+    public String getFormattedName() {
+    	return "DefenseCross_";
     }
     
     // Make this return true when this Command no longer needs to run execute()

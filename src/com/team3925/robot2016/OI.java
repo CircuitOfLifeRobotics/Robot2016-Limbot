@@ -1,9 +1,14 @@
 package com.team3925.robot2016;
 
-import static com.team3925.robot2016.util.XboxHelper.*;
+import static com.team3925.robot2016.util.XboxHelper.AXIS_LEFT_Y;
+import static com.team3925.robot2016.util.XboxHelper.AXIS_RIGHT_X;
+import static com.team3925.robot2016.util.XboxHelper.START;
 
-import javax.sound.midi.ControllerEventListener; // Too Legit 4 Me
+import java.text.DecimalFormat;
 
+import com.team3925.robot2016.commands.AutoRoutineCenter;
+import com.team3925.robot2016.commands.AutoRoutineCourtyard;
+import com.team3925.robot2016.commands.AutoRoutineDoNothing;
 import com.team3925.robot2016.commands.CollectBall;
 import com.team3925.robot2016.commands.GyroTurn;
 import com.team3925.robot2016.commands.ThrowBall;
@@ -13,6 +18,7 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.Button;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 
 
 /**
@@ -49,13 +55,20 @@ public final class OI {
 
     public Joystick xboxDriver;
     public Joystick xboxShooter;
+    
     public Button startCollectBall;
     public Button startThrowBall;
     public Button startGyroTurn;
     public Button cancelCommands;
+    
     public Command collectBall;
     public Command throwBall;
     public Command gyroTurn;
+    
+	public SendableChooser autoChooser;
+	public SendableChooser throwBallTesting;
+	private static DecimalFormat df = new DecimalFormat("#.##");
+    
     
     public OI() {
     	
@@ -65,6 +78,13 @@ public final class OI {
     	collectBall = new CollectBall();
     	throwBall = new ThrowBall();
     	gyroTurn = new GyroTurn(45);
+    	
+		// Creating ThrowBall Testing
+    	throwBallTesting = new SendableChooser();
+		throwBallTesting.addDefault("Throwball (" + df.format(calcThrowBallSpeed(100d)) + ", 100%)", new ThrowBall());
+		for (double percentageLoop = 10d; percentageLoop < 100d; percentageLoop+=10) {
+			addThrowBallValue(percentageLoop);
+		}
     	
     	startCollectBall = new JoystickButton(xboxDriver, XboxHelper.A);
     	startCollectBall.whenPressed(collectBall);
@@ -86,6 +106,13 @@ public final class OI {
     	cancelCommands.cancelWhenPressed(throwBall);
     	cancelCommands.cancelWhenActive(gyroTurn);
     	
+		//Creating Autonomous
+		autoChooser = new SendableChooser();
+		autoChooser.addDefault("Nothing Auto", new AutoRoutineDoNothing());
+		autoChooser.addObject("Center Auto", new AutoRoutineCenter());
+		autoChooser.addObject("Courtyard Auto", new AutoRoutineCourtyard());
+		
+    	
         // SmartDashboard Buttons
 //        SmartDashboard.putData("ManualDrive", new ManualDrive());
 //        SmartDashboard.putData("LaunchBall", new LaunchBallHigh());
@@ -98,7 +125,14 @@ public final class OI {
     	
     }
     
+    private double calcThrowBallSpeed(double percentage) {
+    	return Constants.LAUNCHER_MAX_INTAKE_SPEED * (double) percentage / 100d;
+    }
     
+    private void addThrowBallValue(double percentage) {
+		throwBallTesting.addObject("ThrowBall (" + df.format(calcThrowBallSpeed(percentage)) + ", " + percentage + "%)",
+				new ThrowBall(calcThrowBallSpeed(percentage)));
+    }
     
     // ROBOT BEHAVIOR
     

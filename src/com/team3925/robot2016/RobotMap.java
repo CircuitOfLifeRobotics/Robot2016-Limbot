@@ -2,6 +2,7 @@ package com.team3925.robot2016;
 
 import static com.team3925.robot2016.Constants.DRIVETRAIN_ENCODER_FACTOR;
 
+import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.CANTalon.FeedbackDevice;
 import edu.wpi.first.wpilibj.CANTalon.TalonControlMode;
@@ -11,6 +12,7 @@ import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.PIDSourceType;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
+import edu.wpi.first.wpilibj.Ultrasonic;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 
 /**
@@ -37,6 +39,7 @@ public class RobotMap {
     public static CANTalon launcherMotorLeft;
     public static CANTalon launcherMotorRight;
     public static DoubleSolenoid launcherPuncherSolenoid;
+    public static AnalogInput launcherUltrasonic;
     
     public static DoubleSolenoid plexiArmsSolenoid;
     
@@ -195,6 +198,13 @@ public class RobotMap {
         launcherPuncherSolenoid = new DoubleSolenoid(2, 3);
         LiveWindow.addActuator("Launcher", "PuncherSolenoid", launcherPuncherSolenoid);
         
+        //all the way in	2.8A
+        //partially in		1.5A
+        //in wheels			0.9A
+        //no ball			0.8A
+        //pointed at light	1.5A
+        launcherUltrasonic = new AnalogInput(0);
+        
         launcherMotorAim = new CANTalon(15);
         LiveWindow.addActuator("Launcher", "AimMotor", launcherMotorAim);
         launcherMotorAim.setFeedbackDevice(FeedbackDevice.PulseWidth);
@@ -206,7 +216,6 @@ public class RobotMap {
         launcherMotorLeft = new CANTalon(11);
         LiveWindow.addActuator("Launcher", "MotorLeft", launcherMotorLeft);
         launcherMotorLeft.setFeedbackDevice(FeedbackDevice.QuadEncoder);
-//        launcherMotorLeft.changeControlMode(TalonControlMode.Speed);
         launcherMotorLeft.changeControlMode(TalonControlMode.PercentVbus);
         launcherMotorLeft.reverseOutput(false);
         launcherMotorLeft.reverseSensor(true);
