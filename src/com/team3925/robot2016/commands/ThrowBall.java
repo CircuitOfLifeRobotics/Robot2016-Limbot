@@ -44,6 +44,14 @@ public class ThrowBall extends Command implements SmartdashBoardLoggable{
 	
 	private double lowestValSinceSetpoint = (30000*100/4096) * Constants.LAUNCHER_WHEEL_CIRCUM;
 	
+	public void setAngle(double angle) {
+		this.angle = angle;
+	}
+	
+	public void setIntakeSpeed(double speed) {
+		intakeSpeed = speed;
+	}
+	
 	@Override
 	protected void initialize() {
 		mode = Mode.WAIT_FOR_AIM;
@@ -52,7 +60,7 @@ public class ThrowBall extends Command implements SmartdashBoardLoggable{
 		launcher.enableAim(true);
 		launcher.enableIntake(true);
 		launcher.setAimSetpoint(angle);
-		launcher.setIntakeSetpoint(20000);
+		launcher.setIntakeSetpoint(intakeSpeed);
 		
 		buttonTimer.config(0.5);
 		timer.config(10);

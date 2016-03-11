@@ -21,6 +21,9 @@ public class Constants {
 	
 	
 	
+	//WORLD CONSTANTS
+	public static final double GRAVITY = 0;
+	
 	
 	// MECHANICAL CONSTANTS
 	public static final double DRIVE_WHEEL_DIAMETER = 6.0; // inches (inflated)
@@ -39,6 +42,7 @@ public class Constants {
     public static final double CAMERA_PIVOT_HEIGHT_GROUND = (7d / 12d);
     public static final double CAMERA_PIVOT_DIST = (18d / 12d);
     public static final double CAMERA_MID_OFFSET = (6.5d / 12d);
+    public static final double MAX_BALL_EXIT_VELOCITY = 7.7;//meters / second
 	//carpet to pivot 7 in
     //cam to pivot 18 in
     
@@ -136,7 +140,7 @@ public class Constants {
 	
     public static final double DRIVETRAIN_ON_TARGET_ERROR = .05;
 	
-    public static final double GYROTURN_POS_TOLERANCE = 3;
+    public static final double GYROTURN_POS_TOLERANCE = 1;
     public static final double GYROTURN_RATE_TOLERANCE = 0.1;
     
     //Default Motion Profiles
@@ -243,6 +247,7 @@ public class Constants {
     		{0,	0,	10},
     		{0,	0,	10},
     };
+
 
 
 

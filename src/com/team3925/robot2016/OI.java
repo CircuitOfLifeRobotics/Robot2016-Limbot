@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj.buttons.Button;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 
 /**
@@ -61,6 +62,7 @@ public final class OI {
     public Button startGyroTurn;
     public Button cancelCommands;
     
+    public Command visionShoot;
     public Command collectBall;
     public Command throwBall;
     public Command gyroTurn;
@@ -112,7 +114,8 @@ public final class OI {
 		autoChooser.addObject("Center Auto", new AutoRoutineCenter());
 		autoChooser.addObject("Courtyard Auto", new AutoRoutineCourtyard());
 		
-    	
+    	SmartDashboard.putData("VisionShoot", visionShoot);
+		
         // SmartDashboard Buttons
 //        SmartDashboard.putData("ManualDrive", new ManualDrive());
 //        SmartDashboard.putData("LaunchBall", new LaunchBallHigh());
