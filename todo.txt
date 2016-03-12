@@ -1,0 +1,5 @@
+TODO FOR MADERA
+
+-output plexi arms state to drivers
+-un-toggle plexi arms (consult with drivers)
+-un-toggle drive train shifting (consult with drivers)

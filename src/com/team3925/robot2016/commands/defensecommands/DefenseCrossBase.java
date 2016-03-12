@@ -60,7 +60,7 @@ public abstract class DefenseCrossBase extends Command implements SmartdashBoard
 			}
 			break;
 		case CROSSING:
-			if (Math.abs(currentRoll) < 2.5 /*&& Math.abs(navx.getDisplacementY()) > 0.06*/ && Math.abs(deltaRoll) < 0.05 && timeout.isFinished()) { //TODO Check axes and fine tune values
+			if (Math.abs(currentRoll) < 2.5 /*&& Math.abs(navx.getDisplacementY()) > 0.06*/ && Math.abs(deltaRoll) < 0.05 && timeout.isFinished()) {
 				state = State.CROSSED;
 			}
 			
@@ -74,12 +74,9 @@ public abstract class DefenseCrossBase extends Command implements SmartdashBoard
 			break;
 		}
     	
-    	putStringSD("State", state.toString());
-    	putNumberSD("Roll", currentRoll);
-    	putNumberSD("DeltaRoll", deltaRoll);
-    	putNumberSD("Displacement", navx.getDisplacementY());
-    	
     	lastRoll = navx.getRoll();
+    	
+    	logData();
     }
     
     protected abstract void routine();

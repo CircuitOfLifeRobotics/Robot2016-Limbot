@@ -24,7 +24,7 @@ public final class Climber extends Subsystem implements SmartdashBoardLoggable {
 	private TimeoutAction enableFunctionality = new TimeoutAction();
 	
 	@Override
-	protected void initDefaultCommand() { setDefaultCommand(new Climb()); }
+	protected void initDefaultCommand() { /*setDefaultCommand(new Climb());*/ }
 	
 	public void startTimeOut() {
 		enableFunctionality.config(135d - CLIMBER_ACTIVE_TIME);

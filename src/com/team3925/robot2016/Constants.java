@@ -50,6 +50,7 @@ public class Constants {
     // CLIMBER CONSTANTS
     public static final double CLIMBER_MAX_VALUE = 20_000; // TODO Get true limit
     public static final double CLIMBER_ACTIVE_TIME = 125d; // the 20 seconds at end of match
+//    public static final double CLIMBER_ACTIVE_TIME = 135d; // the 20 seconds at end of match
     
     
     
@@ -73,14 +74,14 @@ public class Constants {
 	public static final double LAUNCHER_AIM_INCREMENT = 18;
 	public static final double LAUNCHER_INTAKE_INCREMENT = 1000;
 	//TODO: tune shooter pid
-	public static final double LAUNCHER_AIM_KP = 400d/10_000d;   //1400d/10000d
-	public static final double LAUNCHER_AIM_KI = 16d/10_000d;     //8d/10000d; 
-	public static final double LAUNCHER_AIM_KD = 950d/10_000d;   //250d/10000d
+	public static final double LAUNCHER_AIM_KP = /*400d/10_000d;*/   240d/10000d;
+	public static final double LAUNCHER_AIM_KI = /*16d/10_000d; */   8d/10000d;
+	public static final double LAUNCHER_AIM_KD = /*950d/10_000d;*/   250d/10000d;
 	public static final double LAUNCHER_AIM_KF = 0.0;
 	public static final double LAUNCHER_AIM_RAMP_RATE = 5;//ramp rate is maximum acceleration in voltage/second
 	public static final int LAUNCHER_AIM_IZONE = 0; // izone eliminates
 	
-	public static final double LAUNCHER_WHEELS_KP = 8e-7;
+	public static final double LAUNCHER_WHEELS_KP = 4e-7;
 	public static final double LAUNCHER_WHEELS_KI = 0.000000000;
 	public static final double LAUNCHER_WHEELS_KD = 0.00;
 	public static final double LAUNCHER_WHEELS_KF = -0.9;

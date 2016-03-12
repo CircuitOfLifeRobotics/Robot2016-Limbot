@@ -6,13 +6,15 @@ import static com.team3925.robot2016.Constants.DO_LOG_GRIP_VALUES;
 import static com.team3925.robot2016.Constants.DO_LOG_PDP_VALUES;
 
 import com.kauailabs.navx.frc.AHRS;
+import com.ni.vision.NIVision.CircleMatch;
 import com.team3925.robot2016.commands.Climb;
 import com.team3925.robot2016.commands.GyroTurn;
 import com.team3925.robot2016.commands.LaunchBallHigh;
 import com.team3925.robot2016.commands.ManualDrive;
+import com.team3925.robot2016.commands.ManualPlexiArms;
 import com.team3925.robot2016.commands.TrapzoidalMotionTest;
 import com.team3925.robot2016.commands.VerticalAim;
-import com.team3925.robot2016.commands.defensecommands.CrossLowBar;
+import com.team3925.robot2016.commands.defensecommands.CrossDefault;
 import com.team3925.robot2016.subsystems.Climber;
 import com.team3925.robot2016.subsystems.DriveTrain;
 import com.team3925.robot2016.subsystems.Launcher;
@@ -61,6 +63,7 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 	Command trapMotionTest;
 	Command manualDrive;
 	Command manualCandyCanes;
+	Command manualArms;
 	Command visionTest;
 	Command launchBallHigh;
 	Command gyroTurn;
@@ -99,6 +102,7 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 		driveTrain = new DriveTrain();
 		launcher = new Launcher();
 		candyCanes = new Climber();
+		plexiArms = new PlexiArms();
 		Preferences.getInstance();
 		pdp = RobotMap.pdp;
 		
@@ -118,13 +122,14 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 		XboxHelper.init();
 		
 		//Creating Commands
+		manualArms = new ManualPlexiArms();
 		manualDrive = new ManualDrive();
 		trapMotionTest = new TrapzoidalMotionTest();
 		manualCandyCanes = new Climb();
 		visionTest = new VerticalAim();
 		launchBallHigh = new LaunchBallHigh();
 		gyroTurn = new GyroTurn(45);
-		gyroDrive = new CrossLowBar();
+		gyroDrive = new CrossDefault();
 		
 		
 		reset();
@@ -165,24 +170,19 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 	}
 	
 	public void autonomousInit() {
-		Object selected = oi.autoChooser.getSelected();
-		if (selected instanceof Command) {
-			autoRoutine = (CommandGroup) selected;
-			autoRoutine.start();
-		} else {
-			DriverStation.reportError("Could not get selected autonomous routine!", true);
-		}
+		autoRoutine = oi.setAutonomous();
 		
-		launcher.init();
 		driveTrain.setHighGear(false);
 		reset();
 		
 //		launchBallTest.start();
 //		launchBallHigh.start();
 //		gyroTurn.start();
-		gyroDrive.start();
+//		gyroDrive.start();
 		
 		launcher.init();
+		
+		autoRoutine.start();
 	}
 	
 	/**
@@ -207,8 +207,10 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 		reset();
 //		driveTrain.setPIDEnabled(false);
 		candyCanes.startTimeOut();
-		
+		manualCandyCanes.start();
 //		visionTest.start();
+		
+		manualArms.start();
 		
 		launcher.init();
 	}
@@ -218,15 +220,15 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 	 */
 	public void teleopPeriodic() {
 		Scheduler.getInstance().run();
-		if (XboxHelper.getShooterButton(XboxHelper.STICK_RIGHT)) {
-			Object selected = oi.throwBallTesting.getSelected();
-			if (selected instanceof Command) {
-				Command c = (Command) selected;
-				c.start();
-			} else {
-				DriverStation.reportError("Tried to start a throwballtest but it could not be cast to a command!", true);
-			}
-		}
+//		if (XboxHelper.getShooterButton(XboxHelper.STICK_RIGHT)) {
+//			Object selected = oi.throwBallTesting.getSelected();
+//			if (selected instanceof Command) {
+//				Command c = (Command) selected;
+//				c.start();
+//			} else {
+//				DriverStation.reportError("Tried to start a throwballtest but it could not be cast to a command!", true);
+//			}
+//		}
 		
 		launcher.update();
 		
@@ -244,7 +246,7 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 	public void logData() {
 //		driveTrain.logData();
 		launcher.logData();
-//		arms.logData();
+		plexiArms.logData();
 //		candyCanes.logData();
 		
 		double now = Timer.getFPGATimestamp();
@@ -276,9 +278,10 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 //		putDataSD("Autonomous Chooser", autoChooser);
 //		putNamedDataSD(Scheduler.getInstance());
 		
-    	putDataSD("Autonomous Routing Choose", oi.autoChooser);
-		putDataSD("Throw Ball Testing", oi.throwBallTesting);
-		
+//    	SmartDashboard.putData("Autonomous Routing Chooser", oi.autoChooser);
+//    	SmartDashboard.putData("Throw Ball Testing", oi.throwBallTesting);
+//    	SmartDashboard.putData("Autonomous Position Chooser", oi.positionChooser);
+    	
 		if (DO_LOG_AHRS_VALUES) {
 			if (navx != null) {
 				logNavXData();

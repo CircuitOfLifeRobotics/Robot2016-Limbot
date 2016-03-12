@@ -1,16 +1,17 @@
 package com.team3925.robot2016.commands.defensecommands;
 
 import com.team3925.robot2016.Constants;
+import com.team3925.robot2016.Robot;
 import com.team3925.robot2016.util.SmartdashBoardLoggable;
 import com.team3925.robot2016.util.SynchronousPID;
 
-public class CrossLowBar extends DefenseCrossBase implements SmartdashBoardLoggable {
+public class CrossDefault extends DefenseCrossBase implements SmartdashBoardLoggable {
 	
 	private SynchronousPID pidLoop;
 	
 	private double startAngle, currentAngle, lastAngle, rotations, moveVal = -1;
 	
-	public CrossLowBar() {
+	public CrossDefault() {
 		pidLoop = new SynchronousPID(Constants.GYRO_DRIVE_KP, Constants.GYRO_DRIVE_KI, Constants.GYRO_DRIVE_KD);
 		
 		startAngle = currentAngle = lastAngle = navx.getFusedHeading();
@@ -26,6 +27,7 @@ public class CrossLowBar extends DefenseCrossBase implements SmartdashBoardLogga
 	
 	@Override
 	protected void routine() {
+		Robot.plexiArms.setArmUp(false);
 		currentAngle = navx.getFusedHeading();
 		if (Math.abs(currentAngle - lastAngle) > 180) {
 			rotations += (currentAngle-lastAngle)>0 ? -1:1;

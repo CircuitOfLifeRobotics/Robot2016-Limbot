@@ -51,42 +51,46 @@ public class VerticalAim extends Command implements SmartdashBoardLoggable{
 
 	@Override
 	protected void execute() {
-		switch (mode) {
-		case GOTO_AIM:
-			if (launcher.isAimOnSetpoint() && timeoutAction.isFinished()) {
-				mode = Mode.PROCESS_DATA;
-				timeoutAction.config(0.1);
-			}
-			break;
-		case PROCESS_DATA:
-			calcData();
-			if (timeoutAction.isFinished()) {
-				if (!isData) {
-					if (launcher.getAimMotorPosition()<50)
-						launcher.setAimSetpoint(70);
-					else
-						interrupted();
-				}else if (robotYawErrDegs < GYROTURN_POS_TOLERANCE) {
-					mode = Mode.DONE;
-				}else {
-					mode = Mode.GOTO_ANLGE;
-					gyroTurn.setSetpointRelative(robotYawErrDegs);
-					gyroTurn.start();
-					timeoutAction.config(0.5);
+		try {
+			switch (mode) {
+			case GOTO_AIM:
+				if (launcher.isAimOnSetpoint() && timeoutAction.isFinished()) {
+					mode = Mode.PROCESS_DATA;
+					timeoutAction.config(0.1);
 				}
+				break;
+			case PROCESS_DATA:
+				calcData();
+				if (timeoutAction.isFinished()) {
+					if (!isData) {
+						if (launcher.getAimMotorPosition()<50)
+							launcher.setAimSetpoint(70);
+						else
+							interrupted();
+					}else if (robotYawErrDegs < GYROTURN_POS_TOLERANCE) {
+						mode = Mode.DONE;
+					}else {
+						mode = Mode.GOTO_ANLGE;
+						gyroTurn.setSetpointRelative(robotYawErrDegs);
+						gyroTurn.start();
+						timeoutAction.config(0.5);
+					}
+				}
+				break;
+			case GOTO_ANLGE:
+				if (gyroTurn.isFinished() || timeoutAction.isFinished()) {
+					mode = Mode.PROCESS_DATA;
+				}
+				break;
+			case DONE:
+				end();
+				break;
+			default:
+				interrupted();
+				break;
 			}
-			break;
-		case GOTO_ANLGE:
-			if (gyroTurn.isFinished() || timeoutAction.isFinished()) {
-				mode = Mode.PROCESS_DATA;
-			}
-			break;
-		case DONE:
-			end();
-			break;
-		default:
-			interrupted();
-			break;
+		} catch (Exception e) {
+			DriverStation.reportError("Vision Failed. Talk to Adam", true);
 		}
 		
 		calcData();
@@ -103,9 +107,13 @@ public class VerticalAim extends Command implements SmartdashBoardLoggable{
 	protected void end() {
 		table.putBoolean("run", false);
 		
-		throwBall.setAngle(shootAngle);
-		throwBall.setIntakeSpeed(shootSpeed);
-		throwBall.start();
+		if (shootAngle>0 && shootAngle<90) {
+			throwBall.setAngle(shootAngle);
+			throwBall.setIntakeSpeed(shootSpeed);
+			throwBall.start();
+		}else {
+			DriverStation.reportError("AngleOutOfBoundsException", false);
+		}
 	}
 	
 	@Override
@@ -116,44 +124,48 @@ public class VerticalAim extends Command implements SmartdashBoardLoggable{
 	}
 	
 	private void calcData() {
-		centerX = table.getNumberArray("centerX", new double[0]);
-		centerY = table.getNumberArray("centerY", new double[0]);
-		area = table.getNumberArray("area", new double[0]);
-		width = table.getNumberArray("width", new double[0]);
-		height = table.getNumberArray("height", new double[0]);
-		isConnected = table.isConnected();
-		isData = centerX.length>0;
-		
-		contourIndex = 0;
-		
-		if (isData) {
-			double lastMaxWidth = 0;
-			double maxWidth = 0;
-			for (int i=0; i<centerX.length; i++) {
-				maxWidth = Math.max(width[i], maxWidth);
-				contourIndex = maxWidth==lastMaxWidth ? contourIndex:i;
-				lastMaxWidth = maxWidth;
+		try {
+			centerX = table.getNumberArray("centerX", new double[0]);
+			centerY = table.getNumberArray("centerY", new double[0]);
+			area = table.getNumberArray("area", new double[0]);
+			width = table.getNumberArray("width", new double[0]);
+			height = table.getNumberArray("height", new double[0]);
+			isConnected = table.isConnected();
+			isData = centerX.length>0;
+			
+			contourIndex = 0;
+			
+			if (isData) {
+				double lastMaxWidth = 0;
+				double maxWidth = 0;
+				for (int i=0; i<centerX.length; i++) {
+					maxWidth = Math.max(width[i], maxWidth);
+					contourIndex = maxWidth==lastMaxWidth ? contourIndex:i;
+					lastMaxWidth = maxWidth;
+				}
+				
+				//units = (      feet                    *        pixels           )/( pixels  *   tan(degrees)                   ))
+	//			distCamTarget = (CAMERA_TARGET_WIDTH * CAMERA_FOV_PIX)/((width[0]-4) * Math.tan(CAMERA_FOV_DEG));
+				targetAngleRads = Math.toRadians(width[contourIndex]/2 * CAMERA_DEGS_PER_PX);
+				camToTarget = CAMERA_TARGET_WIDTH/2 / Math.tan(targetAngleRads);
+				aimPivotToTargetGnd = Math.sin(Math.toRadians(launcher.getAimMotorPosition())) * (camToTarget + CAMERA_PIVOT_DIST);
+				
+				targetCenterPx = (int) (-Math.atan(CAMERA_MID_OFFSET/camToTarget)/CAMERA_DEGS_PER_PX + CAMERA_FOV_PIX/2);
+				robotYawErrDegs = (targetCenterPx - centerX[contourIndex]) * CAMERA_DEGS_PER_PX;
+				
+				double discriminant = Math.pow(MAX_BALL_EXIT_VELOCITY, 4) - 
+						GRAVITY*(GRAVITY*aimPivotToTargetGnd*aimPivotToTargetGnd + 
+						2*CAMERA_TARGET_HEIGHT_GROUND*Math.pow(MAX_BALL_EXIT_VELOCITY, 2));
+				if (discriminant>0) {
+					double plusAngle = Math.toDegrees(Math.atan( (Math.pow(MAX_BALL_EXIT_VELOCITY, 2) + Math.sqrt(discriminant)) / (GRAVITY*aimPivotToTargetGnd) ));
+					double minusAngle = Math.toDegrees(Math.atan( (Math.pow(MAX_BALL_EXIT_VELOCITY, 2) - Math.sqrt(discriminant)) / (GRAVITY*aimPivotToTargetGnd) ));
+					shootAngle = minusAngle;
+				} else {
+					shootAngle = -1;
+				}
 			}
-			
-			//units = (      feet                    *        pixels           )/( pixels  *   tan(degrees)                   ))
-//			distCamTarget = (CAMERA_TARGET_WIDTH * CAMERA_FOV_PIX)/((width[0]-4) * Math.tan(CAMERA_FOV_DEG));
-			targetAngleRads = Math.toRadians(width[contourIndex]/2 * CAMERA_DEGS_PER_PX);
-			camToTarget = CAMERA_TARGET_WIDTH/2 / Math.tan(targetAngleRads);
-			aimPivotToTargetGnd = Math.sin(Math.toRadians(launcher.getAimMotorPosition())) * (camToTarget + CAMERA_PIVOT_DIST);
-			
-			targetCenterPx = (int) (-Math.atan(CAMERA_MID_OFFSET/camToTarget)/CAMERA_DEGS_PER_PX + CAMERA_FOV_PIX/2);
-			robotYawErrDegs = (targetCenterPx - centerX[contourIndex]) * CAMERA_DEGS_PER_PX;
-			
-			double discriminant = Math.pow(MAX_BALL_EXIT_VELOCITY, 4) - 
-					GRAVITY*(GRAVITY*aimPivotToTargetGnd*aimPivotToTargetGnd + 
-					2*CAMERA_TARGET_HEIGHT_GROUND*Math.pow(MAX_BALL_EXIT_VELOCITY, 2));
-			if (discriminant>0) {
-				double plusAngle = Math.toDegrees(Math.atan( (Math.pow(MAX_BALL_EXIT_VELOCITY, 2) + Math.sqrt(discriminant)) / (GRAVITY*aimPivotToTargetGnd) ));
-				double minusAngle = Math.toDegrees(Math.atan( (Math.pow(MAX_BALL_EXIT_VELOCITY, 2) - Math.sqrt(discriminant)) / (GRAVITY*aimPivotToTargetGnd) ));
-				shootAngle = minusAngle;
-			} else {
-				shootAngle = -1;
-			}
+		} catch (Exception e) {
+			DriverStation.reportError("Vision calculations failed. Talk to Adam.", true);
 		}
 	}
 	
@@ -177,6 +189,7 @@ public class VerticalAim extends Command implements SmartdashBoardLoggable{
 				
 				putNumberSD("YawOffset", robotYawErrDegs);
 				putNumberSD("PixelCenter", targetCenterPx);
+				putNumberSD("ShooterAngle", shootAngle);
 				
 				putNumberSD("ContourIndex", contourIndex);
 			}

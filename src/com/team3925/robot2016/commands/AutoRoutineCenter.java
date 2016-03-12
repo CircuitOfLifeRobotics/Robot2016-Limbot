@@ -1,5 +1,7 @@
 package com.team3925.robot2016.commands;
 
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.CommandGroup;
 
 /**
@@ -9,24 +11,13 @@ import edu.wpi.first.wpilibj.command.CommandGroup;
 public class AutoRoutineCenter extends CommandGroup {
 
 
-	public AutoRoutineCenter() {
-		
-		// Add Commands here:
-		// e.g. addSequential(new Command1());
-		//      addSequential(new Command2());
-		// these will run in order.
-
-		// To run multiple commands at the same time,
-		// use addParallel()
-		// e.g. addParallel(new Command1());
-		//      addSequential(new Command2());
-		// Command1 and Command2 will run in parallel.
-
-		// A command group will require all of the subsystems that each member
-		// would require.
-		// e.g. if Command1 requires chassis, and Command2 requires arm,
-		// a CommandGroup containing them would require both the chassis and the
-		// arm.
-
-	} 
+    public AutoRoutineCenter(Command initCommand, int robotPos) {
+    	//Adam's trig:
+    	//     atan( (13.5 + (pos-2)*4.5) / 12.5 )
+    	addSequential(initCommand, 7d);
+    	addSequential(new GyroTurn(Math.atan( (13.5 + (robotPos-2)*4.5) / 12.5 )));
+    	addSequential(new ThrowBall(75, 1));
+//    	addSequential(new VerticalAim());
+    }
+    
 }

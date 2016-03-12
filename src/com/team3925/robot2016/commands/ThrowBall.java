@@ -31,7 +31,7 @@ public class ThrowBall extends Command implements SmartdashBoardLoggable{
 	 * @param intakeSpeed in native units of encoder ticks/100ms
 	 */
 	public ThrowBall(double angle, double intakeSpeed) {
-		this.intakeSpeed = -intakeSpeed;
+		this.intakeSpeed = intakeSpeed;
 		this.angle = angle;
 	}
 	
@@ -74,7 +74,7 @@ public class ThrowBall extends Command implements SmartdashBoardLoggable{
 					timer.isFinished() || Robot.oi.getThrowBall_LaunchBallOverride()) && buttonTimer.isFinished()) {
 				mode = Mode.SHOOT;
 				launcher.setPuncher(true);
-				timer.config(0.1);
+				timer.config(0.3);
 			}
 			break;
 		case SHOOT:
@@ -82,8 +82,6 @@ public class ThrowBall extends Command implements SmartdashBoardLoggable{
 			lowestValSinceSetpoint = Math.min(lowestValSinceSetpoint, Math.abs((launcher.getIntakeSpeedRight()*100/4096) * Constants.LAUNCHER_WHEEL_CIRCUM));
 			if (timer.isFinished()) {
 				launcher.setPuncher(false);
-				launcher.setAimSetpoint(0);
-				launcher.setIntakeSetpoint(0);
 				mode = Mode.DONE;
 			}
 			break;

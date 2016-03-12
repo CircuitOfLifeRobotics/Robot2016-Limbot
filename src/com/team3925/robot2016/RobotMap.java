@@ -112,14 +112,14 @@ public class RobotMap {
     	boolean invertLeft = true;
     	boolean invertRight = false;
     	
-        driveTrainMotorLeftA = new CANTalon(13);
+        driveTrainMotorLeftA = new CANTalon(19);
         LiveWindow.addActuator("DriveTrain", "MotorLeftA", driveTrainMotorLeftA);
         driveTrainMotorLeftA.setInverted(invertLeft);
         driveTrainMotorLeftA.changeControlMode(TalonControlMode.PercentVbus);
         driveTrainMotorLeftA.setVoltageRampRate(Constants.DRIVE_TRAIN_VOLTAGE_RAMP_RATE);
         driveTrainMotorLeftA.enableBrakeMode(false);
         
-        driveTrainMotorLeftB = new CANTalon(12);
+        driveTrainMotorLeftB = new CANTalon(18);
         LiveWindow.addActuator("DriveTrain", "MotorLeftB", driveTrainMotorLeftB);
         driveTrainMotorLeftB.setInverted(invertLeft);
 //        driveTrainMotorLeftB.reverseOutput(invertLeft);
@@ -136,7 +136,7 @@ public class RobotMap {
 //        driveTrainMotorLeftC.setVoltageRampRate(Constants.DRIVE_TRAIN_VOLTAGE_RAMP_RATE);
 //        driveTrainMotorLeftC.enableBrakeMode(false);
         
-        driveTrainMotorRightA = new CANTalon(18); // was 17
+        driveTrainMotorRightA = new CANTalon(15); // was 17
         LiveWindow.addActuator("DriveTrain", "MotorRightA", driveTrainMotorRightA);
 //        driveTrainMotorRightA.setInverted(invertRight);
 //        driveTrainMotorRightA.reverseSensor(invertRight);
@@ -144,7 +144,7 @@ public class RobotMap {
         driveTrainMotorRightA.setVoltageRampRate(Constants.DRIVE_TRAIN_VOLTAGE_RAMP_RATE);
         driveTrainMotorRightA.enableBrakeMode(false);
         
-        driveTrainMotorRightB = new CANTalon(19);
+        driveTrainMotorRightB = new CANTalon(16);
         LiveWindow.addActuator("DriveTrain", "MotorRightB", driveTrainMotorRightB);
         driveTrainMotorRightB.setInverted(invertRight);
 //        driveTrainMotorRightB.reverseOutput(invertRight);
@@ -205,15 +205,16 @@ public class RobotMap {
         //pointed at light	1.5A
         launcherUltrasonic = new AnalogInput(0);
         
-        launcherMotorAim = new CANTalon(15);
+        launcherMotorAim = new CANTalon(13);
         LiveWindow.addActuator("Launcher", "AimMotor", launcherMotorAim);
         launcherMotorAim.setFeedbackDevice(FeedbackDevice.PulseWidth);
         launcherMotorAim.changeControlMode(TalonControlMode.PercentVbus);
         launcherMotorAim.setFeedbackDevice(FeedbackDevice.CtreMagEncoder_Relative);
         launcherMotorAim.reverseSensor(true);
 //        launcherMotorAim.reverseSensor(true); doesn't work, sensor value is still negative
+        launcherMotorAim.setEncPosition(0);
         
-        launcherMotorLeft = new CANTalon(11);
+        launcherMotorLeft = new CANTalon(12);
         LiveWindow.addActuator("Launcher", "MotorLeft", launcherMotorLeft);
         launcherMotorLeft.setFeedbackDevice(FeedbackDevice.QuadEncoder);
         launcherMotorLeft.changeControlMode(TalonControlMode.PercentVbus);
@@ -221,7 +222,7 @@ public class RobotMap {
         launcherMotorLeft.reverseSensor(true);
 //        launcherMotorLeft.configEncoderCodesPerRev(4096);
         
-        launcherMotorRight = new CANTalon(10);
+        launcherMotorRight = new CANTalon(14);
         LiveWindow.addActuator("Launcher", "MotorRight", launcherMotorRight);
         launcherMotorRight.setFeedbackDevice(FeedbackDevice.QuadEncoder);
         launcherMotorRight.changeControlMode(TalonControlMode.PercentVbus);
@@ -235,6 +236,20 @@ public class RobotMap {
         //2, 3 puncher
         //0, 1 arms
         
+        /*Madera Competition Bot
+         * 
+         * LauncherRight		14
+         * LauncherLeft			12
+         * LauncherAim			13
+         * 
+         * Climber				11
+         * 
+         * RightDriveB			16
+         * RightDriveC			15
+         * LeftDriveB			19
+         * LeftDriveC			18
+         * 
+         */
         
         
         // PLEXI ARMS

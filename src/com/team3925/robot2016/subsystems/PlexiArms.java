@@ -17,7 +17,9 @@ import edu.wpi.first.wpilibj.command.Subsystem;
 public class PlexiArms extends Subsystem implements SmartdashBoardLoggable {
 	private DoubleSolenoid armsSolenoid = RobotMap.plexiArmsSolenoid;
 
-	
+	/**
+	 * @param engaged if true
+	 */
 	public void setArmUp(boolean engaged) {
 		armsSolenoid.set(!engaged ? Value.kForward:Value.kReverse);
 	}
