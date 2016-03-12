@@ -14,7 +14,7 @@ enum Mode {
 
 public class ThrowBall extends Command implements SmartdashBoardLoggable{
 	
-
+	
 	public ThrowBall() {
 		this(Constants.LAUNCHER_MAX_INTAKE_SPEED);
 	}
@@ -31,12 +31,18 @@ public class ThrowBall extends Command implements SmartdashBoardLoggable{
 	 * @param intakeSpeed in native units of encoder ticks/100ms
 	 */
 	public ThrowBall(double angle, double intakeSpeed) {
+		this(angle, intakeSpeed, 5);
+	}
+	
+	public ThrowBall(double angle, double intakeSpeed, double timeout) {
 		this.intakeSpeed = intakeSpeed;
 		this.angle = angle;
+		this.timeout = timeout;
 	}
 	
 	private double intakeSpeed;
 	private double angle;
+	private double timeout;
 	Launcher launcher = Robot.launcher;
 	TimeoutAction timer = new TimeoutAction();
 	TimeoutAction buttonTimer = new TimeoutAction();
@@ -63,7 +69,7 @@ public class ThrowBall extends Command implements SmartdashBoardLoggable{
 		launcher.setIntakeSetpoint(intakeSpeed);
 		
 		buttonTimer.config(0.5);
-		timer.config(10);
+		timer.config(timeout);
 	}
 
 	@Override

@@ -91,9 +91,9 @@ public final class OI {
 		xboxShooter = new Joystick(1);
 
 		collectBall = new CollectBall();
-		throwBallFar = new ThrowBall(65, 1);
-		throwBallNear = new ThrowBall(80, 1);
-		throwBallLow = new ThrowBall(20, 1);
+		throwBallFar = new ThrowBall(65, 1, 5);
+		throwBallNear = new ThrowBall(80, 1, 5);
+		throwBallLow = new ThrowBall(30, 1, 1);
 		visionShoot = new VerticalAim();
 
 

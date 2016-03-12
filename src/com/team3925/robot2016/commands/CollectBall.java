@@ -29,7 +29,7 @@ public class CollectBall extends Command {
 		mode = CollectMode.WAIT_FOR_DOWN;
 		
 		launcher.setAimSetpoint(0);
-		timeout.config(7);
+		timeout.config(30);
 	}
 
 	// Called repeatedly when this Command is scheduled to run
@@ -55,6 +55,7 @@ public class CollectBall extends Command {
 	// Called once after isFinished returns true
 	protected void end() {
 		launcher.setIntakeSetpoint(0);
+		launcher.setAimSetpoint(0);
 	}
 
 	// Called when another command which requires one or more of the same

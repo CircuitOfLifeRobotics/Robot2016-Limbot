@@ -288,6 +288,8 @@ public final class Launcher extends Subsystem implements SmartdashBoardLoggable 
 //    	putNumberSD("MotorAimPosition", getAimMotorPosition());
 //    	putStringSD("MotorAimMode", motorAim.getControlMode().toString());
     	
+    	SmartDashboard.putNumber("Battery_Voltage", DriverStation.getInstance().getBatteryVoltage());
+    	
     	SmartDashboard.putData("Launcher_Aim_PID_L00000000oop", aimPidLoop);
     	putBooleanSD("DoRunAim", doRunAim);
     	putNumberSD("AimMotorSpeed", getAimMotorSpeed());
@@ -299,6 +301,8 @@ public final class Launcher extends Subsystem implements SmartdashBoardLoggable 
     	putNumberSD("AimOutput", aimOutput);
     	
 //    	putNumberSD("IntakeSetpoint", intakeSetpoint);
+    	
+    	putBooleanSD("PuncherSolenoid", puncherSolenoid.get() == Value.kForward);
     	
     	putNumberSD("MotorRightSetpoint", motorRight.getSetpoint());
     	putNumberSD("MotorLeftSetpoint", motorLeft.getSetpoint());

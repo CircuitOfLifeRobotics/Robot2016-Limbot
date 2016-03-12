@@ -49,8 +49,8 @@ public class Constants {
     
     // CLIMBER CONSTANTS
     public static final double CLIMBER_MAX_VALUE = 20_000; // TODO Get true limit
-    public static final double CLIMBER_ACTIVE_TIME = 125d; // the 20 seconds at end of match
-//    public static final double CLIMBER_ACTIVE_TIME = 135d; // the 20 seconds at end of match
+//    public static final double CLIMBER_ACTIVE_TIME = 125d; // the 20 seconds at end of match
+    public static final double CLIMBER_ACTIVE_TIME = 135d; // the 20 seconds at end of match
     
     
     

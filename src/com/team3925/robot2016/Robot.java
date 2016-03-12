@@ -182,7 +182,7 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 		
 		launcher.init();
 		
-		autoRoutine.start();
+//		autoRoutine.start();
 	}
 	
 	/**
