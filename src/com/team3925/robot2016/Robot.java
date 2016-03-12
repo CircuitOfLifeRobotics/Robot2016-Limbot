@@ -106,7 +106,7 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 		Preferences.getInstance();
 		pdp = RobotMap.pdp;
 		
-		table = NetworkTable.getTable("GRIP/Mar4");
+		table = NetworkTable.getTable("GRIP/Madera3925");
 		try {
 			new ProcessBuilder("/home/lvuser/grip").inheritIO().start();
 		}catch (Exception e) {

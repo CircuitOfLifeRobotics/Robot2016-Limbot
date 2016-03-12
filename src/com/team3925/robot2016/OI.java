@@ -93,7 +93,7 @@ public final class OI {
 		collectBall = new CollectBall();
 		throwBallFar = new ThrowBall(65, 1);
 		throwBallNear = new ThrowBall(80, 1);
-		throwBallLow = new ThrowBall(15, 1);
+		throwBallLow = new ThrowBall(20, 1);
 		visionShoot = new VerticalAim();
 
 
@@ -125,12 +125,12 @@ public final class OI {
 		startLow.cancelWhenPressed(throwBallNear);
 		startLow.cancelWhenPressed(visionShoot);
 		
-		startVision = new JoystickButton(xboxDriver, XboxHelper.BACK);
-		startVision.whenPressed(visionShoot);
-		startVision.cancelWhenPressed(throwBallFar);
-		startVision.cancelWhenPressed(collectBall);
-		startVision.cancelWhenPressed(throwBallNear);
-		startVision.cancelWhenPressed(throwBallLow);
+//		startVision = new JoystickButton(xboxDriver, XboxHelper.BACK);
+//		startVision.whenPressed(visionShoot);
+//		startVision.cancelWhenPressed(throwBallFar);
+//		startVision.cancelWhenPressed(collectBall);
+//		startVision.cancelWhenPressed(throwBallNear);
+//		startVision.cancelWhenPressed(throwBallLow);
 		
 		cancelCommands = new JoystickButton(xboxShooter, XboxHelper.START);
 		cancelCommands.cancelWhenPressed(collectBall);
@@ -247,7 +247,7 @@ public final class OI {
 //		}
 		
 		CommandGroup janky = new CommandGroup();
-		janky.addSequential(new  CrossDefault(), 2);
+		janky.addSequential(new  CrossDefault(), 6);
 		janky.addSequential(new GyroTurn(45));
 		janky.addSequential(new GyroTurn(-45));
 		
