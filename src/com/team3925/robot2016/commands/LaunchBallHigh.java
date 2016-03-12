@@ -44,9 +44,7 @@ public class LaunchBallHigh extends Command implements SmartdashBoardLoggable {
 	protected void initialize() {
 		camDist = yawOffsetDegs = pixCenter = 0;
 		mode = Mode.ROUGH_AIM;
-		table = Robot.table;
 		
-		table.putBoolean("run", true);
 		table.addTableListener(tableListener, true);
 		calcData();
 		

@@ -6,28 +6,20 @@ import static com.team3925.robot2016.util.XboxHelper.START;
 
 import java.text.DecimalFormat;
 
-import com.team3925.robot2016.commands.AutoRoutineCenter;
 import com.team3925.robot2016.commands.AutoRoutineCourtyard;
 import com.team3925.robot2016.commands.AutoRoutineDoNothing;
 import com.team3925.robot2016.commands.CollectBall;
 import com.team3925.robot2016.commands.GyroTurn;
-import com.team3925.robot2016.commands.LaunchBallLow;
 import com.team3925.robot2016.commands.ThrowBall;
-import com.team3925.robot2016.commands.VerticalAim;
 import com.team3925.robot2016.commands.defensecommands.CrossDefault;
-import com.team3925.robot2016.commands.defensecommands.CrossRoughTerrain;
-import com.team3925.robot2016.commands.defensecommands.DefenseCrossBase;
-import com.team3925.robot2016.util.RobotPosition;
 import com.team3925.robot2016.util.XboxHelper;
 
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.Button;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.CommandGroup;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 
 /**
@@ -72,7 +64,6 @@ public final class OI {
 	public Button startVision;
 	public Button cancelCommands;
 	
-	public Command visionShoot;
 	public Command collectBall;
 	public Command throwBallFar;
 	public Command throwBallNear;
@@ -94,7 +85,6 @@ public final class OI {
 		throwBallFar = new ThrowBall(65, 1, 5);
 		throwBallNear = new ThrowBall(80, 1, 5);
 		throwBallLow = new ThrowBall(30, 1, 1);
-		visionShoot = new VerticalAim();
 
 
 		startCollectBall = new JoystickButton(xboxShooter, XboxHelper.A);
@@ -102,28 +92,24 @@ public final class OI {
 		startCollectBall.cancelWhenPressed(throwBallNear);
 		startCollectBall.cancelWhenPressed(throwBallFar);
 		startCollectBall.cancelWhenPressed(throwBallLow);
-		startCollectBall.cancelWhenPressed(visionShoot);
 
 		startThrowBallFar = new JoystickButton(xboxShooter, XboxHelper.Y);
 		startThrowBallFar.whenPressed(throwBallFar);
 		startThrowBallFar.cancelWhenPressed(collectBall);
 		startThrowBallFar.cancelWhenPressed(throwBallNear);
 		startThrowBallFar.cancelWhenPressed(throwBallLow);
-		startThrowBallFar.cancelWhenPressed(visionShoot);
 		
 		startThrowBallNear = new JoystickButton(xboxShooter, XboxHelper.X);
 		startThrowBallNear.whenPressed(throwBallNear);
 		startThrowBallNear.cancelWhenPressed(throwBallFar);
 		startThrowBallNear.cancelWhenPressed(collectBall);
 		startThrowBallNear.cancelWhenPressed(throwBallLow);
-		startThrowBallNear.cancelWhenPressed(visionShoot);
 		
 		startLow = new JoystickButton(xboxShooter, XboxHelper.B);
 		startLow.whenPressed(throwBallLow);
 		startLow.cancelWhenPressed(throwBallFar);
 		startLow.cancelWhenPressed(collectBall);
 		startLow.cancelWhenPressed(throwBallNear);
-		startLow.cancelWhenPressed(visionShoot);
 		
 //		startVision = new JoystickButton(xboxDriver, XboxHelper.BACK);
 //		startVision.whenPressed(visionShoot);
@@ -137,7 +123,6 @@ public final class OI {
 		cancelCommands.cancelWhenPressed(throwBallFar);
 		cancelCommands.cancelWhenPressed(throwBallNear);
 		cancelCommands.cancelWhenPressed(throwBallLow);
-		cancelCommands.cancelWhenPressed(visionShoot);
 
 		positionChooser = new SendableChooser();
 		positionChooser.addDefault("1 - Far Right", new Integer(0));
@@ -164,7 +149,6 @@ public final class OI {
 
 
 //		SmartDashboard.putData("Position Chooser", positionChooser);
-		SmartDashboard.putData("VisionShoot", visionShoot);
 
 
 		// SmartDashboard Buttons

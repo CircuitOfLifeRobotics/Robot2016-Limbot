@@ -2,18 +2,15 @@ package com.team3925.robot2016;
 
 
 import static com.team3925.robot2016.Constants.DO_LOG_AHRS_VALUES;
-import static com.team3925.robot2016.Constants.DO_LOG_GRIP_VALUES;
 import static com.team3925.robot2016.Constants.DO_LOG_PDP_VALUES;
 
 import com.kauailabs.navx.frc.AHRS;
-import com.ni.vision.NIVision.CircleMatch;
 import com.team3925.robot2016.commands.Climb;
 import com.team3925.robot2016.commands.GyroTurn;
 import com.team3925.robot2016.commands.LaunchBallHigh;
 import com.team3925.robot2016.commands.ManualDrive;
 import com.team3925.robot2016.commands.ManualPlexiArms;
 import com.team3925.robot2016.commands.TrapzoidalMotionTest;
-import com.team3925.robot2016.commands.VerticalAim;
 import com.team3925.robot2016.commands.defensecommands.CrossDefault;
 import com.team3925.robot2016.subsystems.Climber;
 import com.team3925.robot2016.subsystems.DriveTrain;
@@ -33,7 +30,6 @@ import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.CommandGroup;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
-import edu.wpi.first.wpilibj.networktables.NetworkTable;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
@@ -55,7 +51,6 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 	public static Preferences prefs;
 	public static AHRS navx = null;
 	public static PowerDistributionPanel pdp;
-	public static NetworkTable table;
 	public static OI oi;
 	
 	//Commands
@@ -106,14 +101,6 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 		Preferences.getInstance();
 		pdp = RobotMap.pdp;
 		
-		table = NetworkTable.getTable("GRIP/Madera3925");
-		try {
-			new ProcessBuilder("/home/lvuser/grip").inheritIO().start();
-		}catch (Exception e) {
-			e.printStackTrace();
-		}
-		table.putBoolean("run", false);
-		
 		// OI must be constructed after subsystems. If the OI creates Commands
 		//(which it very likely will), subsystems are not guaranteed to be
 		// constructed yet. Thus, their requires() statements may grab null
@@ -126,7 +113,6 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 		manualDrive = new ManualDrive();
 		trapMotionTest = new TrapzoidalMotionTest();
 		manualCandyCanes = new Climb();
-		visionTest = new VerticalAim();
 		launchBallHigh = new LaunchBallHigh();
 		gyroTurn = new GyroTurn(45);
 		gyroDrive = new CrossDefault();
@@ -298,37 +284,11 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 			}
 		}
 		
-		if (DO_LOG_GRIP_VALUES) {
-			if (table.isConnected()) {
-//				logGRIPData();
-			}else {
-				putStringSD("GRIPLogger", "Cannot log GRIP values while unconnected!");
-			}
-		}
 	}
 
 	@Override
 	public String getFormattedName() {
 		return "Robot_";
-	}
-	
-	private void logGRIPData() {
-		double[] area = table.getNumberArray("area", defaultVal);
-		double[] width = table.getNumberArray("width", defaultVal);
-		double[] height = table.getNumberArray("height", defaultVal);
-		double[] solidity = table.getNumberArray("solidity", defaultVal);
-		double[] centerX = table.getNumberArray("centerX", defaultVal);
-		double[] centerY = table.getNumberArray("centerY", defaultVal);
-		int areasCount = area.length;
-		putNumberSD("NetworkTables_Count", areasCount);
-		for (int i=0; i<1; i++) {
-			putNumberSD("NetworkTables_Area_"+i, area[i]);
-			putNumberSD("NetworkTables_Width_"+i, width[i]);
-			putNumberSD("NetworkTables_Height_"+i, height[i]);
-			putNumberSD("NetworkTables_Solidity_"+i, solidity[i]);
-			putNumberSD("NetworkTables_CenterX_"+i, centerX[i]);
-			putNumberSD("NetworkTables_CenterY_"+i, centerY[i]);
-		}
 	}
 	
 	private void logNavXData() {
