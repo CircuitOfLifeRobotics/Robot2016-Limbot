@@ -11,7 +11,7 @@ public class Constants {
 	// Loop time of the program
 	public static final double DELTA_TIME = 0.020; // 20 ms TODO Will be bigger due to GRIP
 	
-	public static final boolean DO_LOG_AHRS_VALUES = true;//Robot.prefs.getBoolean("Do Log AHRS Vals", false);
+	public static final boolean DO_LOG_AHRS_VALUES = false;//Robot.prefs.getBoolean("Do Log AHRS Vals", false);
 	public static final boolean DO_LOG_PDP_VALUES = false;//Robot.prefs.getBoolean("Do Log PDP Vals", false);
 	public static final boolean DO_LOG_GRIP_VALUES = false;//Robot.prefs.getBoolean("Do Log GRIP Vals", false);
 	
@@ -92,7 +92,7 @@ public class Constants {
 	
 	
 //	DRIVETRAIN CONSTANTS
-	
+	public static double kDriveSensitivity = 0.75;
 	public static final double GLOBAL_MAX_DRIVE_TRAIN_PWR = 0.8;//Robot.prefs.getDouble("Max DriveTrain Pwr", 1);
 	public static final double DRIVE_TRAIN_VOLTAGE_RAMP_RATE = 1;
 	
@@ -248,6 +248,8 @@ public class Constants {
     		{0,	0,	10},
     		{0,	0,	10},
     };
+
+
 
 
 

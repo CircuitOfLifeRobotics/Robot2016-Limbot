@@ -8,6 +8,7 @@ import com.team3925.robot2016.util.DriveTrainSignal;
 import com.team3925.robot2016.util.SmartdashBoardLoggable;
 
 import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  *
@@ -30,6 +31,7 @@ public class ManualDrive extends Command implements SmartdashBoardLoggable {
 
 	// Called repeatedly when this Command is scheduled to run
 	protected void execute() {
+		/*
 		// negate fwd on practice robot
 		fwdSet = oi.getManualDrive_ForwardValue();
 		turnSet = oi.getManualDrive_RotateValue();
@@ -53,6 +55,9 @@ public class ManualDrive extends Command implements SmartdashBoardLoggable {
 		lastFwdSet = fwdSet;
 		lastTurnSet = turnSet;
 		shiftWasPressed = shiftPressed;
+		*/
+		
+		Robot.cdh.cheesyDrive(oi.getManualDrive_ForwardValue(), oi.getManualDrive_RotateValue(), oi.getManualDrive_QuickTurn(), driveTrain.isHighGear());
 		
 		logData();
 	}
@@ -77,6 +82,8 @@ public class ManualDrive extends Command implements SmartdashBoardLoggable {
 	public void logData() {
 		putNumberSD("FwdPwr", fwdSet);
 		putNumberSD("TurnPwr", turnSet);
+		Constants.kDriveSensitivity = SmartDashboard.getNumber(getFormattedName() + "Sensitivity", Constants.kDriveSensitivity);
+		putNumberSD("Sensitivity", Constants.kDriveSensitivity);
 	}
 	
 	@Override

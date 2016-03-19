@@ -52,6 +52,7 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 	public static AHRS navx = null;
 	public static PowerDistributionPanel pdp;
 	public static OI oi;
+	public static CheesyDriveHelper cdh;
 	
 	//Commands
 	CommandGroup autoRoutine;
@@ -107,6 +108,7 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 		// pointers. Bad news. Don't move it.
 		oi = new OI();
 		XboxHelper.init();
+		cdh = new CheesyDriveHelper(driveTrain);
 		
 		//Creating Commands
 		manualArms = new ManualPlexiArms();
@@ -193,7 +195,7 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 		reset();
 //		driveTrain.setPIDEnabled(false);
 		candyCanes.startTimeOut();
-		manualCandyCanes.start();
+//		manualCandyCanes.start();
 //		visionTest.start();
 		
 		manualArms.start();

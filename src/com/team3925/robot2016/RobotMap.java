@@ -218,6 +218,7 @@ public class RobotMap {
         LiveWindow.addActuator("Launcher", "MotorLeft", launcherMotorLeft);
         launcherMotorLeft.setFeedbackDevice(FeedbackDevice.QuadEncoder);
         launcherMotorLeft.changeControlMode(TalonControlMode.PercentVbus);
+        launcherMotorLeft.setInverted(false);
         launcherMotorLeft.reverseOutput(false);
         launcherMotorLeft.reverseSensor(true);
 //        launcherMotorLeft.configEncoderCodesPerRev(4096);
@@ -226,8 +227,9 @@ public class RobotMap {
         LiveWindow.addActuator("Launcher", "MotorRight", launcherMotorRight);
         launcherMotorRight.setFeedbackDevice(FeedbackDevice.QuadEncoder);
         launcherMotorRight.changeControlMode(TalonControlMode.PercentVbus);
-        launcherMotorLeft.reverseOutput(false);
-        launcherMotorRight.reverseSensor(false);
+        launcherMotorRight.setInverted(true); // practice = true | comp = false
+        launcherMotorRight.reverseOutput(true);
+        launcherMotorRight.reverseSensor(true);
 //        launcherMotorRight.configEncoderCodesPerRev(4096);
         
         //END LAUNCHER

@@ -1,7 +1,5 @@
 package com.team3925.robot2016;
 
-import static com.team3925.robot2016.util.XboxHelper.AXIS_LEFT_Y;
-import static com.team3925.robot2016.util.XboxHelper.AXIS_RIGHT_X;
 import static com.team3925.robot2016.util.XboxHelper.START;
 
 import java.text.DecimalFormat;
@@ -20,6 +18,7 @@ import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.CommandGroup;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 
 /**
@@ -56,6 +55,7 @@ public final class OI {
 
 	public Joystick xboxDriver;
 	public Joystick xboxShooter;
+	public Joystick wheel;
 
 	public Button startCollectBall;
 	public Button startThrowBallFar;
@@ -80,6 +80,7 @@ public final class OI {
 
 		xboxDriver = new Joystick(0);
 		xboxShooter = new Joystick(1);
+		wheel = new Joystick(2);
 
 		collectBall = new CollectBall();
 		throwBallFar = new ThrowBall(65, 1, 5);
@@ -175,15 +176,22 @@ public final class OI {
 	// ROBOT BEHAVIOR
 
 	public double getManualDrive_ForwardValue() {
-		return XboxHelper.getDriverAxis(AXIS_LEFT_Y);
+//		return XboxHelper.getDriverAxis(AXIS_LEFT_Y);
+		return xboxDriver.getRawAxis(1);
 	}
 
 	public double getManualDrive_RotateValue() {
-		return XboxHelper.getDriverAxis(AXIS_RIGHT_X);
+//		return -XboxHelper.getDriverAxis(AXIS_RIGHT_X);
+		return -wheel.getRawAxis(0);
 	}
 
 	public boolean getManualDrive_HighGearToggle() {
-		return XboxHelper.getDriverButton(XboxHelper.TRIGGER_LT) || XboxHelper.getDriverButton(XboxHelper.TRIGGER_RT);
+		return XboxHelper.getDriverButton(XboxHelper.TRIGGER_LT);
+	}
+	
+	public boolean getManualDrive_QuickTurn() {
+//		return XboxHelper.getDriverButton(XboxHelper.TRIGGER_RT);
+		return wheel.getRawButton(6) || wheel.getRawButton(5);
 	}
 
 	public boolean getStartCandyCanes() {
@@ -207,7 +215,7 @@ public final class OI {
 	}
 
 	public boolean getManualArms_GetArmValue() {
-		return XboxHelper.getDriverAxis(XboxHelper.AXIS_TRIGGER_LEFT)>0.5 || XboxHelper.getDriverAxis(XboxHelper.AXIS_TRIGGER_RIGHT)>0.5;
+		return xboxDriver.getRawButton(1);
 	}
 
 	public boolean getCommandCancel() {
@@ -240,4 +248,3 @@ public final class OI {
 	}
 
 }
-

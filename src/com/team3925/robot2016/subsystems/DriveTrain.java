@@ -61,7 +61,7 @@ public class DriveTrain extends Subsystem implements SmartdashBoardLoggable {
 //    }
     
     public void setHighGear(boolean highGear) {
-    	shifterSolenoid.set(highGear ? Value.kReverse : Value.kForward);
+//    	shifterSolenoid.set(highGear ? Value.kReverse : Value.kForward);
     }
     
     public void resetEncoders() {
@@ -70,7 +70,8 @@ public class DriveTrain extends Subsystem implements SmartdashBoardLoggable {
     }
     
     public boolean isHighGear() {
-    	return shifterSolenoid.get() == Value.kReverse;
+//    	return shifterSolenoid.get() == Value.kReverse;
+    	return false;
     }
     
 //    public void setPIDEnabled(boolean enabled) {

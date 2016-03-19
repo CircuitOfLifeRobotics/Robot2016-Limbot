@@ -5,7 +5,7 @@ import com.team3925.robot2016.subsystems.PlexiArms;
 
 import edu.wpi.first.wpilibj.command.Command;
 
-public class PlanZAuto extends Command{
+public class PlanZAuto extends Command {
 
 	PlexiArms  plexi = new PlexiArms();
 	DriveTrain drive = new DriveTrain();
