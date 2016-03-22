@@ -2,6 +2,7 @@ package com.team3925.robot2016.commands;
 
 import com.team3925.robot2016.Constants;
 import com.team3925.robot2016.Robot;
+import com.team3925.robot2016.subsystems.IntakeAssist;
 import com.team3925.robot2016.subsystems.Launcher;
 import com.team3925.robot2016.util.SmartdashBoardLoggable;
 import com.team3925.robot2016.util.TimeoutAction;
@@ -12,7 +13,19 @@ enum Mode {
 	WAIT_FOR_AIM, SHOOT, DONE;
 }
 
-public class ThrowBall extends Command implements SmartdashBoardLoggable{
+public class ThrowBall extends Command implements SmartdashBoardLoggable {
+	
+	private double intakeSpeed;
+	private double angle;
+	private double timeout;
+	private double wheelSpeed;
+	private final Launcher launcher = Robot.launcher;
+	private final IntakeAssist intakeAssist = Robot.intakeAssist;
+	
+	private final TimeoutAction timer = new TimeoutAction();
+	private final TimeoutAction buttonTimer = new TimeoutAction();
+	private Mode mode;
+	private double lowestValSinceSetpoint = (30000*100/4096) * Constants.LAUNCHER_WHEEL_CIRCUM;
 	
 	
 	public ThrowBall() {
@@ -31,32 +44,34 @@ public class ThrowBall extends Command implements SmartdashBoardLoggable{
 	 * @param intakeSpeed in native units of encoder ticks/100ms
 	 */
 	public ThrowBall(double angle, double intakeSpeed) {
-		this(angle, intakeSpeed, 5);
+		this(angle, intakeSpeed, 5, 0);
 	}
 	
-	public ThrowBall(double angle, double intakeSpeed, double timeout) {
+	/**
+	 * @param angle in degrees
+	 * @param intakeSpeed in native units of encoder ticks/100ms
+	 * @param timeOut timeout
+	 */
+	public ThrowBall(double angle, double intakeSpeed, double timeOut) {
+		this(angle, intakeSpeed, timeOut, 0);
+	}
+	
+	public ThrowBall(double angle, double intakeSpeed, double timeout, double wheelSpeed) {
 		this.intakeSpeed = intakeSpeed;
 		this.angle = angle;
 		this.timeout = timeout;
+		this.wheelSpeed = wheelSpeed;
+		requires(launcher);
+		requires(intakeAssist);
 	}
 	
-	private double intakeSpeed;
-	private double angle;
-	private double timeout;
-	Launcher launcher = Robot.launcher;
-	TimeoutAction timer = new TimeoutAction();
-	TimeoutAction buttonTimer = new TimeoutAction();
-	Mode mode;
-	
-	private double lowestValSinceSetpoint = (30000*100/4096) * Constants.LAUNCHER_WHEEL_CIRCUM;
-	
-	public void setAngle(double angle) {
-		this.angle = angle;
-	}
-	
-	public void setIntakeSpeed(double speed) {
-		intakeSpeed = speed;
-	}
+//	public void setAngle(double angle) {
+//		this.angle = angle;
+//	}
+//	
+//	public void setIntakeSpeed(double speed) {
+//		intakeSpeed = speed;
+//	}
 	
 	@Override
 	protected void initialize() {
@@ -67,6 +82,7 @@ public class ThrowBall extends Command implements SmartdashBoardLoggable{
 		launcher.enableIntake(true);
 		launcher.setAimSetpoint(angle);
 		launcher.setIntakeSetpoint(intakeSpeed);
+		intakeAssist.setWheelSpeeds(wheelSpeed);
 		
 		buttonTimer.config(0.5);
 		timer.config(timeout);
@@ -107,12 +123,14 @@ public class ThrowBall extends Command implements SmartdashBoardLoggable{
 	protected void end() {
 		launcher.setAimSetpoint(0);
 		launcher.setIntakeSetpoint(0);
+		intakeAssist.setWheelSpeeds(0d);
 	}
 	
 	@Override
 	protected void interrupted() {
 		launcher.setAimSetpoint(0);
 		launcher.setIntakeSetpoint(0);
+		intakeAssist.setWheelSpeeds(0d);
 	}
 
 	@Override

@@ -83,9 +83,9 @@ public final class OI {
 		wheel = new Joystick(2);
 
 		collectBall = new CollectBall();
-		throwBallFar = new ThrowBall(65, 1, 5);
+		throwBallFar = new ThrowBall(70, 1, 5);
 		throwBallNear = new ThrowBall(80, 1, 5);
-		throwBallLow = new ThrowBall(30, 1, 1);
+		throwBallLow = new ThrowBall(0, 1, 1, -1);
 
 
 		startCollectBall = new JoystickButton(xboxShooter, XboxHelper.A);

@@ -32,7 +32,7 @@ public class DriveTrain extends Subsystem implements SmartdashBoardLoggable {
 //	private final CANTalon motorRightC = RobotMap.driveTrainMotorRightC;
     private final Encoder encoderLeft = RobotMap.driveTrainEncoderLeft;
     private final Encoder encoderRight = RobotMap.driveTrainEncoderRight;
-    private final DoubleSolenoid shifterSolenoid = RobotMap.driveTrainShifterSolenoid;
+//    private final DoubleSolenoid shifterSolenoid = RobotMap.driveTrainShifterSolenoid;
     //DELETE ON COMP BOT
     private final PIDController pidLeft = RobotMap.driveTrainPIDLeft;
     private final PIDController pidRight = RobotMap.driveTrainPIDRight;

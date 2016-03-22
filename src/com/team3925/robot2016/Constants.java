@@ -69,14 +69,14 @@ public class Constants {
 	public static final double LAUNCHER_MAX_HEIGHT = 700; // in encoder ticks
 	public static final double LAUNCHER_MIN_HEIGHT = 50; // in encoder ticks
 	
-	public static final double LAUNCHER_AIM_TOLERANCE = 3;
+	public static final double LAUNCHER_AIM_TOLERANCE = 1;
 	public static final double LAUNCHER_AIM_SLOWDOWN = 40;
 	public static final double LAUNCHER_AIM_INCREMENT = 18;
 	public static final double LAUNCHER_INTAKE_INCREMENT = 1000;
 	//TODO: tune shooter pid
-	public static final double LAUNCHER_AIM_KP = /*400d/10_000d;*/   240d/10000d;
-	public static final double LAUNCHER_AIM_KI = /*16d/10_000d; */   8d/10000d;
-	public static final double LAUNCHER_AIM_KD = /*950d/10_000d;*/   250d/10000d;
+	public static final double LAUNCHER_AIM_KP = /*400d/10_000d;*/   /*240d/10000d;*/    220d/10000d;
+	public static final double LAUNCHER_AIM_KI = /*16d/10_000d; */   /*8d/10000d;  */    8d/10000d;
+	public static final double LAUNCHER_AIM_KD = /*950d/10_000d;*/   /*250d/10000d;*/    250d/10000d;
 	public static final double LAUNCHER_AIM_KF = 0.0;
 	public static final double LAUNCHER_AIM_RAMP_RATE = 5;//ramp rate is maximum acceleration in voltage/second
 	public static final int LAUNCHER_AIM_IZONE = 0; // izone eliminates

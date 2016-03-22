@@ -66,7 +66,9 @@ public class MiscUtil {
 	 * @return degrees
 	 */
 	public static double aimEncoderTicksToDegrees(double encoderTicks) {
-		return (encoderTicks + 36)/11.377777778;
+//		return (encoderTicks + 36)/11.377777778;
+//		return (encoderTicks/8) + 5;
+		return encoderTicks * (60d/765d);
 	}
 	
 }

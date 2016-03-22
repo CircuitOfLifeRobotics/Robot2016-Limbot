@@ -14,12 +14,14 @@ import com.team3925.robot2016.commands.TrapzoidalMotionTest;
 import com.team3925.robot2016.commands.defensecommands.CrossDefault;
 import com.team3925.robot2016.subsystems.Climber;
 import com.team3925.robot2016.subsystems.DriveTrain;
+import com.team3925.robot2016.subsystems.IntakeAssist;
 import com.team3925.robot2016.subsystems.Launcher;
 import com.team3925.robot2016.subsystems.PlexiArms;
 import com.team3925.robot2016.util.DriveTrainSignal;
 import com.team3925.robot2016.util.SmartdashBoardLoggable;
 import com.team3925.robot2016.util.XboxHelper;
 
+import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
@@ -31,6 +33,7 @@ import edu.wpi.first.wpilibj.command.CommandGroup;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.vision.USBCamera;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -46,6 +49,7 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 	public static Launcher launcher;
 	public static Climber candyCanes;
 	public static PlexiArms plexiArms;
+	public static IntakeAssist intakeAssist;
 	
 	//Other
 	public static Preferences prefs;
@@ -53,6 +57,8 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 	public static PowerDistributionPanel pdp;
 	public static OI oi;
 	public static CheesyDriveHelper cdh;
+	public static USBCamera usbCamera;
+	public static CameraServer cameraServer;
 	
 	//Commands
 	CommandGroup autoRoutine;
@@ -99,6 +105,7 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 		launcher = new Launcher();
 		candyCanes = new Climber();
 		plexiArms = new PlexiArms();
+		intakeAssist = new IntakeAssist();
 		Preferences.getInstance();
 		pdp = RobotMap.pdp;
 		
@@ -109,6 +116,12 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 		oi = new OI();
 		XboxHelper.init();
 		cdh = new CheesyDriveHelper(driveTrain);
+		
+		usbCamera = new USBCamera("cam0");
+		usbCamera.setBrightness(30);
+		usbCamera.updateSettings();
+		cameraServer = CameraServer.getInstance();
+		cameraServer.startAutomaticCapture(usbCamera);
 		
 		//Creating Commands
 		manualArms = new ManualPlexiArms();
@@ -170,7 +183,7 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 		
 		launcher.init();
 		
-//		autoRoutine.start();
+		autoRoutine.start();
 	}
 	
 	/**
@@ -228,6 +241,7 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 	 */
 	public void testPeriodic() {
 		LiveWindow.run();
+		launcher.logData();
 	}
 	
 	@Override

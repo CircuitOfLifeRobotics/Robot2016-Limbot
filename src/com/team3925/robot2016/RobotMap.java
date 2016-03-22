@@ -41,6 +41,11 @@ public class RobotMap {
     public static DoubleSolenoid launcherPuncherSolenoid;
     public static AnalogInput launcherUltrasonic;
     
+    public static CANTalon intakeAssistArmLeft;
+    public static CANTalon intakeAssistArmRight;
+    public static CANTalon intakeAssistWheels;
+    
+    
     public static DoubleSolenoid plexiArmsSolenoid;
     
     public static CANTalon climberArmsMotor;
@@ -252,6 +257,30 @@ public class RobotMap {
          * LeftDriveC			18
          * 
          */
+        
+        
+        
+        //  INTAKE ASSIST
+        
+        intakeAssistArmLeft = new CANTalon(20); //TODO Get ports
+        LiveWindow.addActuator("Intake_Assist", "ArmLeft", intakeAssistArmLeft);
+        intakeAssistArmLeft.changeControlMode(TalonControlMode.PercentVbus);
+        intakeAssistArmLeft.setInverted(false);
+        intakeAssistArmLeft.reverseOutput(false);
+        intakeAssistArmLeft.reverseSensor(false);
+        
+        intakeAssistArmRight = new CANTalon(20);
+        LiveWindow.addActuator("Intake_Assist", "ArmRight", intakeAssistArmRight);
+        intakeAssistArmRight.changeControlMode(TalonControlMode.PercentVbus);
+        intakeAssistArmRight.setInverted(false);
+        intakeAssistArmRight.reverseOutput(false);
+        intakeAssistArmRight.reverseSensor(false);
+        
+        intakeAssistWheels = new CANTalon(25);
+        LiveWindow.addActuator("Intake_Assist", "Wheels", intakeAssistWheels);
+        intakeAssistWheels.changeControlMode(TalonControlMode.PercentVbus);
+        intakeAssistWheels.setInverted(true);
+        intakeAssistWheels.reverseOutput(true);
         
         
         // PLEXI ARMS

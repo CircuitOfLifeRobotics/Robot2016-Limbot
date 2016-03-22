@@ -25,7 +25,7 @@ import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-
+import static com.team3925.robot2016.Constants.*;
 
 /**
  * The subsystem that represents the launcher. It is responsible for the
@@ -47,7 +47,7 @@ public final class Launcher extends Subsystem implements SmartdashBoardLoggable 
     private SynchronousPID rightPidLoop = new SynchronousPID(Constants.LAUNCHER_WHEELS_KP, Constants.LAUNCHER_WHEELS_KP, Constants.LAUNCHER_WHEELS_KP);
 //    Sensor for ball goes here
     
-    private boolean aimEnabled = false, intakeEnabled = true, doRunAim = true, aimOnTarget = false, intakeOnTarget = false;
+    private boolean aimEnabled = false, intakeEnabled = true, doRunAim = false, aimOnTarget = false, intakeOnTarget = false;
 	private double aimSetpoint, aimSetpointDiff, aimLastSetpoint, aimLimitedSetpoint, aimPosition, aimDifference, aimOutput, aimAngleMultiplier;
 	private double intakeSetpoint, intakeLimitedSetpoint, intakeSetpointDiff, intakeLastSetpoint/*, intakeSpeedLeft, intakeSpeedRight*/;
 	private double currentBallVal, lastBallVal, averagedBallVal;
@@ -56,11 +56,11 @@ public final class Launcher extends Subsystem implements SmartdashBoardLoggable 
     private boolean hasBall = false;
 	
 	public void init() {
-		aimPidLoop.setPID(Constants.LAUNCHER_AIM_KP, Constants.LAUNCHER_AIM_KI, Constants.LAUNCHER_AIM_KD);
+		aimPidLoop.setPID(LAUNCHER_AIM_KP, LAUNCHER_AIM_KI, LAUNCHER_AIM_KD);
 		aimPidLoop.setPIDLimits(10000, 10000, 10000, 10000, -10000, -10000, -10000, -10000);
 		
-		motorLeft.setPID(Constants.LAUNCHER_WHEELS_KP, Constants.LAUNCHER_WHEELS_KI, Constants.LAUNCHER_WHEELS_KD, Constants.LAUNCHER_WHEELS_KF, Constants.LAUNCHER_WHEELS_IZONE, Constants.LAUNCHER_WHEELS_RAMP_RATE, 0);
-		motorRight.setPID(Constants.LAUNCHER_WHEELS_KP, Constants.LAUNCHER_WHEELS_KI, Constants.LAUNCHER_WHEELS_KD, Constants.LAUNCHER_WHEELS_KF, Constants.LAUNCHER_WHEELS_IZONE, Constants.LAUNCHER_WHEELS_RAMP_RATE, 0);
+		motorLeft.setPID(LAUNCHER_WHEELS_KP, LAUNCHER_WHEELS_KI, LAUNCHER_WHEELS_KD, LAUNCHER_WHEELS_KF, LAUNCHER_WHEELS_IZONE, LAUNCHER_WHEELS_RAMP_RATE, 0);
+		motorRight.setPID(LAUNCHER_WHEELS_KP, LAUNCHER_WHEELS_KI, LAUNCHER_WHEELS_KD, LAUNCHER_WHEELS_KF, LAUNCHER_WHEELS_IZONE, LAUNCHER_WHEELS_RAMP_RATE, 0);
 		motorLeft.setProfile(0);
 		motorRight.setProfile(0);
 		
