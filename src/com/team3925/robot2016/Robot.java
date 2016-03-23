@@ -61,6 +61,7 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 	public static CheesyDriveHelper cdh;
 	public static USBCamera usbCamera;
 	public static CameraServer cameraServer;
+	private static TimeoutAction brakeBeforeMatchEnd = new TimeoutAction();
 	
 	//Commands
 	CommandGroup autoRoutine;
@@ -142,6 +143,7 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 	 * Resets lastTimestamp, the IMU, max unit testers, encoders, and launcherPID
 	 */
 	private void reset() {
+		driveTrain.setBrakeMode(false);
 		driveTrain.resetEncoders();
 		lastTimestamp = Timer.getFPGATimestamp();
 		lastRotationStamp = navx.getRate();
@@ -175,8 +177,6 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 	public void autonomousInit() {
 //		autoRoutine = oi.setAutonomous();
 		
-		intakeAssist.setArmPosition(false);
-		
 		driveTrain.setHighGear(false);
 		reset();
 		
@@ -188,7 +188,7 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 		launcher.init();
 		
 //		autoRoutine.start();
-		Command tmpAuto = new GyroDrive(2);
+		Command tmpAuto = new GyroDrive(0, true, 2);
 		tmpAuto.start();
 	}
 	
@@ -200,6 +200,7 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 		logData();
 		
 		launcher.update();
+		intakeAssist.setArmPosition(false);
 	}
 
 	public void teleopInit() {
@@ -208,16 +209,15 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 		// teleop starts running. If you want the autonomous to
 		// continue until interrupted by another command, remove
 		// this line or comment it out.
-		
-		intakeAssist.setArmEncPos(0);
-		manualDrive.start();
-		
 		reset();
-//		driveTrain.setPIDEnabled(false);
-		candyCanes.startTimeOut();
-//		manualCandyCanes.start();
-//		visionTest.start();
 		
+		candyCanes.startTimeOut();
+		brakeBeforeMatchEnd.config(135 - Constants.DRIVETRAIN_BREAK_MODE_ENABLE);
+		intakeAssist.setArmEncPos(0);
+		
+		
+//		visionTest.start();
+		manualDrive.start();
 		manualArms.start();
 		
 		launcher.init();
@@ -240,7 +240,13 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 		
 		launcher.update();
 		
+		// too lazy to make a new command just for this
 		intakeAssist.setArmPosition(oi.getIntakeAssist_ArmValue());
+		
+		if (brakeBeforeMatchEnd.isFinished()) {
+			driveTrain.setBrakeMode(true);
+			DriverStation.reportError("BrakeModeEnabled!", false);
+		}
 		
 		logData();
 	}

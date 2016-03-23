@@ -14,25 +14,39 @@ import edu.wpi.first.wpilibj.command.Command;
 public class GyroDrive extends Command implements SmartdashBoardLoggable {
 	
 	private SynchronousPID pidLoop;
-	private double startAngle, currentAngle, lastAngle, rotations, moveVal = -1, timeout;
+	private double startAngle, currentAngle, lastAngle, rotations, distance, timeout;
 	private final AHRS navx = Robot.navx;
 	private final DriveTrain driveTrain = Robot.driveTrain;
 	private final TimeoutAction timeoutAction = new TimeoutAction();
 	
 	/**
-	 *  Creates a gyrodrive with the default timeout of 3 seconds
+	 * Creates a gyro drive with default parameters of disabled timeout and no timeout
+	 * @param distance distance to travel in inches
+	 */
+	public GyroDrive(double distance) {
+		this(distance, false, -1);
+	}
+	
+	/**
+	 * Creates a default gyrodrive that drives until stopped
 	 */
 	public GyroDrive() {
-		this(3);
+		this(Double.NaN, true, -1);
 	}
-
+	
 	/**
-	 * @param timeout time to drive in seconds
+	 * <code>GyroDrive</code> only drives forward!
+	 * @param distance distance to travel in inches
+	 * @param disableEncPos override distance and travel until stopped
+	 * @param timeout if encPos disabled, time to drive until command stops.
+	 * 	Only works when <code>disableEncPos</code> is true
 	 */
-	public GyroDrive(double timeout) {
+	public GyroDrive(double distance, boolean disableEncPos, double timeout) {
 		requires(driveTrain);
-		this.timeout = timeout;
+		this.distance = disableEncPos ? Double.NaN : distance;
+		this.timeout = disableEncPos ? timeout : -1;
 	}
+	
 	
 	@Override
 	protected void initialize() {
@@ -43,6 +57,7 @@ public class GyroDrive extends Command implements SmartdashBoardLoggable {
 		
 		pidLoop.setSetpoint(startAngle);
 		timeoutAction.config(timeout);
+		driveTrain.resetEncoders();
 	}
 
 	@Override
@@ -53,23 +68,36 @@ public class GyroDrive extends Command implements SmartdashBoardLoggable {
 		}
 		pidLoop.calculate(currentAngle + rotations*360);
 		
-		driveTrain.arcadeDrive(moveVal, -pidLoop.get(), false);
+		// normally negative
+		driveTrain.arcadeDrive(-1, -pidLoop.get(), false);
+		
+		// logic for slowing down or stopping here
 		
 		lastAngle = currentAngle;
 	}
 
 	@Override
 	protected boolean isFinished() {
-		return timeoutAction.isFinished();
+		if (Double.isNaN(distance)) {
+			return timeoutAction.isFinished();
+		} else {
+			return Math.abs(getAverageDriveTrainEncoders() - distance) < Constants.GYRO_DRIVE_ON_TARGET_ERROR_INCHES;
+		}
 	}
-
+	
+	private double getAverageDriveTrainEncoders() {
+		return (driveTrain.getPhysicalPose().m_left_distance + driveTrain.getPhysicalPose().m_right_distance) / 2;
+	}
+	
 	@Override
 	protected void end() {
+		driveTrain.setBrakeMode(true);
 		driveTrain.setMotorSpeeds(DriveTrainSignal.NEUTRAL);
 	}
 
 	@Override
 	protected void interrupted() {
+		driveTrain.setBrakeMode(true);
 		driveTrain.setMotorSpeeds(DriveTrainSignal.NEUTRAL);
 	}
 
@@ -77,6 +105,8 @@ public class GyroDrive extends Command implements SmartdashBoardLoggable {
 	public void logData() {
 		putNumberSD("StartAngle", startAngle);
 		putNumberSD("CurrentAngle", currentAngle);
+		putNumberSD("AverageEncDistance", getAverageDriveTrainEncoders());
+		putNumberSD("Timeout", timeout);
 	}
 
 	@Override

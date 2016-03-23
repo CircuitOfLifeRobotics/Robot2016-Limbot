@@ -17,9 +17,6 @@ public class Constants {
 	
 	public static final double XBOX_AXIS_TOLERANCE = 0.05;
 	
-	public static final boolean DO_MANUAL_CLIMBER = true;
-	
-	public static final double AUTONOMOUS_SHOOT_ANGLE = 65;
 	
 	
 	//WORLD CONSTANTS
@@ -51,7 +48,8 @@ public class Constants {
     // CLIMBER CONSTANTS
     public static final double CLIMBER_MAX_VALUE = 20_000; // TODO Get true limit
 //    public static final double CLIMBER_ACTIVE_TIME = 125d; // the 20 seconds at end of match
-    public static final double CLIMBER_ACTIVE_TIME = 135d; // the 20 seconds at end of match
+    public static final double CLIMBER_ACTIVE_TIME = 30; // calculated from end of match
+	public static final boolean DO_MANUAL_CLIMBER = true;
     
     
     
@@ -64,8 +62,10 @@ public class Constants {
     
     
 	// LAUNCHER CONSTANTS
-	public static final double LAUNCHER_TESTING_ANGLE = 45d; // degrees
+    public static final double LAUNCHER_THROWBALL_FAR_ANGLE = 65; //degrees
+    public static final double LAUNCHER_THROWBALL_NEAR_ANGLE = 73; //degrees
     
+	public static final double LAUNCHER_TESTING_ANGLE = 45d; // degrees
 	public static final LauncherTrajectoryTable TABLE = new LauncherTrajectoryTable(11, LAUNCHER_TESTING_ANGLE);
 	public static final void initLauncherIntakeTable() {
 		// TODO Add implementation and get debug values
@@ -104,12 +104,14 @@ public class Constants {
 	public static double kDriveSensitivity = 0.75;
 	public static final double GLOBAL_MAX_DRIVE_TRAIN_PWR = 0.8;//Robot.prefs.getDouble("Max DriveTrain Pwr", 1);
 	public static final double DRIVE_TRAIN_VOLTAGE_RAMP_RATE = 1;
+	public static final double DRIVETRAIN_BREAK_MODE_ENABLE = 0.25; // calculated from end of the match
 	
 //	Straight Gyro Drive PID Constants
 	//TODO: tune gyro straight drive PID
 	public static final double GYRO_DRIVE_KP = 0.1;
 	public static final double GYRO_DRIVE_KI = 0;
 	public static final double GYRO_DRIVE_KD = 0;
+	public static final double GYRO_DRIVE_ON_TARGET_ERROR_INCHES = 5;
 	
 	
 //	Drivetrain PID Constants
@@ -152,115 +154,11 @@ public class Constants {
 	
     public static final double GYROTURN_POS_TOLERANCE = 1;
     public static final double GYROTURN_RATE_TOLERANCE = 0.1;
+
     
-    //Default Motion Profiles
-    //{Position (rotations), Velocity (RPM), Duration (ms)}
-    public static final double[][] MOTION_PROFILE_HOLD = {
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    };
-
-
-
-
-
-
+    
+    // AUTONOMOUS CONSTANTS
+	public static final double AUTONOMOUS_SHOOT_ANGLE = LAUNCHER_THROWBALL_FAR_ANGLE;
+	public static final double AUTONOMOUS_CROSS_DEFENSE_DRIVE_TIME = 3;
+    
 }

@@ -85,8 +85,8 @@ public final class OI {
 		wheel = new Joystick(2);
 
 		collectBall = new CollectBall();
-		throwBallFar = new ThrowBall(65, 1, 5);
-		throwBallNear = new ThrowBall(73, 1, 5);
+		throwBallFar = new ThrowBall(Constants.LAUNCHER_THROWBALL_FAR_ANGLE, 1, 5);
+		throwBallNear = new ThrowBall(Constants.LAUNCHER_THROWBALL_NEAR_ANGLE, 1, 5);
 		throwBallLow = new ThrowBall(0, 1, 1, -1);
 
 
@@ -141,7 +141,7 @@ public final class OI {
 		autoChooser.addObject("Courtyard Freebie Shot", new AutoRoutineCourtyard(Constants.AUTONOMOUS_SHOOT_ANGLE));
 
 		autoChooser.addObject("Low Bar", new CrossDefault());
-		//		autoChooser.addObject("Portcullis", new CrossLowBar());
+				autoChooser.addObject("Portcullis", new CrossDefault());
 		//		autoChooser.addObject("Chival De Frise", new CrossLowBar());
 		//		autoChooser.addObject("Draw Bridge", new CrossLowBar());
 		autoChooser.addObject("Moat", new CrossDefault());
@@ -167,14 +167,14 @@ public final class OI {
 
 	}
 
-	private double calcThrowBallSpeed(double percentage) {
-		return Constants.LAUNCHER_MAX_INTAKE_SPEED * (double) percentage / 100d;
-	}
-
-	private void addThrowBallValue(double percentage) {
-		throwBallTesting.addObject("ThrowBall (" + df.format(calcThrowBallSpeed(percentage)) + ", " + percentage + "%)",
-				new ThrowBall(calcThrowBallSpeed(percentage)));
-	}
+//	private double calcThrowBallSpeed(double percentage) {
+//		return Constants.LAUNCHER_MAX_INTAKE_SPEED * (double) percentage / 100d;
+//	}
+//
+//	private void addThrowBallValue(double percentage) {
+//		throwBallTesting.addObject("ThrowBall (" + df.format(calcThrowBallSpeed(percentage)) + ", " + percentage + "%)",
+//				new ThrowBall(calcThrowBallSpeed(percentage)));
+//	}
 
 	// ROBOT BEHAVIOR
 
@@ -185,7 +185,7 @@ public final class OI {
 
 	public double getManualDrive_RotateValue() {
 		//		return -XboxHelper.getDriverAxis(AXIS_RIGHT_X);
-		return -wheel.getRawAxis(0);
+		return -wheel.getRawAxis(0); // TODO Get steering wheel helper class
 	}
 
 	public boolean getManualDrive_HighGearToggle() {
@@ -194,7 +194,7 @@ public final class OI {
 
 	public boolean getManualDrive_QuickTurn() {
 		//		return XboxHelper.getDriverButton(XboxHelper.TRIGGER_RT);
-		return wheel.getRawButton(6) || wheel.getRawButton(5);
+		return wheel.getRawButton(6) || wheel.getRawButton(5); // TODO Get steering wheel helper class
 	}
 
 	public boolean getStartCandyCanes() {
@@ -222,7 +222,7 @@ public final class OI {
 	}
 	
 	public boolean getManualArms_GetArmValue() {
-		return xboxDriver.getRawButton(1);
+		return xboxDriver.getRawButton(1); // TODO Get flight stick helper class
 	}
 
 	public boolean getCommandCancel() {
@@ -240,7 +240,7 @@ public final class OI {
 			return (CommandGroup) selected;
 
 		} else if (selected instanceof DefenseCrossBase) {
-			return new AutoRoutineCenter((Command) selected, (int) positionChooser.getSelected());
+			return new AutoRoutineCenter((DefenseCrossBase) selected, (int) positionChooser.getSelected());
 
 		} else {
 			DriverStation.reportError("Defaulted in autonomous selection!", false);

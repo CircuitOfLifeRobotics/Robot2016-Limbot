@@ -93,14 +93,22 @@ public class DriveTrain extends Subsystem implements SmartdashBoardLoggable {
 //		return pidLeft.onTarget() && pidRight.onTarget();
 //	}
     
+    public void setBrakeMode(boolean enabled) {
+    	motorLeftA.enableBrakeMode(enabled);
+    	motorLeftB.enableBrakeMode(enabled);
+    	motorRightA.enableBrakeMode(enabled);
+    	motorRightB.enableBrakeMode(enabled);
+    }
+    
     /**
-     * @return The pose according to the current sensor state
+     * @return The pose according to the current sensor state <p>
+     * rate + heading are in degrees
      */
     public DrivetrainPose getPhysicalPose() {
     	cached_pose.reset(encoderLeft.getDistance(), encoderRight.getDistance(),
     			encoderLeft.getRate(), encoderRight.getRate(),
-    			Math.toRadians(navx.getFusedHeading()),
-    			Math.toRadians(navx.getRate()));
+    			navx.getFusedHeading(),
+    			navx.getRate());
     	return cached_pose;
     }
     

@@ -1,5 +1,7 @@
 package com.team3925.robot2016.commands;
 
+import com.team3925.robot2016.Constants;
+
 import edu.wpi.first.wpilibj.command.CommandGroup;
 
 /**
@@ -8,10 +10,6 @@ import edu.wpi.first.wpilibj.command.CommandGroup;
 public class AutoRoutineCourtyard extends CommandGroup {
 
     public AutoRoutineCourtyard(double angle) {
-    	//Adam's trig:
-    	//     atan( (13.5 + (pos-2)*4.5) / 12.5 )
-    	
-    	addSequential(new ThrowBall(75, 1));
-//    	addSequential(new VerticalAim());
+    	addSequential(new ThrowBall(Constants.AUTONOMOUS_SHOOT_ANGLE, 1));
     } 
 }

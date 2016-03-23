@@ -84,12 +84,14 @@ public class GyroTurn extends PIDCommand implements SmartdashBoardLoggable {
 	protected void end() {
 		driveTrain.setMotorSpeeds(DriveTrainSignal.NEUTRAL);
 		isRunning = false;
+		driveTrain.setBrakeMode(true);
 	}
 	
 	@Override
 	protected void interrupted() {
 		driveTrain.setMotorSpeeds(DriveTrainSignal.NEUTRAL);
 		isRunning = false;
+		driveTrain.setBrakeMode(true);
 	}
 	
 	@Override

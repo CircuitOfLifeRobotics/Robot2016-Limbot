@@ -1,7 +1,9 @@
 package com.team3925.robot2016.commands.defensecommands;
 
 import com.kauailabs.navx.frc.AHRS;
+import com.team3925.robot2016.Constants;
 import com.team3925.robot2016.Robot;
+import com.team3925.robot2016.commands.GyroDrive;
 import com.team3925.robot2016.subsystems.DriveTrain;
 import com.team3925.robot2016.subsystems.PlexiArms;
 import com.team3925.robot2016.util.DriveTrainSignal;
@@ -23,19 +25,25 @@ public abstract class DefenseCrossBase extends Command implements SmartdashBoard
 	protected State state = State.START;
 	protected double currentRoll, lastRoll, deltaRoll;
 	private final TimeoutAction timeout;
+	private final GyroDrive gyroDrive;
+	private final boolean runGyroDrive;
 	
 	enum State {
 		START, CROSSING, CROSSED;
 	}
 	
     public DefenseCrossBase() {
-        // Use requires() here to declare subsystem dependencies
-        // eg. requires(chassis);
-    	requires(Robot.driveTrain);
-    	requires(Robot.candyCanes);
-    	timeout = new TimeoutAction();
+    	this(true);
     }
-
+    
+    protected DefenseCrossBase(boolean runGyroDrive) {
+    	requires(Robot.driveTrain);
+		requires(Robot.candyCanes);
+		timeout = new TimeoutAction();
+		gyroDrive = new GyroDrive(0, true, Constants.AUTONOMOUS_CROSS_DEFENSE_DRIVE_TIME);
+		this.runGyroDrive = runGyroDrive;
+    }
+    
     // Called just before this Command runs the first time
     protected void initialize() {
     	state = State.START;
@@ -43,6 +51,10 @@ public abstract class DefenseCrossBase extends Command implements SmartdashBoard
     	navx.resetDisplacement();
     	currentRoll = lastRoll = navx.getRoll();
     	deltaRoll = 0;
+    	
+    	if (runGyroDrive) {
+			gyroDrive.start();
+		}
     }
 
     // Called repeatedly when this Command is scheduled to run
@@ -83,6 +95,10 @@ public abstract class DefenseCrossBase extends Command implements SmartdashBoard
     
     public boolean hasCrossed() {
     	return state == State.CROSSED;
+    }
+    
+    public boolean gyroDriveFinished() {
+    	return gyroDrive.isRunning();
     }
     
     @Override
