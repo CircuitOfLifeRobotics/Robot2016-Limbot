@@ -1,6 +1,5 @@
 package com.team3925.robot2016.commands;
 
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.command.CommandGroup;
 
 /**
@@ -8,7 +7,7 @@ import edu.wpi.first.wpilibj.command.CommandGroup;
  */
 public class AutoRoutineCourtyard extends CommandGroup {
 
-    public AutoRoutineCourtyard() {
+    public AutoRoutineCourtyard(double angle) {
     	//Adam's trig:
     	//     atan( (13.5 + (pos-2)*4.5) / 12.5 )
     	

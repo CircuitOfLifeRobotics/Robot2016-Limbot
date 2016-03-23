@@ -19,6 +19,7 @@ public class Constants {
 	
 	public static final boolean DO_MANUAL_CLIMBER = true;
 	
+	public static final double AUTONOMOUS_SHOOT_ANGLE = 65;
 	
 	
 	//WORLD CONSTANTS
@@ -51,6 +52,14 @@ public class Constants {
     public static final double CLIMBER_MAX_VALUE = 20_000; // TODO Get true limit
 //    public static final double CLIMBER_ACTIVE_TIME = 125d; // the 20 seconds at end of match
     public static final double CLIMBER_ACTIVE_TIME = 135d; // the 20 seconds at end of match
+    
+    
+    
+    // INTAKE ASSIST CONSTANTS
+    public static final double INTAKE_ASSIST_UP_POSITION = 140;
+    public static final double INTAKE_ASSIST_P = 0.1;
+    public static final double INTAKE_ASSIST_I = 0;
+    public static final double INTAKE_ASSIST_D = 0;
     
     
     

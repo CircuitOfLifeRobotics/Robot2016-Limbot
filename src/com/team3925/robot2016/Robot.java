@@ -6,6 +6,7 @@ import static com.team3925.robot2016.Constants.DO_LOG_PDP_VALUES;
 
 import com.kauailabs.navx.frc.AHRS;
 import com.team3925.robot2016.commands.Climb;
+import com.team3925.robot2016.commands.GyroDrive;
 import com.team3925.robot2016.commands.GyroTurn;
 import com.team3925.robot2016.commands.LaunchBallHigh;
 import com.team3925.robot2016.commands.ManualDrive;
@@ -19,6 +20,7 @@ import com.team3925.robot2016.subsystems.Launcher;
 import com.team3925.robot2016.subsystems.PlexiArms;
 import com.team3925.robot2016.util.DriveTrainSignal;
 import com.team3925.robot2016.util.SmartdashBoardLoggable;
+import com.team3925.robot2016.util.TimeoutAction;
 import com.team3925.robot2016.util.XboxHelper;
 
 import edu.wpi.first.wpilibj.CameraServer;
@@ -52,7 +54,7 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 	public static IntakeAssist intakeAssist;
 	
 	//Other
-	public static Preferences prefs;
+//	public static Preferences prefs;
 	public static AHRS navx = null;
 	public static PowerDistributionPanel pdp;
 	public static OI oi;
@@ -81,7 +83,7 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 	private static double maxVel = 0;
 	private static double maxRotationVel = 0;
 	private static double maxRotationAccel = 0;
-	private double[] defaultVal  = new double[0];
+//	private double[] defaultVal  = new double[0];
 	
 	public Robot() {
 		try {
@@ -106,7 +108,7 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 		candyCanes = new Climber();
 		plexiArms = new PlexiArms();
 		intakeAssist = new IntakeAssist();
-		Preferences.getInstance();
+//		prefs = Preferences.getInstance();
 		pdp = RobotMap.pdp;
 		
 		// OI must be constructed after subsystems. If the OI creates Commands
@@ -118,7 +120,7 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 		cdh = new CheesyDriveHelper(driveTrain);
 		
 		usbCamera = new USBCamera("cam0");
-		usbCamera.setBrightness(30);
+		usbCamera.setBrightness(0);
 		usbCamera.updateSettings();
 		cameraServer = CameraServer.getInstance();
 		cameraServer.startAutomaticCapture(usbCamera);
@@ -130,7 +132,7 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 		manualCandyCanes = new Climb();
 		launchBallHigh = new LaunchBallHigh();
 		gyroTurn = new GyroTurn(45);
-		gyroDrive = new CrossDefault();
+		gyroDrive = new GyroDrive();
 		
 		
 		reset();
@@ -171,7 +173,9 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 	}
 	
 	public void autonomousInit() {
-		autoRoutine = oi.setAutonomous();
+//		autoRoutine = oi.setAutonomous();
+		
+		intakeAssist.setArmPosition(false);
 		
 		driveTrain.setHighGear(false);
 		reset();
@@ -183,7 +187,9 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 		
 		launcher.init();
 		
-		autoRoutine.start();
+//		autoRoutine.start();
+		Command tmpAuto = new GyroDrive(2);
+		tmpAuto.start();
 	}
 	
 	/**
@@ -203,6 +209,7 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 		// continue until interrupted by another command, remove
 		// this line or comment it out.
 		
+		intakeAssist.setArmEncPos(0);
 		manualDrive.start();
 		
 		reset();
@@ -233,6 +240,8 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 		
 		launcher.update();
 		
+		intakeAssist.setArmPosition(oi.getIntakeAssist_ArmValue());
+		
 		logData();
 	}
 	
@@ -241,7 +250,6 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 	 */
 	public void testPeriodic() {
 		LiveWindow.run();
-		launcher.logData();
 	}
 	
 	@Override
@@ -250,6 +258,7 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 		launcher.logData();
 		plexiArms.logData();
 //		candyCanes.logData();
+		intakeAssist.logData();
 		
 		double now = Timer.getFPGATimestamp();
 		deltaTime = now - lastTimestamp;
@@ -280,9 +289,9 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 //		putDataSD("Autonomous Chooser", autoChooser);
 //		putNamedDataSD(Scheduler.getInstance());
 		
-//    	SmartDashboard.putData("Autonomous Routing Chooser", oi.autoChooser);
+    	SmartDashboard.putData("Autonomous Routing Chooser", oi.autoChooser);
 //    	SmartDashboard.putData("Throw Ball Testing", oi.throwBallTesting);
-//    	SmartDashboard.putData("Autonomous Position Chooser", oi.positionChooser);
+    	SmartDashboard.putData("Autonomous Position Chooser", oi.positionChooser);
     	
 		if (DO_LOG_AHRS_VALUES) {
 			if (navx != null) {

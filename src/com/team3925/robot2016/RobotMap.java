@@ -262,19 +262,25 @@ public class RobotMap {
         
         //  INTAKE ASSIST
         
-        intakeAssistArmLeft = new CANTalon(20); //TODO Get ports
-        LiveWindow.addActuator("Intake_Assist", "ArmLeft", intakeAssistArmLeft);
-        intakeAssistArmLeft.changeControlMode(TalonControlMode.PercentVbus);
-        intakeAssistArmLeft.setInverted(false);
-        intakeAssistArmLeft.reverseOutput(false);
-        intakeAssistArmLeft.reverseSensor(false);
-        
         intakeAssistArmRight = new CANTalon(20);
         LiveWindow.addActuator("Intake_Assist", "ArmRight", intakeAssistArmRight);
         intakeAssistArmRight.changeControlMode(TalonControlMode.PercentVbus);
+        intakeAssistArmRight.setFeedbackDevice(FeedbackDevice.QuadEncoder);
         intakeAssistArmRight.setInverted(false);
         intakeAssistArmRight.reverseOutput(false);
         intakeAssistArmRight.reverseSensor(false);
+        intakeAssistArmRight.setEncPosition(140);
+//        intakeAssistArmRight.setPID(Constants.INTAKE_ASSIST_P, Constants.INTAKE_ASSIST_I, Constants.INTAKE_ASSIST_D);
+        
+        intakeAssistArmLeft = new CANTalon(21);
+        LiveWindow.addActuator("Intake_Assist", "ArmLeft", intakeAssistArmLeft);
+        intakeAssistArmLeft.changeControlMode(TalonControlMode.PercentVbus);
+//        intakeAssistArmLeft.changeControlMode(TalonControlMode.Follower);
+//        intakeAssistArmLeft.set(intakeAssistArmRight.getDeviceID());
+//        intakeAssistArmLeft.setFeedbackDevice(FeedbackDevice.QuadEncoder);
+        intakeAssistArmLeft.setInverted(true);
+        intakeAssistArmLeft.reverseOutput(false);
+//        intakeAssistArmLeft.reverseSensor(false);
         
         intakeAssistWheels = new CANTalon(25);
         LiveWindow.addActuator("Intake_Assist", "Wheels", intakeAssistWheels);

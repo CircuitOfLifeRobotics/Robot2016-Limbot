@@ -32,7 +32,7 @@ public class DriveTrain extends Subsystem implements SmartdashBoardLoggable {
 //	private final CANTalon motorRightC = RobotMap.driveTrainMotorRightC;
     private final Encoder encoderLeft = RobotMap.driveTrainEncoderLeft;
     private final Encoder encoderRight = RobotMap.driveTrainEncoderRight;
-//    private final DoubleSolenoid shifterSolenoid = RobotMap.driveTrainShifterSolenoid;
+    private final DoubleSolenoid shifterSolenoid = RobotMap.driveTrainShifterSolenoid;
     //DELETE ON COMP BOT
     private final PIDController pidLeft = RobotMap.driveTrainPIDLeft;
     private final PIDController pidRight = RobotMap.driveTrainPIDRight;
@@ -61,7 +61,7 @@ public class DriveTrain extends Subsystem implements SmartdashBoardLoggable {
 //    }
     
     public void setHighGear(boolean highGear) {
-//    	shifterSolenoid.set(highGear ? Value.kReverse : Value.kForward);
+    	shifterSolenoid.set(highGear ? Value.kReverse : Value.kForward);
     }
     
     public void resetEncoders() {
@@ -70,8 +70,8 @@ public class DriveTrain extends Subsystem implements SmartdashBoardLoggable {
     }
     
     public boolean isHighGear() {
-//    	return shifterSolenoid.get() == Value.kReverse;
-    	return false;
+    	return shifterSolenoid.get() == Value.kReverse;
+//    	return false;
     }
     
 //    public void setPIDEnabled(boolean enabled) {

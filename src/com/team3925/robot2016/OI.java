@@ -4,14 +4,16 @@ import static com.team3925.robot2016.util.XboxHelper.START;
 
 import java.text.DecimalFormat;
 
+import com.team3925.robot2016.commands.AutoRoutineCenter;
 import com.team3925.robot2016.commands.AutoRoutineCourtyard;
 import com.team3925.robot2016.commands.AutoRoutineDoNothing;
 import com.team3925.robot2016.commands.CollectBall;
-import com.team3925.robot2016.commands.GyroTurn;
 import com.team3925.robot2016.commands.ThrowBall;
 import com.team3925.robot2016.commands.defensecommands.CrossDefault;
+import com.team3925.robot2016.commands.defensecommands.DefenseCrossBase;
 import com.team3925.robot2016.util.XboxHelper;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.Button;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
@@ -63,12 +65,12 @@ public final class OI {
 	public Button startLow;
 	public Button startVision;
 	public Button cancelCommands;
-	
+
 	public Command collectBall;
 	public Command throwBallFar;
 	public Command throwBallNear;
 	public Command throwBallLow;
-//	public Command gyroTurn;
+	//	public Command gyroTurn;
 
 	public SendableChooser autoChooser;
 	public SendableChooser throwBallTesting;
@@ -83,8 +85,8 @@ public final class OI {
 		wheel = new Joystick(2);
 
 		collectBall = new CollectBall();
-		throwBallFar = new ThrowBall(70, 1, 5);
-		throwBallNear = new ThrowBall(80, 1, 5);
+		throwBallFar = new ThrowBall(65, 1, 5);
+		throwBallNear = new ThrowBall(73, 1, 5);
 		throwBallLow = new ThrowBall(0, 1, 1, -1);
 
 
@@ -99,26 +101,26 @@ public final class OI {
 		startThrowBallFar.cancelWhenPressed(collectBall);
 		startThrowBallFar.cancelWhenPressed(throwBallNear);
 		startThrowBallFar.cancelWhenPressed(throwBallLow);
-		
+
 		startThrowBallNear = new JoystickButton(xboxShooter, XboxHelper.X);
 		startThrowBallNear.whenPressed(throwBallNear);
 		startThrowBallNear.cancelWhenPressed(throwBallFar);
 		startThrowBallNear.cancelWhenPressed(collectBall);
 		startThrowBallNear.cancelWhenPressed(throwBallLow);
-		
+
 		startLow = new JoystickButton(xboxShooter, XboxHelper.B);
 		startLow.whenPressed(throwBallLow);
 		startLow.cancelWhenPressed(throwBallFar);
 		startLow.cancelWhenPressed(collectBall);
 		startLow.cancelWhenPressed(throwBallNear);
-		
-//		startVision = new JoystickButton(xboxDriver, XboxHelper.BACK);
-//		startVision.whenPressed(visionShoot);
-//		startVision.cancelWhenPressed(throwBallFar);
-//		startVision.cancelWhenPressed(collectBall);
-//		startVision.cancelWhenPressed(throwBallNear);
-//		startVision.cancelWhenPressed(throwBallLow);
-		
+
+		//		startVision = new JoystickButton(xboxDriver, XboxHelper.BACK);
+		//		startVision.whenPressed(visionShoot);
+		//		startVision.cancelWhenPressed(throwBallFar);
+		//		startVision.cancelWhenPressed(collectBall);
+		//		startVision.cancelWhenPressed(throwBallNear);
+		//		startVision.cancelWhenPressed(throwBallLow);
+
 		cancelCommands = new JoystickButton(xboxShooter, XboxHelper.START);
 		cancelCommands.cancelWhenPressed(collectBall);
 		cancelCommands.cancelWhenPressed(throwBallFar);
@@ -131,36 +133,37 @@ public final class OI {
 		positionChooser.addObject("3 - Middle", new Integer(2));
 		positionChooser.addObject("4 - Near Left", new Integer(3));
 		positionChooser.addObject("5 - Far Left", new Integer(4));
-		
+
 		//NATHAN IS THE BEST
 		autoChooser = new SendableChooser();
-		
+
 		autoChooser.addDefault("DO NOTHING", new AutoRoutineDoNothing());
-		autoChooser.addObject("Courtyard Freebie Shot", new AutoRoutineCourtyard());
-		
+		autoChooser.addObject("Courtyard Freebie Shot", new AutoRoutineCourtyard(Constants.AUTONOMOUS_SHOOT_ANGLE));
+
 		autoChooser.addObject("Low Bar", new CrossDefault());
-//		autoChooser.addObject("Portcullis", new CrossLowBar());
-//		autoChooser.addObject("Chival De Frise", new CrossLowBar());
-//		autoChooser.addObject("Draw Bridge", new CrossLowBar());
+		//		autoChooser.addObject("Portcullis", new CrossLowBar());
+		//		autoChooser.addObject("Chival De Frise", new CrossLowBar());
+		//		autoChooser.addObject("Draw Bridge", new CrossLowBar());
 		autoChooser.addObject("Moat", new CrossDefault());
 		autoChooser.addObject("Rock Wall", new CrossDefault());
 		autoChooser.addObject("Rough Terrain", new CrossDefault());
-//		autoChooser.addObject("Sally Port", new CrossLowBar());
+		//		autoChooser.addObject("Sally Port", new CrossLowBar());
 		autoChooser.addObject("Ramparts", new CrossDefault());
 
 
-//		SmartDashboard.putData("Position Chooser", positionChooser);
+		SmartDashboard.putData("Position Chooser", positionChooser);
+		SmartDashboard.putData("Autonomous Chooser", autoChooser);
 
 
 		// SmartDashboard Buttons
-		//        SmartDashboard.putData("ManualDrive", new ManualDrive());
-		//        SmartDashboard.putData("LaunchBall", new LaunchBallHigh());
-		//        SmartDashboard.putData("CollectBall", new CollectBall());
-		//        SmartDashboard.putData("AutoRoutineCenter", new AutoRoutineCenter());
-		//        SmartDashboard.putData("AutoRoutineCourtyard", new AutoRoutineCourtyard());
+		// SmartDashboard.putData("ManualDrive", new ManualDrive());
+		// SmartDashboard.putData("LaunchBall", new LaunchBallHigh());
+		// SmartDashboard.putData("CollectBall", new CollectBall());
+		// SmartDashboard.putData("AutoRoutineCenter", new AutoRoutineCenter());
+		// SmartDashboard.putData("AutoRoutineCourtyard", new AutoRoutineCourtyard());
 
-		//    	SmartDashboard.putData("ThrowBall", new ThrowBall());
-		//    	SmartDashboard.putData("FeedBall", new FeedBall());
+		// SmartDashboard.putData("ThrowBall", new ThrowBall());
+		// SmartDashboard.putData("FeedBall", new FeedBall());
 
 	}
 
@@ -176,21 +179,21 @@ public final class OI {
 	// ROBOT BEHAVIOR
 
 	public double getManualDrive_ForwardValue() {
-//		return XboxHelper.getDriverAxis(AXIS_LEFT_Y);
+		//		return XboxHelper.getDriverAxis(AXIS_LEFT_Y);
 		return xboxDriver.getRawAxis(1);
 	}
 
 	public double getManualDrive_RotateValue() {
-//		return -XboxHelper.getDriverAxis(AXIS_RIGHT_X);
+		//		return -XboxHelper.getDriverAxis(AXIS_RIGHT_X);
 		return -wheel.getRawAxis(0);
 	}
 
 	public boolean getManualDrive_HighGearToggle() {
 		return XboxHelper.getDriverButton(XboxHelper.TRIGGER_LT);
 	}
-	
+
 	public boolean getManualDrive_QuickTurn() {
-//		return XboxHelper.getDriverButton(XboxHelper.TRIGGER_RT);
+		//		return XboxHelper.getDriverButton(XboxHelper.TRIGGER_RT);
 		return wheel.getRawButton(6) || wheel.getRawButton(5);
 	}
 
@@ -209,11 +212,15 @@ public final class OI {
 	public double getManualArms_ClimberValue() {
 		return XboxHelper.getShooterAxis(XboxHelper.AXIS_RIGHT_Y);
 	}
-	
+
 	public double getCandyCanes_Set() {
 		return -XboxHelper.getShooterAxis(XboxHelper.AXIS_LEFT_Y);
 	}
-
+	
+	public boolean getIntakeAssist_ArmValue() {
+		return XboxHelper.getShooterButton(XboxHelper.TRIGGER_RT) || XboxHelper.getShooterButton(XboxHelper.TRIGGER_LT);
+	}
+	
 	public boolean getManualArms_GetArmValue() {
 		return xboxDriver.getRawButton(1);
 	}
@@ -223,28 +230,30 @@ public final class OI {
 	}
 
 	public CommandGroup setAutonomous() {
-//		return new RobotPosition(((RobotPosition)positionChooser.getSelected()).getFieldPosition(), ((RobotPosition)obstacleChooser.getSelected()).getObstacle());
-//		if (autoChooser.getSelected() instanceof AutoRoutineDoNothing) {
-//			return (CommandGroup) autoChooser.getSelected();
-//			
-//		} else if (autoChooser.getSelected() instanceof AutoRoutineCourtyard) {
-//			return (CommandGroup) autoChooser.getSelected();
-//			
-//		} else if (autoChooser.getSelected() instanceof DefenseCrossBase) {
-//			return new AutoRoutineCenter((Command) autoChooser.getSelected(), (int) positionChooser.getSelected());
-//			
-//		} else {
-//			DriverStation.reportError("Defaulted in autonomous selection!", false);
-//			return new AutoRoutineDoNothing();
-//		}
+		// return new RobotPosition(((RobotPosition)positionChooser.getSelected()).getFieldPosition(), ((RobotPosition)obstacleChooser.getSelected()).getObstacle());
+		Object selected = autoChooser.getSelected();
 		
-		CommandGroup janky = new CommandGroup();
-		janky.addSequential(new  CrossDefault(), 6);
-		janky.addSequential(new GyroTurn(45));
-		janky.addSequential(new GyroTurn(-45));
+		if (selected instanceof AutoRoutineDoNothing) {
+			return (CommandGroup) selected;
+
+		} else if (selected instanceof AutoRoutineCourtyard) {
+			return (CommandGroup) selected;
+
+		} else if (selected instanceof DefenseCrossBase) {
+			return new AutoRoutineCenter((Command) selected, (int) positionChooser.getSelected());
+
+		} else {
+			DriverStation.reportError("Defaulted in autonomous selection!", false);
+			return new AutoRoutineDoNothing();
+		}
+
+		// CommandGroup janky = new CommandGroup();
+		// janky.addSequential(new  CrossDefault(), 6);
+		// janky.addSequential(new GyroTurn(45));
+		// janky.addSequential(new GyroTurn(-45));
 		
-		return janky;
-		
+		// return janky;
+
 	}
 
 }
