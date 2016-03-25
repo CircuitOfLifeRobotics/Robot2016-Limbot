@@ -164,11 +164,14 @@ public class DriveTrain extends Subsystem implements SmartdashBoardLoggable {
 		putNumberSD("MotorLeft_Speed", motorLeftA.get());
 		putNumberSD("MotorRight_Speed", motorRightA.get());
 		
-		putNumberSD("MotorLeftA_V", motorLeftA.getOutputVoltage());
-		putNumberSD("MotorLeftB_V", motorLeftB.getOutputVoltage());
+		putNumberSD("EncoderLeft", encoderLeft.getDistance());
+		putNumberSD("EncoderRight", encoderRight.getDistance());
+		
+//		putNumberSD("MotorLeftA_V", motorLeftA.getOutputVoltage());
+//		putNumberSD("MotorLeftB_V", motorLeftB.getOutputVoltage());
 //		putNumberSD("MotorLeftC_V", motorLeftC.getOutputVoltage());
-		putNumberSD("MotorRightA_V", motorRightA.getOutputVoltage());
-		putNumberSD("MotorRightB_V", motorRightB.getOutputVoltage());
+//		putNumberSD("MotorRightA_V", motorRightA.getOutputVoltage());
+//		putNumberSD("MotorRightB_V", motorRightB.getOutputVoltage());
 //		putNumberSD("MotorRightC_V", motorRightC.getOutputVoltage());
 		
 //		putNumberSD("MotorLeftA_C", motorLeftA.getOutputCurrent());

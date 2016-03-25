@@ -26,7 +26,7 @@ public class IntakeAssist extends Subsystem implements SmartdashBoardLoggable {
 		wheels.set(speed);
 	}
 	
-	private void setArmSpeed(double speed) {
+	public void setArmSpeed(double speed) {
 		armLeft.set(speed);
 		armRight.set(speed);
 	}
@@ -88,36 +88,36 @@ public class IntakeAssist extends Subsystem implements SmartdashBoardLoggable {
 	 * In Position mode
 	 * @param isUp set position to up state or down state
 	 */
-	public void setArmPosition(boolean isUp) {
-		// setArmMotorDisabled(false);
-		
-		if (isUp) {
-			if (armRight.getEncPosition() >= Constants.INTAKE_ASSIST_UP_POSITION) {
-				setArmSpeed(0.25);
-				putStringSD("ArmSpeed", "Top + 25%");
-			} else {
-				setArmSpeed(1);
-				putStringSD("ArmSpeed", " 100%");
-			}
-		} else {
-			if (armRight.getEncPosition() < 10) {
-				setArmSpeed(0);
-				putStringSD("ArmSpeed", "Bottom + 0%");
-			} else {
-				setArmSpeed(-1);
-				putStringSD("ArmSpeed", "-100%");
-			}
-		}
-		
-		/*
-		if (isUp && getArmState() == IntakeAssistState.UP) {
-			state = IntakeAssistState.DISABLED;
-		} else if (!isUp && getArmState() == IntakeAssistState.DOWN) {
-			state = IntakeAssistState.DISABLED;
-		} else {
-			state = isUp ? IntakeAssistState.UP : IntakeAssistState.DOWN;
-		} */
-	}
+//	public void setArmPosition(boolean isUp) {
+//		// setArmMotorDisabled(false);
+//		
+//		if (isUp) {
+////			if (armRight.getEncPosition() >= Constants.INTAKE_ASSIST_UP_POSITION) {
+////				setArmSpeed(0.25);
+////				putStringSD("ArmSpeed", "Top + 25%");
+////			} else {
+//				setArmSpeed(1);
+//				putStringSD("ArmSpeed", " 100%");
+////			}
+//		} else {
+////			if (armRight.getEncPosition() < 10) {
+////				setArmSpeed(0);
+////				putStringSD("ArmSpeed", "Bottom + 0%");
+////			} else {
+//				setArmSpeed(-.25);
+//				putStringSD("ArmSpeed", "-25%");
+////			}
+//		}
+//		
+//		/*
+//		if (isUp && getArmState() == IntakeAssistState.UP) {
+//			state = IntakeAssistState.DISABLED;
+//		} else if (!isUp && getArmState() == IntakeAssistState.DOWN) {
+//			state = IntakeAssistState.DISABLED;
+//		} else {
+//			state = isUp ? IntakeAssistState.UP : IntakeAssistState.DOWN;
+//		} */
+//	}
 	
 	@Override
 	public void logData() {
@@ -125,8 +125,8 @@ public class IntakeAssist extends Subsystem implements SmartdashBoardLoggable {
 //		putStringSD("State", state.toString());
 		putNumberSD("ArmRightGet", armRight.get());
 		putNumberSD("ArmLeftGet", armLeft.get());
-		putNumberSD("ArmRightPos", armRight.getPosition());
-		putNumberSD("ArmRightEncPos", armRight.getEncPosition());
+//		putNumberSD("ArmRightPos", armRight.getPosition());
+//		putNumberSD("ArmRightEncPos", armRight.getEncPosition());
 	}
 
 	@Override

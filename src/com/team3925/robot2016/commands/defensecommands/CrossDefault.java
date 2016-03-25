@@ -17,7 +17,7 @@ public class CrossDefault extends DefenseCrossBase implements SmartdashBoardLogg
 	 * Defaults to putting arms up
 	 */
 	public CrossDefault() {
-		this(true);
+		this(false);
 //		pidLoop = new SynchronousPID(Constants.GYRO_DRIVE_KP, Constants.GYRO_DRIVE_KI, Constants.GYRO_DRIVE_KD);
 //		
 //		startAngle = currentAngle = lastAngle = navx.getFusedHeading();
@@ -34,6 +34,7 @@ public class CrossDefault extends DefenseCrossBase implements SmartdashBoardLogg
 	@Override
 	protected void routine() {
 		Robot.plexiArms.setArmUp(armsUp);
+		
 //		currentAngle = navx.getFusedHeading();
 //		if (Math.abs(currentAngle - lastAngle) > 180) {
 //			rotations += (currentAngle-lastAngle)>0 ? -1:1;
@@ -53,5 +54,6 @@ public class CrossDefault extends DefenseCrossBase implements SmartdashBoardLogg
 	public void logData() {
 //		putNumberSD("StartAngle", startAngle);
 //		putNumberSD("CurrentAngle", currentAngle);
+		putBooleanSD("Arms", armsUp);
 	}
 }

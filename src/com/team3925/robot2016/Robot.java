@@ -62,6 +62,7 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 	public static USBCamera usbCamera;
 	public static CameraServer cameraServer;
 	private static TimeoutAction brakeBeforeMatchEnd = new TimeoutAction();
+	private static TimeoutAction armsDownInit = new TimeoutAction();
 	
 	//Commands
 	CommandGroup autoRoutine;
@@ -73,7 +74,6 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 	Command launchBallHigh;
 	Command gyroTurn;
 	Command gyroDrive;
-	
 	
 	//Variables
 	public static double deltaTime = 0;
@@ -120,7 +120,7 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 		XboxHelper.init();
 		cdh = new CheesyDriveHelper(driveTrain);
 		
-		usbCamera = new USBCamera("cam0");
+		usbCamera = new USBCamera("cam1");
 		usbCamera.setBrightness(0);
 		usbCamera.updateSettings();
 		cameraServer = CameraServer.getInstance();
@@ -134,7 +134,6 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 		launchBallHigh = new LaunchBallHigh();
 		gyroTurn = new GyroTurn(45);
 		gyroDrive = new GyroDrive();
-		
 		
 		reset();
 	}
@@ -175,10 +174,12 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 	}
 	
 	public void autonomousInit() {
-//		autoRoutine = oi.setAutonomous();
+		autoRoutine = oi.setAutonomous();
 		
 		driveTrain.setHighGear(false);
 		reset();
+		
+		armsDownInit.config(.7);
 		
 //		launchBallTest.start();
 //		launchBallHigh.start();
@@ -187,9 +188,7 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 		
 		launcher.init();
 		
-//		autoRoutine.start();
-		Command tmpAuto = new GyroDrive(0, true, 2);
-		tmpAuto.start();
+		autoRoutine.start();
 	}
 	
 	/**
@@ -199,8 +198,13 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 		Scheduler.getInstance().run();
 		logData();
 		
+		if (armsDownInit.isFinished()) {
+			intakeAssist.setArmSpeed(0);
+		} else {
+			intakeAssist.setArmSpeed(-0.5);
+		}
+		
 		launcher.update();
-		intakeAssist.setArmPosition(false);
 	}
 
 	public void teleopInit() {
@@ -213,7 +217,7 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 		
 		candyCanes.startTimeOut();
 		brakeBeforeMatchEnd.config(135 - Constants.DRIVETRAIN_BREAK_MODE_ENABLE);
-		intakeAssist.setArmEncPos(0);
+//		intakeAssist.setArmEncPos(0);
 		
 		
 //		visionTest.start();
@@ -241,7 +245,22 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 		launcher.update();
 		
 		// too lazy to make a new command just for this
-		intakeAssist.setArmPosition(oi.getIntakeAssist_ArmValue());
+		
+		if (oi.getIntakeAssist_ArmValue_Down() && oi.getIntakeAssist_ArmValue_Up()) {
+			intakeAssist.setArmSpeed(0);
+			SmartDashboard.putNumber("IntakeAssistSpeed" ,0);
+		} else {
+			if (oi.getIntakeAssist_ArmValue_Up()) {
+				intakeAssist.setArmSpeed(1);
+				SmartDashboard.putNumber("IntakeAssistSpeed" ,1);
+			} else if (oi.getIntakeAssist_ArmValue_Down()) {
+				intakeAssist.setArmSpeed(-0.5);
+				SmartDashboard.putNumber("IntakeAssistSpeed" ,-0.5);
+			} else {
+				intakeAssist.setArmSpeed(0);
+				SmartDashboard.putNumber("IntakeAssistSpeed" ,0);
+			}		
+		}
 		
 		if (brakeBeforeMatchEnd.isFinished()) {
 			driveTrain.setBrakeMode(true);
@@ -260,11 +279,11 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 	
 	@Override
 	public void logData() {
-//		driveTrain.logData();
+		driveTrain.logData();
 		launcher.logData();
 		plexiArms.logData();
 //		candyCanes.logData();
-		intakeAssist.logData();
+//		intakeAssist.logData();
 		
 		double now = Timer.getFPGATimestamp();
 		deltaTime = now - lastTimestamp;
@@ -295,9 +314,9 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 //		putDataSD("Autonomous Chooser", autoChooser);
 //		putNamedDataSD(Scheduler.getInstance());
 		
-    	SmartDashboard.putData("Autonomous Routing Chooser", oi.autoChooser);
+//    	SmartDashboard.putData("Autonomous Routing Chooser", oi.autoChooser);
 //    	SmartDashboard.putData("Throw Ball Testing", oi.throwBallTesting);
-    	SmartDashboard.putData("Autonomous Position Chooser", oi.positionChooser);
+//    	SmartDashboard.putData("Autonomous Position Chooser", oi.positionChooser);
     	
 		if (DO_LOG_AHRS_VALUES) {
 			if (navx != null) {

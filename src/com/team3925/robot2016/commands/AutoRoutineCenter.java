@@ -5,6 +5,7 @@ import com.team3925.robot2016.Robot;
 import com.team3925.robot2016.commands.defensecommands.DefenseCrossBase;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
+import edu.wpi.first.wpilibj.command.WaitCommand;
 
 /**
  *	Drives the robot from the center of the arena, over a defense,
@@ -12,11 +13,12 @@ import edu.wpi.first.wpilibj.command.CommandGroup;
  */
 public class AutoRoutineCenter extends CommandGroup {
 
-
     public AutoRoutineCenter(DefenseCrossBase initCrossCommand, int robotPos) {
     	//Adam's trig:
     	// atan( (13.5 + (pos-2)*4.5) / 12.5 )
     	// Math.atan( (13.5 + (robotPos-2)*4.5) / 12.5 ))
+    	
+    	addSequential(new WaitCommand(2));
     	
     	addSequential(initCrossCommand, 7d);
     	Robot.driveTrain.setBrakeMode(false);

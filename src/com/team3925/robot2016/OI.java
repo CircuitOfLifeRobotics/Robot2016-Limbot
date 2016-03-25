@@ -217,8 +217,12 @@ public final class OI {
 		return -XboxHelper.getShooterAxis(XboxHelper.AXIS_LEFT_Y);
 	}
 	
-	public boolean getIntakeAssist_ArmValue() {
-		return XboxHelper.getShooterButton(XboxHelper.TRIGGER_RT) || XboxHelper.getShooterButton(XboxHelper.TRIGGER_LT);
+	public boolean getIntakeAssist_ArmValue_Up() {
+		return XboxHelper.getShooterButton(XboxHelper.TRIGGER_RT);
+	}
+	
+	public boolean getIntakeAssist_ArmValue_Down() {
+		return XboxHelper.getShooterButton(XboxHelper.TRIGGER_LT);
 	}
 	
 	public boolean getManualArms_GetArmValue() {
