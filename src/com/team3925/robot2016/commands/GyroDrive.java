@@ -69,7 +69,7 @@ public class GyroDrive extends Command implements SmartdashBoardLoggable {
 		pidLoop.calculate(currentAngle + rotations*360);
 		
 		// normally negative
-		driveTrain.arcadeDrive(-1, -pidLoop.get(), false);
+		driveTrain.arcadeDrive(-1, pidLoop.get(), false);
 		
 		// logic for slowing down or stopping here
 		

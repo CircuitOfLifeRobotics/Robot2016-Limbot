@@ -47,11 +47,11 @@ public class AutoRoutineCenter extends CommandGroup {
 			break;
 		}
     	
-    	addSequential(new GyroDrive(distToDrive), 3);
-    	Robot.driveTrain.setBrakeMode(false);
-    	addSequential(new GyroTurn(angleToTurn));
-    	Robot.driveTrain.setBrakeMode(false);
-    	addSequential(new ThrowBall(Constants.AUTONOMOUS_SHOOT_ANGLE, 1));
+//    	addSequential(new GyroDrive(distToDrive), 3);
+//    	Robot.driveTrain.setBrakeMode(false);
+//    	addSequential(new GyroTurn(angleToTurn));
+//    	Robot.driveTrain.setBrakeMode(false);
+//    	addSequential(new ThrowBall(Constants.AUTONOMOUS_SHOOT_ANGLE, 1));
     }
     
 }

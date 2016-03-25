@@ -30,8 +30,8 @@ public class DriveTrain extends Subsystem implements SmartdashBoardLoggable {
 	private final CANTalon motorRightB = RobotMap.driveTrainMotorRightB;
 //	private final CANTalon motorLeftC = RobotMap.driveTrainMotorLeftC;
 //	private final CANTalon motorRightC = RobotMap.driveTrainMotorRightC;
-    private final Encoder encoderLeft = RobotMap.driveTrainEncoderLeft;
-    private final Encoder encoderRight = RobotMap.driveTrainEncoderRight;
+//    private final Encoder encoderLeft = RobotMap.driveTrainEncoderLeft;
+//    private final Encoder encoderRight = RobotMap.driveTrainEncoderRight;
     private final DoubleSolenoid shifterSolenoid = RobotMap.driveTrainShifterSolenoid;
     //DELETE ON COMP BOT
     private final PIDController pidLeft = RobotMap.driveTrainPIDLeft;
@@ -65,8 +65,8 @@ public class DriveTrain extends Subsystem implements SmartdashBoardLoggable {
     }
     
     public void resetEncoders() {
-    	encoderLeft.reset();
-    	encoderRight.reset();
+//    	encoderLeft.reset();
+//    	encoderRight.reset();
     }
     
     public boolean isHighGear() {
@@ -105,10 +105,10 @@ public class DriveTrain extends Subsystem implements SmartdashBoardLoggable {
      * rate + heading are in degrees
      */
     public DrivetrainPose getPhysicalPose() {
-    	cached_pose.reset(encoderLeft.getDistance(), encoderRight.getDistance(),
-    			encoderLeft.getRate(), encoderRight.getRate(),
-    			navx.getFusedHeading(),
-    			navx.getRate());
+//    	cached_pose.reset(encoderLeft.getDistance(), encoderRight.getDistance(),
+//    			encoderLeft.getRate(), encoderRight.getRate(),
+//    			navx.getFusedHeading(),
+//    			navx.getRate());
     	return cached_pose;
     }
     
@@ -164,8 +164,7 @@ public class DriveTrain extends Subsystem implements SmartdashBoardLoggable {
 		putNumberSD("MotorLeft_Speed", motorLeftA.get());
 		putNumberSD("MotorRight_Speed", motorRightA.get());
 		
-		putNumberSD("EncoderLeft", encoderLeft.getDistance());
-		putNumberSD("EncoderRight", encoderRight.getDistance());
+		putNumberSD("EncoderLeft", motorRightA.getEncPosition());
 		
 //		putNumberSD("MotorLeftA_V", motorLeftA.getOutputVoltage());
 //		putNumberSD("MotorLeftB_V", motorLeftB.getOutputVoltage());

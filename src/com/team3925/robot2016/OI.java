@@ -10,6 +10,7 @@ import com.team3925.robot2016.commands.AutoRoutineDoNothing;
 import com.team3925.robot2016.commands.CollectBall;
 import com.team3925.robot2016.commands.ThrowBall;
 import com.team3925.robot2016.commands.defensecommands.CrossDefault;
+import com.team3925.robot2016.commands.defensecommands.CrossLowBar;
 import com.team3925.robot2016.commands.defensecommands.DefenseCrossBase;
 import com.team3925.robot2016.util.XboxHelper;
 
@@ -235,22 +236,25 @@ public final class OI {
 
 	public CommandGroup setAutonomous() {
 		// return new RobotPosition(((RobotPosition)positionChooser.getSelected()).getFieldPosition(), ((RobotPosition)obstacleChooser.getSelected()).getObstacle());
+		
 		Object selected = autoChooser.getSelected();
 		
-		if (selected instanceof AutoRoutineDoNothing) {
-			return (CommandGroup) selected;
-
-		} else if (selected instanceof AutoRoutineCourtyard) {
-			return (CommandGroup) selected;
-
-		} else if (selected instanceof DefenseCrossBase) {
-			return new AutoRoutineCenter((DefenseCrossBase) selected, (int) positionChooser.getSelected());
-
-		} else {
-			DriverStation.reportError("Defaulted in autonomous selection!", false);
-			return new AutoRoutineDoNothing();
-		}
-
+//		if (selected instanceof AutoRoutineDoNothing) {
+//			return (CommandGroup) selected;
+//
+//		} else if (selected instanceof AutoRoutineCourtyard) {
+//			return (CommandGroup) selected;
+//
+//		} else if (selected instanceof DefenseCrossBase) {
+//			return new AutoRoutineCenter((DefenseCrossBase) selected, (int) positionChooser.getSelected());
+//
+//		} else {
+//			DriverStation.reportError("Defaulted in autonomous selection!", false);
+//			return new AutoRoutineDoNothing();
+//		}
+		
+		return new AutoRoutineCenter(new CrossDefault(), 0);
+		
 		// CommandGroup janky = new CommandGroup();
 		// janky.addSequential(new  CrossDefault(), 6);
 		// janky.addSequential(new GyroTurn(45));

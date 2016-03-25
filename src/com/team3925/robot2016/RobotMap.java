@@ -29,8 +29,8 @@ public class RobotMap {
     public static CANTalon driveTrainMotorRightB;
 //    public static CANTalon driveTrainMotorLeftC;
 //    public static CANTalon driveTrainMotorRightC;
-    public static Encoder driveTrainEncoderLeft;
-    public static Encoder driveTrainEncoderRight;
+//    public static Encoder driveTrainEncoderLeft;
+//    public static Encoder driveTrainEncoderRight;
     public static DoubleSolenoid driveTrainShifterSolenoid;
     public static PIDController driveTrainPIDLeft;
     public static PIDController driveTrainPIDRight;
@@ -169,15 +169,15 @@ public class RobotMap {
 //        driveTrainMotorRightC.enableBrakeMode(false);
        
         
-        driveTrainEncoderLeft = new Encoder(0, 1, false, EncodingType.k4X);
-        LiveWindow.addSensor("DriveTrain", "EncoderLeft", driveTrainEncoderLeft);
-        driveTrainEncoderLeft.setDistancePerPulse(DRIVETRAIN_ENCODER_FACTOR);
-        driveTrainEncoderLeft.setPIDSourceType(PIDSourceType.kRate);
-        
-        driveTrainEncoderRight = new Encoder(2, 3, true, EncodingType.k4X);
-        LiveWindow.addSensor("DriveTrain", "EncoderRight", driveTrainEncoderRight);
-        driveTrainEncoderRight.setDistancePerPulse(DRIVETRAIN_ENCODER_FACTOR);
-        driveTrainEncoderRight.setPIDSourceType(PIDSourceType.kRate);
+//        driveTrainEncoderLeft = new Encoder(0, 1, false, EncodingType.k4X);
+//        LiveWindow.addSensor("DriveTrain", "EncoderLeft", driveTrainEncoderLeft);
+//        driveTrainEncoderLeft.setDistancePerPulse(DRIVETRAIN_ENCODER_FACTOR);
+//        driveTrainEncoderLeft.setPIDSourceType(PIDSourceType.kRate);
+//        
+//        driveTrainEncoderRight = new Encoder(2, 3, true, EncodingType.k4X);
+//        LiveWindow.addSensor("DriveTrain", "EncoderRight", driveTrainEncoderRight);
+//        driveTrainEncoderRight.setDistancePerPulse(DRIVETRAIN_ENCODER_FACTOR);
+//        driveTrainEncoderRight.setPIDSourceType(PIDSourceType.kRate);
         
         
         driveTrainShifterSolenoid = new DoubleSolenoid(4, 5);
