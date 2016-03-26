@@ -44,9 +44,9 @@ public class CrossDefault extends DefenseCrossBase implements SmartdashBoardLogg
 	protected void routine() {
 		Robot.plexiArms.setArmUp(armsUp);
 		
-		if (putUpIntakeAssist.isFinished()) {
-			Robot.intakeAssist.setArmSpeed(1);
-		}
+//		if (putUpIntakeAssist.isFinished()) {
+//			Robot.intakeAssist.setArmSpeed(1);
+//		}
 		
 //		currentAngle = navx.getFusedHeading();
 //		if (Math.abs(currentAngle - lastAngle) > 180) {

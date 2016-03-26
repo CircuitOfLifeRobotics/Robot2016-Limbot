@@ -203,11 +203,11 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 		Scheduler.getInstance().run();
 		logData();
 		
-		if (armsDownInit.isFinished()) {
-			intakeAssist.setArmSpeed(0);
-		} else {
-			intakeAssist.setArmSpeed(-0.5);
-		}
+//		if (armsDownInit.isFinished()) {
+//			intakeAssist.setArmSpeed(0);
+//		} else {
+//			intakeAssist.setArmSpeed(-0.5);
+//		}
 		
 		launcher.update();
 	}

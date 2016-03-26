@@ -139,17 +139,18 @@ public final class OI {
 		autoChooser = new SendableChooser();
 
 		autoChooser.addDefault("DO NOTHING", new AutoRoutineDoNothing());
-		autoChooser.addObject("Courtyard Freebie Shot", new AutoRoutineCourtyard(Constants.AUTONOMOUS_SHOOT_ANGLE));
-
-		autoChooser.addObject("Low Bar", new CrossDefault());
-				autoChooser.addObject("Portcullis", new CrossDefault());
-		//		autoChooser.addObject("Chival De Frise", new CrossLowBar());
-		//		autoChooser.addObject("Draw Bridge", new CrossLowBar());
-		autoChooser.addObject("Moat", new CrossDefault());
-		autoChooser.addObject("Rock Wall", new CrossDefault());
-		autoChooser.addObject("Rough Terrain", new CrossDefault());
-		//		autoChooser.addObject("Sally Port", new CrossLowBar());
-		autoChooser.addObject("Ramparts", new CrossDefault());
+		autoChooser.addObject("Cross-ArmsUP", new AutoRoutineCenter(new CrossDefault(), 0, false));
+		autoChooser.addObject("Cross-ArmsDOWN", new AutoRoutineCenter(new CrossDefault(), 0, true));
+//		autoChooser.addObject("Courtyard Freebie Shot", new AutoRoutineCourtyard(Constants.AUTONOMOUS_SHOOT_ANGLE));
+//
+//				autoChooser.addObject("Portcullis", new CrossDefault());
+//		//		autoChooser.addObject("Chival De Frise", new CrossLowBar());
+//		//		autoChooser.addObject("Draw Bridge", new CrossLowBar());
+//		autoChooser.addObject("Moat", new CrossDefault());
+//		autoChooser.addObject("Rock Wall", new CrossDefault());
+//		autoChooser.addObject("Rough Terrain", new CrossDefault());
+//		//		autoChooser.addObject("Sally Port", new CrossLowBar());
+//		autoChooser.addObject("Ramparts", new CrossDefault());
 
 
 		SmartDashboard.putData("Position Chooser", positionChooser);
@@ -237,7 +238,11 @@ public final class OI {
 	public CommandGroup setAutonomous() {
 		// return new RobotPosition(((RobotPosition)positionChooser.getSelected()).getFieldPosition(), ((RobotPosition)obstacleChooser.getSelected()).getObstacle());
 		
-		Object selected = autoChooser.getSelected();
+//		Object selected = autoChooser.getSelected();
+//		
+//		return (CommandGroup) selected;
+		
+		return new AutoRoutineCenter(new CrossDefault(), 0, false);
 		
 //		if (selected instanceof AutoRoutineDoNothing) {
 //			return (CommandGroup) selected;
@@ -252,8 +257,6 @@ public final class OI {
 //			DriverStation.reportError("Defaulted in autonomous selection!", false);
 //			return new AutoRoutineDoNothing();
 //		}
-		
-		return new AutoRoutineCenter(new CrossDefault(false), 0);
 		
 		// CommandGroup janky = new CommandGroup();
 		// janky.addSequential(new  CrossDefault(), 6);
