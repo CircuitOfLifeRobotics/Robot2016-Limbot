@@ -354,13 +354,12 @@ public class PixyCmu5 implements PIDSource
 	    				" width: "+ Integer.toString(tempFrame.width) +
 	    				" height: "+ Integer.toString(tempFrame.height));
 	    		
-	    		SmartDashboard.putString("PixyFrameStuff", 
-	    		"Checksum: "+ Integer.toString(tempFrame.checksum) + 
-				" Signature: "+ Integer.toString(tempFrame.signature) +
-				" xCenter: "+ Integer.toString(tempFrame.xCenter) + 
-				" yCenter: "+ Integer.toString(tempFrame.yCenter) +
-				" width: "+ Integer.toString(tempFrame.width) +
-				" height: "+ Integer.toString(tempFrame.height));
+	    		SmartDashboard.putNumber("Checksum", tempFrame.checksum); 
+				SmartDashboard.putNumber("Signature", tempFrame.signature);
+				SmartDashboard.putNumber("XCenter", tempFrame.xCenter);
+				SmartDashboard.putNumber("YCenter", tempFrame.yCenter);
+				SmartDashboard.putNumber("Width", tempFrame.width);
+				SmartDashboard.putNumber("Height", tempFrame.height);
     		}
     		
     		// Append the constructed frame to the Linked List which will be returned to the caller

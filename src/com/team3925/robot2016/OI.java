@@ -24,6 +24,23 @@ import edu.wpi.first.wpilibj.command.CommandGroup;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
+/*
+                 000000000000000
+             0000               0000    
+           00                       00
+          0                           0
+         0            WPILIB           0
+        0                               0
+        0        SEAL of APPROVAL       0
+        0                               0
+        0                               0
+        0           - 2016 -            0
+         0                             0
+          0                           0
+           00                       00
+             0000               0000   
+                 000000000000000    
+*/
 
 /**
  * This class is the glue that binds the controls on the physical operator
