@@ -20,8 +20,14 @@ public class AutoRoutineCenter extends CommandGroup {
     	
     	addSequential(new WaitCommand(2));
     	
-    	addSequential(initCrossCommand, 7d);
+    	addSequential(initCrossCommand, Constants.AUTONOMOUS_CROSS_DEFENSE_DRIVE_TIME + 0.5);
+    	addSequential(new WaitCommand(.5));
     	Robot.driveTrain.setBrakeMode(false);
+    	
+//    	addSequential(new GyroDrive(0, true, 2, -1));
+//    	addSequential(new WaitCommand(.5));
+//    	Robot.driveTrain.setBrakeMode(false);
+    	
     	
     	double distToDrive = 0;
     	double angleToTurn = 0;

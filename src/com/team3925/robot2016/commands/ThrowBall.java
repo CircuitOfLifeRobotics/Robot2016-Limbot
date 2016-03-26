@@ -83,7 +83,7 @@ public class ThrowBall extends Command implements SmartdashBoardLoggable {
 		launcher.setAimSetpoint(angle);
 		intakeAssist.setWheelSpeeds(wheelSpeed);
 		
-		buttonTimer.config(0.2);
+		buttonTimer.config(0.3);
 		timer.config(timeout);
 	}
 
@@ -96,7 +96,7 @@ public class ThrowBall extends Command implements SmartdashBoardLoggable {
 				mode = Mode.SHOOT;
 				launcher.setIntakeSetpoint(intakeSpeed);
 //				launcher.setPuncher(true);
-				timer.config(0.3);
+				timer.config(0.4);
 			}
 			break;
 		case SHOOT:
@@ -117,7 +117,7 @@ public class ThrowBall extends Command implements SmartdashBoardLoggable {
 	
 	@Override
 	protected boolean isFinished() {
-		return (mode == Mode.DONE && timer.isFinished()) || Robot.oi.getCommandCancel();
+		return /*(mode == Mode.DONE && timer.isFinished()) || */Robot.oi.getCommandCancel();
 	}
 	
 	@Override

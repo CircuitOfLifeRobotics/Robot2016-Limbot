@@ -5,6 +5,7 @@ import static com.team3925.robot2016.Constants.DO_LOG_AHRS_VALUES;
 import static com.team3925.robot2016.Constants.DO_LOG_PDP_VALUES;
 
 import com.kauailabs.navx.frc.AHRS;
+import com.ni.vision.NIVision;
 import com.team3925.robot2016.commands.Climb;
 import com.team3925.robot2016.commands.GyroDrive;
 import com.team3925.robot2016.commands.GyroTurn;
@@ -120,11 +121,15 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 		XboxHelper.init();
 		cdh = new CheesyDriveHelper(driveTrain);
 		
-		usbCamera = new USBCamera("cam1");
-		usbCamera.setBrightness(0);
-		usbCamera.updateSettings();
-		cameraServer = CameraServer.getInstance();
-		cameraServer.startAutomaticCapture(usbCamera);
+		try {
+			usbCamera = new USBCamera("cam1");
+			usbCamera.setBrightness(0);
+			usbCamera.updateSettings();
+			cameraServer = CameraServer.getInstance();
+			cameraServer.startAutomaticCapture(usbCamera);
+		} catch (Exception e) {
+			DriverStation.reportError("Could not find USBCamera!", true);
+		}
 		
 		//Creating Commands
 		manualArms = new ManualPlexiArms();

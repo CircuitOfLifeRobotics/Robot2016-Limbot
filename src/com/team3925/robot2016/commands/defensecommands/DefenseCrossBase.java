@@ -40,7 +40,7 @@ public abstract class DefenseCrossBase extends Command implements SmartdashBoard
     	requires(Robot.driveTrain);
 		requires(Robot.candyCanes);
 		timeout = new TimeoutAction();
-		gyroDrive = new GyroDrive(0, true, Constants.AUTONOMOUS_CROSS_DEFENSE_DRIVE_TIME);
+		gyroDrive = new GyroDrive(0, true, Constants.AUTONOMOUS_CROSS_DEFENSE_DRIVE_TIME, 1);
 		this.runGyroDrive = runGyroDrive;
     }
     

@@ -253,7 +253,7 @@ public final class OI {
 //			return new AutoRoutineDoNothing();
 //		}
 		
-		return new AutoRoutineCenter(new CrossDefault(), 0);
+		return new AutoRoutineCenter(new CrossDefault(false), 0);
 		
 		// CommandGroup janky = new CommandGroup();
 		// janky.addSequential(new  CrossDefault(), 6);

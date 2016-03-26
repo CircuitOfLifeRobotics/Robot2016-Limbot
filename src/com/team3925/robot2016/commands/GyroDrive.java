@@ -14,7 +14,7 @@ import edu.wpi.first.wpilibj.command.Command;
 public class GyroDrive extends Command implements SmartdashBoardLoggable {
 	
 	private SynchronousPID pidLoop;
-	private double startAngle, currentAngle, lastAngle, rotations, distance, timeout;
+	private double startAngle, currentAngle, lastAngle, rotations, distance, timeout, forwardPower;
 	private final AHRS navx = Robot.navx;
 	private final DriveTrain driveTrain = Robot.driveTrain;
 	private final TimeoutAction timeoutAction = new TimeoutAction();
@@ -24,27 +24,28 @@ public class GyroDrive extends Command implements SmartdashBoardLoggable {
 	 * @param distance distance to travel in inches
 	 */
 	public GyroDrive(double distance) {
-		this(distance, false, -1);
+		this(distance, false, -1, 1);
 	}
 	
 	/**
 	 * Creates a default gyrodrive that drives until stopped
 	 */
 	public GyroDrive() {
-		this(Double.NaN, true, -1);
+		this(Double.NaN, true, -1, 1);
 	}
 	
 	/**
-	 * <code>GyroDrive</code> only drives forward!
 	 * @param distance distance to travel in inches
 	 * @param disableEncPos override distance and travel until stopped
 	 * @param timeout if encPos disabled, time to drive until command stops.
 	 * 	Only works when <code>disableEncPos</code> is true
+	 * @param forwardPower power from -1 to 1 to pass to arcade drive
 	 */
-	public GyroDrive(double distance, boolean disableEncPos, double timeout) {
+	public GyroDrive(double distance, boolean disableEncPos, double timeout, double forwardPower) {
 		requires(driveTrain);
 		this.distance = disableEncPos ? Double.NaN : distance;
 		this.timeout = disableEncPos ? timeout : -1;
+		this.forwardPower = forwardPower;
 	}
 	
 	
@@ -69,7 +70,7 @@ public class GyroDrive extends Command implements SmartdashBoardLoggable {
 		pidLoop.calculate(currentAngle + rotations*360);
 		
 		// normally negative
-		driveTrain.arcadeDrive(-1, pidLoop.get(), false);
+		driveTrain.arcadeDrive(-forwardPower, pidLoop.get(), false);
 		
 		// logic for slowing down or stopping here
 		

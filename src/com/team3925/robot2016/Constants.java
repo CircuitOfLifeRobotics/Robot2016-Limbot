@@ -30,6 +30,7 @@ public class Constants {
 	
     // CAMERA CONSTANTS
 	
+	public static final double PIXY_FOV = 76; //degrees
 	public static final String AXIS_CAMERA_IP = "192.168.0.90";
     public static final double CAMERA_AIMED_X = 159;
     public static final double CAMERA_FOV_DEG = 45.134;
@@ -63,7 +64,7 @@ public class Constants {
     
 	// LAUNCHER CONSTANTS
     public static final double LAUNCHER_THROWBALL_FAR_ANGLE = 62; //degrees
-    public static final double LAUNCHER_THROWBALL_NEAR_ANGLE = 54; //degrees
+    public static final double LAUNCHER_THROWBALL_NEAR_ANGLE = 53; //degrees
     
 	public static final double LAUNCHER_TESTING_ANGLE = 45d; // degrees
 	public static final LauncherTrajectoryTable TABLE = new LauncherTrajectoryTable(11, LAUNCHER_TESTING_ANGLE);
@@ -78,14 +79,14 @@ public class Constants {
 	public static final double LAUNCHER_MAX_HEIGHT = 700; // in encoder ticks
 	public static final double LAUNCHER_MIN_HEIGHT = 50; // in encoder ticks
 	
-	public static final double LAUNCHER_AIM_TOLERANCE = 3;
+	public static final double LAUNCHER_AIM_TOLERANCE = 1.5;
 	public static final double LAUNCHER_AIM_SLOWDOWN = 40;
 	public static final double LAUNCHER_AIM_INCREMENT = 18;
 	public static final double LAUNCHER_INTAKE_INCREMENT = 1000;
 	//TODO: tune shooter pid
-	public static final double LAUNCHER_AIM_KP = /*400d/10_000d;*/   /*240d/10000d;*/    340d/10000d;
-	public static final double LAUNCHER_AIM_KI = /*16d/10_000d; */   /*8d/10000d;  */    8d/10000d;
-	public static final double LAUNCHER_AIM_KD = /*950d/10_000d;*/   /*250d/10000d;*/    250d/10000d;
+	public static final double LAUNCHER_AIM_KP = /*400d/10_000d;*/   /*240d/10000d;*/    420d/10000d;
+	public static final double LAUNCHER_AIM_KI = /*16d/10_000d; */   /*8d/10000d;  */    16d/10000d;
+	public static final double LAUNCHER_AIM_KD = /*950d/10_000d;*/   /*250d/10000d;*/    950d/10000d;
 	public static final double LAUNCHER_AIM_KF = 0.0;
 	public static final double LAUNCHER_AIM_RAMP_RATE = 5;//ramp rate is maximum acceleration in voltage/second
 	public static final int LAUNCHER_AIM_IZONE = 0; // izone eliminates
@@ -159,6 +160,6 @@ public class Constants {
     
     // AUTONOMOUS CONSTANTS
 	public static final double AUTONOMOUS_SHOOT_ANGLE = LAUNCHER_THROWBALL_FAR_ANGLE;
-	public static final double AUTONOMOUS_CROSS_DEFENSE_DRIVE_TIME = 3;
+	public static final double AUTONOMOUS_CROSS_DEFENSE_DRIVE_TIME = 2d;
     
 }
