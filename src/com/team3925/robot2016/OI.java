@@ -8,14 +8,11 @@ import com.team3925.robot2016.commands.AutoRoutineCenter;
 import com.team3925.robot2016.commands.AutoRoutineCourtyard;
 import com.team3925.robot2016.commands.AutoRoutineDoNothing;
 import com.team3925.robot2016.commands.CollectBall;
-import com.team3925.robot2016.commands.LaunchBall;
+import com.team3925.robot2016.commands.LaunchBallVision;
 import com.team3925.robot2016.commands.ThrowBall;
 import com.team3925.robot2016.commands.defensecommands.CrossDefault;
-import com.team3925.robot2016.commands.defensecommands.CrossLowBar;
-import com.team3925.robot2016.commands.defensecommands.DefenseCrossBase;
 import com.team3925.robot2016.util.XboxHelper;
 
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.Button;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
@@ -86,11 +83,11 @@ public final class OI {
 	public Button cancelCommands;
 
 	public Command collectBall;
-	public Command throwBallFar;
-	public Command throwBallNear;
-	public Command throwBallLow;
+	public ThrowBall throwBallFar;
+	public ThrowBall throwBallNear;
+	public ThrowBall throwBallLow;
 	//	public Command gyroTurn;
-	public Command visionShoot;
+	public LaunchBallVision visionShoot;
 
 	public SendableChooser autoChooser;
 	public SendableChooser throwBallTesting;
@@ -108,7 +105,7 @@ public final class OI {
 		throwBallFar = new ThrowBall(Constants.LAUNCHER_THROWBALL_FAR_ANGLE, 1, 5);
 		throwBallNear = new ThrowBall(Constants.LAUNCHER_THROWBALL_NEAR_ANGLE, 1, 5);
 		throwBallLow = new ThrowBall(0, 1, 1, -1);
-		visionShoot = new LaunchBall();
+		visionShoot = new LaunchBallVision();
 		
 
 		startCollectBall = new JoystickButton(xboxShooter, XboxHelper.A);

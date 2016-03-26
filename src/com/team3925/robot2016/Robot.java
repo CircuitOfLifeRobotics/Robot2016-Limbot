@@ -4,6 +4,11 @@ package com.team3925.robot2016;
 import static com.team3925.robot2016.Constants.DO_LOG_AHRS_VALUES;
 import static com.team3925.robot2016.Constants.DO_LOG_PDP_VALUES;
 
+import java.awt.List;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.Set;
+
 import com.kauailabs.navx.frc.AHRS;
 import com.ni.vision.NIVision;
 import com.team3925.robot2016.commands.Climb;
@@ -21,6 +26,7 @@ import com.team3925.robot2016.subsystems.Launcher;
 import com.team3925.robot2016.subsystems.PlexiArms;
 import com.team3925.robot2016.util.DriveTrainSignal;
 import com.team3925.robot2016.util.PixyCmu5;
+import com.team3925.robot2016.util.PixyCmu5.PixyFrame;
 import com.team3925.robot2016.util.SmartdashBoardLoggable;
 import com.team3925.robot2016.util.TimeoutAction;
 import com.team3925.robot2016.util.XboxHelper;
@@ -64,6 +70,7 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 	public static USBCamera usbCamera;
 	public static CameraServer cameraServer;
 	public static PixyCmu5 pixy;
+	public static LinkedList<PixyFrame> pixyFrames;
 	private static TimeoutAction brakeBeforeMatchEnd = new TimeoutAction();
 	private static TimeoutAction armsDownInit = new TimeoutAction();
 	
@@ -97,9 +104,10 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 			DriverStation.reportError("There was an error instantiating the NavxMXP!" + e.getMessage(), true);
 		}
 		try {
-			pixy = new PixyCmu5(0xa8);
+			pixyFrames = (LinkedList<PixyFrame>) Collections.synchronizedList(new LinkedList<PixyFrame>());
+    	    pixy = new PixyCmu5(168, .25);
 		} catch (Exception e) {
-			DriverStation.reportError("There was an error instantiating the Pixy!" + e.getMessage(), true);
+			DriverStation.reportError("There was an error instantiating the Pixy/Frames!" + e.getMessage(), true);
 		}
 	}
 
@@ -330,6 +338,7 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 //    	SmartDashboard.putData("Throw Ball Testing", oi.throwBallTesting);
 //    	SmartDashboard.putData("Autonomous Position Chooser", oi.positionChooser);
     	
+		
 		if (DO_LOG_AHRS_VALUES) {
 			if (navx != null) {
 				logNavXData();

@@ -1,5 +1,7 @@
 package com.team3925.robot2016.commands;
 
+import static com.team3925.robot2016.Constants.*;
+
 import com.team3925.robot2016.Constants;
 import com.team3925.robot2016.Robot;
 import com.team3925.robot2016.subsystems.Launcher;
@@ -8,6 +10,7 @@ import com.team3925.robot2016.util.PixyCmu5.PixyFrame;
 import com.team3925.robot2016.util.SmartdashBoardLoggable;
 import com.team3925.robot2016.util.TimeoutAction;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -15,53 +18,65 @@ enum State {
 	BEGIN_WAIT, HORIZ_AIMING, VERT_AIMING, SHOOTING, DONE;
 }
 
-public class LaunchBall extends Command implements SmartdashBoardLoggable {
+public class LaunchBallVision extends Command implements SmartdashBoardLoggable {
 	
 	GyroTurn turnCommand;
+	Command throwball;
 	Launcher launcher = Robot.launcher;
 	TimeoutAction timeout = new TimeoutAction();
 	State state;
 	private final PixyCmu5 pixy = Robot.pixy;
 	
-	double horizDeltaSetpoint, horizDelta, vertSetpoint;
+	double vertSetpoint, degFromCenter;
 	
 	private int centerX, centerY, area, width, height;
-	private double camDist, yawOffsetDegs, pixCenter;
+	private double camDist, pixCenter;
 	private PixyFrame frame;
+	private boolean hasTurned;
 	
-	public LaunchBall() {
-		this(0, 0);
-	}
-	
-	public LaunchBall(double horizAimDeltaSetpoint, double vertAimSetpoint) {
-		horizDeltaSetpoint = horizAimDeltaSetpoint;
-		vertSetpoint = vertAimSetpoint;
+	public LaunchBallVision() {
+		turnCommand = new GyroTurn();
+		throwball = Robot.oi.throwBallFar;
 	}
 	
 	public void reset() {
 		launcher.setAimSetpoint(0);
 		launcher.setIntakeSetpoint(0);
-		timeout.config(0.2);
 	}
 	
 	@Override
 	protected void initialize() {
-		turnCommand = new GyroTurn(horizDeltaSetpoint);
 		reset();
 		state = State.BEGIN_WAIT;
-		turnCommand.start();
+		hasTurned = false;
 	}
 	
 	@Override
 	protected void execute() {
 		
-		frame = pixy.getFrames().get(pixy.getFrames().size()-1);
-		calcData();
+		try {
+			frame = pixy.getFrames().get(pixy.getFrames().size()-1);
+			calcData();
+		} catch (Exception e) {
+			DriverStation.reportError("No Camera! Cannot do Vision!", true);
+			this.cancel();
+		}
 		
+//		if (!turnCommand.isRunning()) {
+//			turnCommand.setSetpointRelative(degFromCenter + Constants.CAMERA_OFFSET_COMP);
+//			turnCommand.start();
+//			hasTurned = true;
+//		}
+//		
+//		if (!turnCommand.isRunning() && hasTurned == true) {
+//			end();
+//		}
+		
+		/*
 		switch (state) {
 		case BEGIN_WAIT:
 			if (timeout.isFinished()) {
-				timeout.config(5);
+				timeout.config(0);
 				state = State.HORIZ_AIMING;
 			}
 			break;
@@ -69,14 +84,14 @@ public class LaunchBall extends Command implements SmartdashBoardLoggable {
 			if (!turnCommand.isRunning() || timeout.isFinished()) {
 				launcher.enableAim(true);
 				launcher.enableIntake(true);
-				launcher.setAimSetpoint(vertSetpoint);
-				launcher.setIntakeSetpoint(20000);
+				launcher.setAimSetpoint(Constants.LAUNCHER_THROWBALL_NEAR_ANGLE);
 				timeout.config(5);
 				state = State.VERT_AIMING;
 			}
 			break;
 		case VERT_AIMING:
 			if ((launcher.isAimOnSetpoint() && launcher.isIntakeOnSetpoint()) || timeout.isFinished()) {
+				launcher.setIntakeSetpoint(1);
 				launcher.setPuncher(true);
 				timeout.config(0.1);
 				state = State.SHOOTING;
@@ -93,21 +108,32 @@ public class LaunchBall extends Command implements SmartdashBoardLoggable {
 		case DONE:
 			end();
 			break;
-		}
+		}*/
+		
+		
 		
 		logData();
 	}
 	
 	private void calcData() {
-		centerX = frame.xCenter;
-		centerY = frame.yCenter;
-		area = frame.area;
-		width = frame.width;
-		height = frame.height;
+		/*
+		camDist = CAMERA_TARGET_WIDTH/2 / Math.tan(Math.toRadians(width/2 * CAMERA_DEGS_PER_PX));
+		pixCenter = -Math.atan(CAMERA_MID_OFFSET/camDist)/CAMERA_DEGS_PER_PX + PIXY_FOV/2;
+		yawOffsetDegs = (pixCenter - centerX) * CAMERA_DEGS_PER_PX;
+		*/
 		
-		camDist = Constants.CAMERA_TARGET_WIDTH/2 / Math.tan(Math.toRadians(width/2 * Constants.CAMERA_DEGS_PER_PX));
-		pixCenter = -Math.atan(Constants.CAMERA_MID_OFFSET/camDist)/Constants.CAMERA_DEGS_PER_PX + Constants.PIXY_FOV/2;
-		yawOffsetDegs = (pixCenter - centerX) * Constants.CAMERA_DEGS_PER_PX;
+		if (!pixy.getFrames().isEmpty()) {
+			centerX = frame.xCenter;
+			centerY = frame.yCenter;
+			area = frame.area;
+			width = frame.width;
+			height = frame.height;
+			
+			camDist = CAMERA_TARGET_WIDTH/2 / Math.tan(Math.toRadians(width/2 * PixyCmu5.PIXY_X_DEG_PER_PIXEL));
+			pixCenter = -Math.atan(CAMERA_MID_OFFSET/camDist)/PixyCmu5.PIXY_X_DEG_PER_PIXEL + PixyCmu5.PIXY_X_FOV/2;
+			degFromCenter = PixyCmu5.degreesXFromCenter(pixy.getCurrentframes().get(0));
+		}
+		
 	}
 	
 	@Override
@@ -116,12 +142,13 @@ public class LaunchBall extends Command implements SmartdashBoardLoggable {
 	}
 	
 	@Override
-	protected void end() {}
+	protected void end() {
+		throwball.cancel();
+	}
 	
 	@Override
 	protected void interrupted() {
-		launcher.setAimSetpoint(0);
-		launcher.setIntakeSetpoint(0);
+		throwball.cancel();
 	}
 
 	@Override
@@ -131,7 +158,10 @@ public class LaunchBall extends Command implements SmartdashBoardLoggable {
 		
 		putNumberSD("CamDist", camDist);
 		putNumberSD("PixCenter", pixCenter);
-		putNumberSD("YawOffsetDegs", yawOffsetDegs);
+		
+		putBooleanSD("Pixy_ObjectDetected", pixy.isObjectDetected());
+		putBooleanSD("Pixy_ObjectDetected", pixy.isDetectedAndCentered());
+		putNumberSD("Pixy_DegFromCenter", degFromCenter);
 	}
 
 	@Override

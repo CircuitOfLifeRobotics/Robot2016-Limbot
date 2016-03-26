@@ -38,7 +38,7 @@ public class CollectBall extends Command {
 	protected void execute() {
 		switch (mode) {
 		case WAIT_FOR_DOWN:
-			launcher.setIntakeSetpoint(-24000);
+			launcher.setIntakeSetpoint(-1);
 			intakeAssist.setWheelSpeeds(1d);
 //			if (launcher.isAimOnSetpoint() || timeout.isFinished()) {
 //				mode = CollectMode.INTAKE;

@@ -31,6 +31,7 @@ public class Constants {
     // CAMERA CONSTANTS
 	
 	public static final double PIXY_FOV = 76; //degrees
+	public static final double CAMERA_OFFSET_COMP = 6;
 	public static final String AXIS_CAMERA_IP = "192.168.0.90";
     public static final double CAMERA_AIMED_X = 159;
     public static final double CAMERA_FOV_DEG = 45.134;
@@ -161,5 +162,5 @@ public class Constants {
     // AUTONOMOUS CONSTANTS
 	public static final double AUTONOMOUS_SHOOT_ANGLE = LAUNCHER_THROWBALL_FAR_ANGLE;
 	public static final double AUTONOMOUS_CROSS_DEFENSE_DRIVE_TIME = 2d;
-    
+
 }
