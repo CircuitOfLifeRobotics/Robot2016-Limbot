@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.PIDSource;
 import edu.wpi.first.wpilibj.PIDSourceType;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * Class implements the interface to the Pixy Camera via I2C.
@@ -352,6 +353,14 @@ public class PixyCmu5 implements PIDSource
 	    				" yCenter: "+ Integer.toString(tempFrame.yCenter) +
 	    				" width: "+ Integer.toString(tempFrame.width) +
 	    				" height: "+ Integer.toString(tempFrame.height));
+	    		
+	    		SmartDashboard.putString("PixyFrameStuff", 
+	    		"Checksum: "+ Integer.toString(tempFrame.checksum) + 
+				" Signature: "+ Integer.toString(tempFrame.signature) +
+				" xCenter: "+ Integer.toString(tempFrame.xCenter) + 
+				" yCenter: "+ Integer.toString(tempFrame.yCenter) +
+				" width: "+ Integer.toString(tempFrame.width) +
+				" height: "+ Integer.toString(tempFrame.height));
     		}
     		
     		// Append the constructed frame to the Linked List which will be returned to the caller

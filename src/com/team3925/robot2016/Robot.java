@@ -20,6 +20,7 @@ import com.team3925.robot2016.subsystems.IntakeAssist;
 import com.team3925.robot2016.subsystems.Launcher;
 import com.team3925.robot2016.subsystems.PlexiArms;
 import com.team3925.robot2016.util.DriveTrainSignal;
+import com.team3925.robot2016.util.PixyCmu5;
 import com.team3925.robot2016.util.SmartdashBoardLoggable;
 import com.team3925.robot2016.util.TimeoutAction;
 import com.team3925.robot2016.util.XboxHelper;
@@ -62,6 +63,7 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 	public static CheesyDriveHelper cdh;
 	public static USBCamera usbCamera;
 	public static CameraServer cameraServer;
+	public static PixyCmu5 pixy;
 	private static TimeoutAction brakeBeforeMatchEnd = new TimeoutAction();
 	private static TimeoutAction armsDownInit = new TimeoutAction();
 	
@@ -92,7 +94,12 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 			//Alternatively:  I2C.Port.kMXP, SerialPort.Port.kMXP or SerialPort.Port.kUSB
 			navx = new AHRS(SPI.Port.kMXP);
 		} catch (RuntimeException e) {
-			DriverStation.reportError("There was an error instantiating the NavxMXP!\n" + e.getMessage(), true);
+			DriverStation.reportError("There was an error instantiating the NavxMXP!" + e.getMessage(), true);
+		}
+		try {
+			pixy = new PixyCmu5(0xa8);
+		} catch (Exception e) {
+			DriverStation.reportError("There was an error instantiating the Pixy!" + e.getMessage(), true);
 		}
 	}
 

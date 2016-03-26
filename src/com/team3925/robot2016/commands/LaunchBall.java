@@ -1,11 +1,15 @@
 package com.team3925.robot2016.commands;
 
+import com.team3925.robot2016.Constants;
 import com.team3925.robot2016.Robot;
 import com.team3925.robot2016.subsystems.Launcher;
+import com.team3925.robot2016.util.PixyCmu5;
+import com.team3925.robot2016.util.PixyCmu5.PixyFrame;
 import com.team3925.robot2016.util.SmartdashBoardLoggable;
 import com.team3925.robot2016.util.TimeoutAction;
 
 import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 enum State {
 	BEGIN_WAIT, HORIZ_AIMING, VERT_AIMING, SHOOTING, DONE;
@@ -17,8 +21,17 @@ public class LaunchBall extends Command implements SmartdashBoardLoggable {
 	Launcher launcher = Robot.launcher;
 	TimeoutAction timeout = new TimeoutAction();
 	State state;
+	private final PixyCmu5 pixy = Robot.pixy;
 	
 	double horizDeltaSetpoint, horizDelta, vertSetpoint;
+	
+	private int centerX, centerY, area, width, height;
+	private double camDist, yawOffsetDegs, pixCenter;
+	private PixyFrame frame;
+	
+	public LaunchBall() {
+		this(0, 0);
+	}
 	
 	public LaunchBall(double horizAimDeltaSetpoint, double vertAimSetpoint) {
 		horizDeltaSetpoint = horizAimDeltaSetpoint;
@@ -41,6 +54,10 @@ public class LaunchBall extends Command implements SmartdashBoardLoggable {
 	
 	@Override
 	protected void execute() {
+		
+		frame = pixy.getFrames().get(pixy.getFrames().size()-1);
+		calcData();
+		
 		switch (state) {
 		case BEGIN_WAIT:
 			if (timeout.isFinished()) {
@@ -81,6 +98,18 @@ public class LaunchBall extends Command implements SmartdashBoardLoggable {
 		logData();
 	}
 	
+	private void calcData() {
+		centerX = frame.xCenter;
+		centerY = frame.yCenter;
+		area = frame.area;
+		width = frame.width;
+		height = frame.height;
+		
+		camDist = Constants.CAMERA_TARGET_WIDTH/2 / Math.tan(Math.toRadians(width/2 * Constants.CAMERA_DEGS_PER_PX));
+		pixCenter = -Math.atan(Constants.CAMERA_MID_OFFSET/camDist)/Constants.CAMERA_DEGS_PER_PX + Constants.PIXY_FOV/2;
+		yawOffsetDegs = (pixCenter - centerX) * Constants.CAMERA_DEGS_PER_PX;
+	}
+	
 	@Override
 	protected boolean isFinished() {
 		return state == State.DONE;
@@ -99,6 +128,10 @@ public class LaunchBall extends Command implements SmartdashBoardLoggable {
 	public void logData() {
 		putStringSD("State", state.toString());
 		putBooleanSD("TurnCommandRunning", turnCommand.isRunning());
+		
+		putNumberSD("CamDist", camDist);
+		putNumberSD("PixCenter", pixCenter);
+		putNumberSD("YawOffsetDegs", yawOffsetDegs);
 	}
 
 	@Override
