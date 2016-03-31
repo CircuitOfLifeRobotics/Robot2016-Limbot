@@ -284,9 +284,9 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 	
 	@Override
 	public void logData() {
-		driveTrain.logData();
-		launcher.logData();
-		plexiArms.logData();
+//		driveTrain.logData();
+//		launcher.logData();
+//		plexiArms.logData();
 //		candyCanes.logData();
 //		intakeAssist.logData();
 		

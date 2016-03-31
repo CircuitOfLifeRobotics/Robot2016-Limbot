@@ -5,16 +5,11 @@ import static com.team3925.robot2016.util.XboxHelper.START;
 import java.text.DecimalFormat;
 
 import com.team3925.robot2016.commands.AutoRoutineCenter;
-import com.team3925.robot2016.commands.AutoRoutineCourtyard;
-import com.team3925.robot2016.commands.AutoRoutineDoNothing;
 import com.team3925.robot2016.commands.CollectBall;
 import com.team3925.robot2016.commands.ThrowBall;
 import com.team3925.robot2016.commands.defensecommands.CrossDefault;
-import com.team3925.robot2016.commands.defensecommands.CrossLowBar;
-import com.team3925.robot2016.commands.defensecommands.DefenseCrossBase;
 import com.team3925.robot2016.util.XboxHelper;
 
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.Button;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
@@ -138,8 +133,8 @@ public final class OI {
 		//NATHAN IS THE BEST
 		autoChooser = new SendableChooser();
 
-		autoChooser.addDefault("DO NOTHING", new AutoRoutineDoNothing());
-		autoChooser.addObject("Cross-ArmsUP", new AutoRoutineCenter(new CrossDefault(), 0, false));
+//		autoChooser.addDefault("DO NOTHING", new AutoRoutineDoNothing());
+		autoChooser.addDefault("Cross-ArmsUP", new AutoRoutineCenter(new CrossDefault(), 0, false));
 		autoChooser.addObject("Cross-ArmsDOWN", new AutoRoutineCenter(new CrossDefault(), 0, true));
 //		autoChooser.addObject("Courtyard Freebie Shot", new AutoRoutineCourtyard(Constants.AUTONOMOUS_SHOOT_ANGLE));
 //
@@ -168,7 +163,44 @@ public final class OI {
 		// SmartDashboard.putData("FeedBall", new FeedBall());
 
 	}
+	
 
+	public CommandGroup setAutonomous() {
+		// return new RobotPosition(((RobotPosition)positionChooser.getSelected()).getFieldPosition(), ((RobotPosition)obstacleChooser.getSelected()).getObstacle());
+		
+//		Object selected = autoChooser.getSelected();
+//		SendableChooser selected = ((SendableChooser) SmartDashboard.getData("Autonomous Chooser")).getSelected();
+//		SmartDashboard.putString("AutoSelected", selected.toString());
+//		return (CommandGroup) selected;
+		
+		return new AutoRoutineCenter(new CrossDefault(), 0, false);
+		
+//		if (selected instanceof AutoRoutineDoNothing) {
+//			return (CommandGroup) selected;
+//
+//		} else if (selected instanceof AutoRoutineCourtyard) {
+//			return (CommandGroup) selected;
+//
+//		} else if (selected instanceof DefenseCrossBase) {
+//			return new AutoRoutineCenter((DefenseCrossBase) selected, (int) positionChooser.getSelected());
+//
+//		} else {
+//			DriverStation.reportError("Defaulted in autonomous selection!", false);
+//			return new AutoRoutineDoNothing();
+//		}
+		
+		// CommandGroup janky = new CommandGroup();
+		// janky.addSequential(new  CrossDefault(), 6);
+		// janky.addSequential(new GyroTurn(45));
+		// janky.addSequential(new GyroTurn(-45));
+		
+		// return janky;
+
+	}
+	
+	
+	
+	
 //	private double calcThrowBallSpeed(double percentage) {
 //		return Constants.LAUNCHER_MAX_INTAKE_SPEED * (double) percentage / 100d;
 //	}
@@ -235,36 +267,5 @@ public final class OI {
 		return XboxHelper.getShooterButton(START) || XboxHelper.getDriverButton(START);
 	}
 
-	public CommandGroup setAutonomous() {
-		// return new RobotPosition(((RobotPosition)positionChooser.getSelected()).getFieldPosition(), ((RobotPosition)obstacleChooser.getSelected()).getObstacle());
-		
-//		Object selected = autoChooser.getSelected();
-//		
-//		return (CommandGroup) selected;
-		
-		return new AutoRoutineCenter(new CrossDefault(), 0, false);
-		
-//		if (selected instanceof AutoRoutineDoNothing) {
-//			return (CommandGroup) selected;
-//
-//		} else if (selected instanceof AutoRoutineCourtyard) {
-//			return (CommandGroup) selected;
-//
-//		} else if (selected instanceof DefenseCrossBase) {
-//			return new AutoRoutineCenter((DefenseCrossBase) selected, (int) positionChooser.getSelected());
-//
-//		} else {
-//			DriverStation.reportError("Defaulted in autonomous selection!", false);
-//			return new AutoRoutineDoNothing();
-//		}
-		
-		// CommandGroup janky = new CommandGroup();
-		// janky.addSequential(new  CrossDefault(), 6);
-		// janky.addSequential(new GyroTurn(45));
-		// janky.addSequential(new GyroTurn(-45));
-		
-		// return janky;
-
-	}
 
 }

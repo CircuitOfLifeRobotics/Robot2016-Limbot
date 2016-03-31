@@ -19,7 +19,7 @@ public class AutoRoutineCenter extends CommandGroup {
     	// atan( (13.5 + (pos-2)*4.5) / 12.5 )
     	// Math.atan( (13.5 + (robotPos-2)*4.5) / 12.5 ))
     	
-    	addParallel(new IntakeAssistArmControl(putArmsDown));
+    	addParallel(new IntakeAssistArmControl(putArmsDown), 15);
     	addSequential(new WaitCommand(2));
     	
     	addSequential(initCrossCommand, Constants.AUTONOMOUS_CROSS_DEFENSE_DRIVE_TIME + 0.5);
