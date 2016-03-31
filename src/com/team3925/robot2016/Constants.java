@@ -1,7 +1,5 @@
 package com.team3925.robot2016;
 
-import com.team3925.robot2016.trajectory.LauncherTrajectoryTable;
-
 /**
  *	A class holding all the constants of the project
  */
@@ -66,11 +64,6 @@ public class Constants {
     public static final double LAUNCHER_THROWBALL_FAR_ANGLE = 62; //degrees
     public static final double LAUNCHER_THROWBALL_NEAR_ANGLE = 53; //degrees
     
-	public static final double LAUNCHER_TESTING_ANGLE = 45d; // degrees
-	public static final LauncherTrajectoryTable TABLE = new LauncherTrajectoryTable(11, LAUNCHER_TESTING_ANGLE);
-	public static final void initLauncherIntakeTable() {
-		// TODO Add implementation and get debug values
-	}
     public static final double LAUNCHER_GLOBAL_MAX_POWER = 1;//Robot.prefs.getDouble("Max Shooter Pwr", 1);
     public static final double LAUNCHER_AIM_MOTOR_SPEED_MULTIPLIED = 1;
 	public static final double LAUNCHER_MAX_INTAKE_SPEED = 25_000; //TODO get actual max speed

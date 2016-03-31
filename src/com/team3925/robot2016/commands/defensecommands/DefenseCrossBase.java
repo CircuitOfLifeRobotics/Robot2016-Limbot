@@ -5,7 +5,6 @@ import com.team3925.robot2016.Constants;
 import com.team3925.robot2016.Robot;
 import com.team3925.robot2016.commands.GyroDrive;
 import com.team3925.robot2016.subsystems.DriveTrain;
-import com.team3925.robot2016.subsystems.PlexiArms;
 import com.team3925.robot2016.util.DriveTrainSignal;
 import com.team3925.robot2016.util.SmartdashBoardLoggable;
 import com.team3925.robot2016.util.TimeoutAction;
@@ -20,7 +19,6 @@ import edu.wpi.first.wpilibj.command.Command;
 public abstract class DefenseCrossBase extends Command implements SmartdashBoardLoggable {
 	
 	protected final DriveTrain driveTrain = Robot.driveTrain;
-	protected final PlexiArms arms = Robot.plexiArms;
 	protected final AHRS navx = Robot.navx;
 	protected State state = State.START;
 	protected double currentRoll, lastRoll, deltaRoll;
@@ -38,7 +36,6 @@ public abstract class DefenseCrossBase extends Command implements SmartdashBoard
     
     protected DefenseCrossBase(boolean runGyroDrive) {
     	requires(Robot.driveTrain);
-		requires(Robot.candyCanes);
 		timeout = new TimeoutAction();
 		gyroDrive = new GyroDrive(0, true, Constants.AUTONOMOUS_CROSS_DEFENSE_DRIVE_TIME, 1);
 		this.runGyroDrive = runGyroDrive;
@@ -122,13 +119,11 @@ public abstract class DefenseCrossBase extends Command implements SmartdashBoard
     // Called once after isFinished returns true
     protected void end() {
     	driveTrain.setMotorSpeeds(DriveTrainSignal.NEUTRAL);
-    	arms.setArmUp(true);
     }
 
     // Called when another command which requires one or more of the same
     // subsystems is scheduled to run
     protected void interrupted() {
     	driveTrain.setMotorSpeeds(DriveTrainSignal.NEUTRAL);
-    	arms.setArmUp(true);
     }
 }

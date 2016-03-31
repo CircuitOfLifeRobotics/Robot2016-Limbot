@@ -27,13 +27,7 @@ public class RobotMap {
     public static CANTalon driveTrainMotorRightA;
     public static CANTalon driveTrainMotorLeftB;
     public static CANTalon driveTrainMotorRightB;
-//    public static CANTalon driveTrainMotorLeftC;
-//    public static CANTalon driveTrainMotorRightC;
-//    public static Encoder driveTrainEncoderLeft;
-//    public static Encoder driveTrainEncoderRight;
     public static DoubleSolenoid driveTrainShifterSolenoid;
-    public static PIDController driveTrainPIDLeft;
-    public static PIDController driveTrainPIDRight;
     
     public static CANTalon launcherMotorAim;
     public static CANTalon launcherMotorLeft;
@@ -55,53 +49,6 @@ public class RobotMap {
 //    public static Solenoid redLedStrip;
     
     public static PowerDistributionPanel pdp;
-    
-    
-    /*
-    Practice Robot CAN Configurations (What was IN code)
-    
-    LeftDriveA = 20
-    LeftDriveB = 19
-    LeftDriveC = 18
-    RightDriveA = 17
-    RightDriveB = 16
-    RightDriveC = 15
-    
-    LauncherAimMotor = 13
-    LauncherIntakeLeft = 12
-    LauncherIntakeRight = 14
-    
-    */
-    
-    /*
-    Competition Robot CAN Configurations (What was IN code)
-    
-    LeftDriveA = 18
-    LeftDriveB = 19
-    LeftDriveC = removed
-    RightDriveA = 15
-    RightDriveB = 16
-    RightDriveC = removed
-    
-    LauncherAimMotor = 13
-    LauncherIntakeLeft = 12
-    LauncherIntakeRight = 14
-    
-     */
-    
-    /*
-    Practice Robot CAN Configurations (What is ON ROBOT as of March 3)
-    LeftDriveA = 13
-    LeftDriveB = 12
-    RightDriveA = 18
-    RightDriveB = 19
-    
-    LauncherAim = 15
-    LauncherRight = 10
-    LauncherLeft = 11
-    
-    Unused = 14
-    */
     
     public static void init() {
     	
@@ -133,14 +80,6 @@ public class RobotMap {
         driveTrainMotorLeftB.setVoltageRampRate(Constants.DRIVE_TRAIN_VOLTAGE_RAMP_RATE);
         driveTrainMotorLeftB.enableBrakeMode(false);
         
-//        driveTrainMotorLeftC = new CANTalon(18);
-//        LiveWindow.addActuator("DriveTrain", "MotorLeftC", driveTrainMotorLeftC);
-//        driveTrainMotorLeftC.setInverted(invertLeft);
-////        driveTrainMotorLeftC.reverseOutput(invertLeft);
-//        driveTrainMotorLeftC.changeControlMode(TalonControlMode.Follower);
-//        driveTrainMotorLeftC.setVoltageRampRate(Constants.DRIVE_TRAIN_VOLTAGE_RAMP_RATE);
-//        driveTrainMotorLeftC.enableBrakeMode(false);
-        
         driveTrainMotorRightA = new CANTalon(17); // was 17
         LiveWindow.addActuator("DriveTrain", "MotorRightA", driveTrainMotorRightA);
 //        driveTrainMotorRightA.setInverted(invertRight);
@@ -159,42 +98,9 @@ public class RobotMap {
         driveTrainMotorRightB.setVoltageRampRate(Constants.DRIVE_TRAIN_VOLTAGE_RAMP_RATE);
         driveTrainMotorRightB.enableBrakeMode(false);
         
-//        driveTrainMotorRightC = new CANTalon(15);
-//        LiveWindow.addActuator("DriveTrain", "MotorRightC", driveTrainMotorRightC);
-////        driveTrainMotorRightC.reverseOutput(invertRight);
-////        driveTrainMotorRightC.reverseSensor(invertRight);
-//        driveTrainMotorRightC.changeControlMode(TalonControlMode.Follower);
-//        driveTrainMotorRightC.set(driveTrainMotorRightA.getDeviceID());
-//        driveTrainMotorRightC.setVoltageRampRate(Constants.DRIVE_TRAIN_VOLTAGE_RAMP_RATE);
-//        driveTrainMotorRightC.enableBrakeMode(false);
-       
-        
-//        driveTrainEncoderLeft = new Encoder(0, 1, false, EncodingType.k4X);
-//        LiveWindow.addSensor("DriveTrain", "EncoderLeft", driveTrainEncoderLeft);
-//        driveTrainEncoderLeft.setDistancePerPulse(DRIVETRAIN_ENCODER_FACTOR);
-//        driveTrainEncoderLeft.setPIDSourceType(PIDSourceType.kRate);
-//        
-//        driveTrainEncoderRight = new Encoder(2, 3, true, EncodingType.k4X);
-//        LiveWindow.addSensor("DriveTrain", "EncoderRight", driveTrainEncoderRight);
-//        driveTrainEncoderRight.setDistancePerPulse(DRIVETRAIN_ENCODER_FACTOR);
-//        driveTrainEncoderRight.setPIDSourceType(PIDSourceType.kRate);
-        
         
         driveTrainShifterSolenoid = new DoubleSolenoid(4, 5);
         LiveWindow.addActuator("DriveTrain", "ShifterSolenoid", driveTrainShifterSolenoid);
-        
-        
-//        driveTrainPIDLeft = new PIDController(DRIVETRAIN_LEFT_KP, DRIVETRAIN_LEFT_KI,
-//        		DRIVETRAIN_LEFT_KD, driveTrainEncoderLeft, driveTrainMotorLeftA, DELTA_TIME / 4);
-//        LiveWindow.addActuator("DriveTrain", "PIDLeft", driveTrainPIDLeft);
-//        driveTrainPIDLeft.setAbsoluteTolerance(DRIVETRAIN_ON_TARGET_ERROR);
-        
-//        driveTrainPIDRight = new PIDController(DRIVETRAIN_RIGHT_KP, DRIVETRAIN_RIGHT_KI,
-//        		DRIVETRAIN_RIGHT_KD, driveTrainEncoderRight, driveTrainMotorRightA, DELTA_TIME / 4);
-//        LiveWindow.addActuator("DriveTrain", "PIDRight", driveTrainPIDRight);
-//        driveTrainPIDLeft.setAbsoluteTolerance(DRIVETRAIN_ON_TARGET_ERROR);
-        
-        //END DRIVETRAIN
         
         
         
@@ -236,27 +142,7 @@ public class RobotMap {
         launcherMotorRight.reverseOutput(true);
         launcherMotorRight.reverseSensor(true);
 //        launcherMotorRight.configEncoderCodesPerRev(4096);
-        
-        //END LAUNCHER
-        
-        //4, 5 shifter
-        //2, 3 puncher
-        //0, 1 arms
-        
-        /*Madera Competition Bot
-         * 
-         * LauncherRight		14
-         * LauncherLeft			12
-         * LauncherAim			13
-         * 
-         * Climber				11
-         * 
-         * RightDriveB			16
-         * RightDriveC			15
-         * LeftDriveB			19
-         * LeftDriveC			18
-         * 
-         */
+
         
         
         
@@ -289,24 +175,6 @@ public class RobotMap {
         intakeAssistWheels.reverseOutput(true);
         
         
-        // PLEXI ARMS
-        
-        plexiArmsSolenoid = new DoubleSolenoid(0, 1);
-        //TODO: correct ports for candy cane solenoid
-        
-        
-        
-        // CLIMBER
-        
-        climberArmsMotor = new CANTalon(11);
-        LiveWindow.addActuator("Arms", "MotorClimb", climberArmsMotor);
-        climberArmsMotor.setFeedbackDevice(FeedbackDevice.QuadEncoder);
-        climberArmsMotor.changeControlMode(TalonControlMode.PercentVbus);
-//        armsMotorClimb.configEncoderCodesPerRev(4096);
-        
-//        climberSolenoid = new DoubleSolenoid(0, 0); TODO Get ports
-        
-
         // LEDS
         
 //        blueLedStrip = new Solenoid(7);
