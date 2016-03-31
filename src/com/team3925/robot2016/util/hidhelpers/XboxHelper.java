@@ -1,4 +1,4 @@
-package com.team3925.robot2016.util;
+package com.team3925.robot2016.util.hidhelpers;
 
 import com.team3925.robot2016.Constants;
 import com.team3925.robot2016.Robot;
@@ -45,7 +45,7 @@ public class XboxHelper {
 	
 	public static double getShooterAxis(int axis) {
 		if (!hasInit) {	init();	}
-		return Math.abs(shooter.getRawAxis(axis)) > Math.abs(Constants.XBOX_AXIS_TOLERANCE) ? shooter.getRawAxis(axis) : 0;
+		return Math.abs(shooter.getRawAxis(axis)) > Math.abs(Constants.AXIS_TOLERANCE) ? shooter.getRawAxis(axis) : 0;
 	}
 	
 	public static boolean getShooterButton(int button) {
@@ -60,7 +60,7 @@ public class XboxHelper {
 	
 	public static double getDriverAxis(int axis) {
 		if (!hasInit) {	init();	}
-		return Math.abs(driver.getRawAxis(axis)) > Math.abs(Constants.XBOX_AXIS_TOLERANCE) ? driver.getRawAxis(axis) : 0;
+		return Math.abs(driver.getRawAxis(axis)) > Math.abs(Constants.AXIS_TOLERANCE) ? driver.getRawAxis(axis) : 0;
 	}
 	
 	public static boolean getDriverButton(int button) {

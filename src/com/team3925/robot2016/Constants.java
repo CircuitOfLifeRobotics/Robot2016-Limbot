@@ -15,7 +15,7 @@ public class Constants {
 	public static final boolean DO_LOG_PDP_VALUES = false;//Robot.prefs.getBoolean("Do Log PDP Vals", false);
 	public static final boolean DO_LOG_GRIP_VALUES = false;//Robot.prefs.getBoolean("Do Log GRIP Vals", false);
 	
-	public static final double XBOX_AXIS_TOLERANCE = 0.05;
+	public static final double AXIS_TOLERANCE = 0.05;
 	
 	
 	

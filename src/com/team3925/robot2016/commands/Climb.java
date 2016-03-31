@@ -6,7 +6,7 @@ import static com.team3925.robot2016.Constants.DO_MANUAL_CLIMBER;
 import com.team3925.robot2016.OI;
 import com.team3925.robot2016.subsystems.Climber;
 import com.team3925.robot2016.util.SmartdashBoardLoggable;
-import com.team3925.robot2016.util.XboxHelper;
+import com.team3925.robot2016.util.hidhelpers.XboxHelper;
 
 import edu.wpi.first.wpilibj.command.Command;
 

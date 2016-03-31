@@ -1,6 +1,6 @@
 package com.team3925.robot2016;
 
-import static com.team3925.robot2016.util.XboxHelper.START;
+import static com.team3925.robot2016.util.hidhelpers.XboxHelper.START;
 
 import java.text.DecimalFormat;
 
@@ -8,7 +8,7 @@ import com.team3925.robot2016.commands.AutoRoutineCenter;
 import com.team3925.robot2016.commands.CollectBall;
 import com.team3925.robot2016.commands.ThrowBall;
 import com.team3925.robot2016.commands.defensecommands.CrossDefault;
-import com.team3925.robot2016.util.XboxHelper;
+import com.team3925.robot2016.util.hidhelpers.XboxHelper;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.Button;

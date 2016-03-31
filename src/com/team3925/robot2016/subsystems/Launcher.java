@@ -1,10 +1,10 @@
 package com.team3925.robot2016.subsystems;
 
 import static com.team3925.robot2016.Constants.LAUNCHER_AIM_MOTOR_SPEED_MULTIPLIED;
-import static com.team3925.robot2016.util.XboxHelper.A;
-import static com.team3925.robot2016.util.XboxHelper.B;
-import static com.team3925.robot2016.util.XboxHelper.X;
-import static com.team3925.robot2016.util.XboxHelper.Y;
+import static com.team3925.robot2016.util.hidhelpers.XboxHelper.A;
+import static com.team3925.robot2016.util.hidhelpers.XboxHelper.B;
+import static com.team3925.robot2016.util.hidhelpers.XboxHelper.X;
+import static com.team3925.robot2016.util.hidhelpers.XboxHelper.Y;
 
 import com.team3925.robot2016.Constants;
 import com.team3925.robot2016.Robot;
@@ -15,7 +15,7 @@ import com.team3925.robot2016.util.MiscUtil;
 import com.team3925.robot2016.util.SmartdashBoardLoggable;
 import com.team3925.robot2016.util.SynchronousPID;
 import com.team3925.robot2016.util.TimeoutAction;
-import com.team3925.robot2016.util.XboxHelper;
+import com.team3925.robot2016.util.hidhelpers.XboxHelper;
 
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.CANTalon;
