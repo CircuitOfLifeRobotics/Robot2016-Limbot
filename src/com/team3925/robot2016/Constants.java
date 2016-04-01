@@ -153,6 +153,6 @@ public class Constants {
     
     // AUTONOMOUS CONSTANTS
 	public static final double AUTONOMOUS_SHOOT_ANGLE = LAUNCHER_THROWBALL_FAR_ANGLE;
-	public static final double AUTONOMOUS_CROSS_DEFENSE_DRIVE_TIME = 2d;
+	public static final double AUTONOMOUS_CROSS_DEFENSE_DRIVE_TIME = 2.5d;
     
 }
