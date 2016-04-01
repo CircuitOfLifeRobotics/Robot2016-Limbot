@@ -1,16 +1,13 @@
-package com.team3925.robot2016.commands;
+package com.team3925.robot2016.commands.auto;
 
 import com.team3925.robot2016.Robot;
 import com.team3925.robot2016.subsystems.IntakeAssist;
-import com.team3925.robot2016.util.TimeoutAction;
 
 import edu.wpi.first.wpilibj.command.Command;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class IntakeAssistArmControl extends Command {
 	private final IntakeAssist intake = Robot.intakeAssist;
 	private boolean putArmsDown;
-	private final TimeoutAction timeout = new TimeoutAction();
 	
 	public IntakeAssistArmControl(boolean putArmsDown) {
 		this.putArmsDown = putArmsDown;
@@ -18,19 +15,14 @@ public class IntakeAssistArmControl extends Command {
 	
 	@Override
 	protected void initialize() {
-		timeout.config(-1);
 	}
 
 	@Override
 	protected void execute() {
-		if (!timeout.isFinished()) {
-			if (putArmsDown) {
-				intake.setArmSpeed(-0.5);
-			}else {
-				intake.setArmSpeed(0.25);
-			}
+		if (putArmsDown) {
+			intake.setArmSpeed(-0.5);
 		}else {
-			intake.setArmSpeed(0);
+			intake.setArmSpeed(0.25);
 		}
 	}
 

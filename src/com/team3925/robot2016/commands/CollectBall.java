@@ -21,13 +21,13 @@ public class CollectBall extends Command {
 
 	// Called just before this Command runs the first time
 	protected void initialize() {
-		launcher.setAimSetpoint(0);
 	}
 
 	// Called repeatedly when this Command is scheduled to run
 	protected void execute() {
-			launcher.setIntakeSpeed(-1);
-			intakeAssist.setWheelSpeeds(1);
+		launcher.setAimSetpoint(0);
+		launcher.setIntakeSpeed(-1);
+		intakeAssist.setWheelSpeeds(1);
 	}
 
 	// Make this return true when this Command no longer needs to run execute()
@@ -45,8 +45,6 @@ public class CollectBall extends Command {
 	// Called when another command which requires one or more of the same
 	// subsystems is scheduled to run
 	protected void interrupted() {
-		launcher.setAimSetpoint(0);
-		launcher.setIntakeSpeed(0);
-		intakeAssist.setWheelSpeeds(0d);
+		end();
 	}
 }

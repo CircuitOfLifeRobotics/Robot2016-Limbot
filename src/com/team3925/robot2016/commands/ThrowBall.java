@@ -67,12 +67,6 @@ public class ThrowBall extends Command implements SmartdashBoardLoggable {
 	protected void initialize() {
 		mode = Mode.WAIT_FOR_AIM;
 		
-		launcher.setPuncher(false);
-		launcher.enableAim(true);
-		launcher.enableIntake(true);
-		launcher.setAimSetpoint(angle);
-		intakeAssist.setWheelSpeeds(wheelSpeed);
-		
 		buttonTimer.config(0.3);
 		timer.config(timeout);
 	}
@@ -81,11 +75,15 @@ public class ThrowBall extends Command implements SmartdashBoardLoggable {
 	protected void execute() {
 		switch (mode) {
 		case WAIT_FOR_AIM:
-			if (((launcher.isAimOnSetpoint()/* && launcher.isIntakeOnSetpoint()*/) || 
-					timer.isFinished() || Robot.oi.getThrowBall_LaunchBallOverride()) && buttonTimer.isFinished()) {
+			launcher.setPuncher(false);
+			launcher.enableAim(true);
+			launcher.enableIntake(true);
+			launcher.setAimSetpoint(angle);
+			intakeAssist.setWheelSpeeds(wheelSpeed);
+		
+			if ((launcher.isAimOnSetpoint() || timer.isFinished()) && buttonTimer.isFinished()) {
 				mode = Mode.SHOOT;
 				launcher.setIntakeSpeed(intakeSpeed);
-//				launcher.setPuncher(true);
 				timer.config(0.4);
 			}
 			break;
@@ -97,6 +95,7 @@ public class ThrowBall extends Command implements SmartdashBoardLoggable {
 			}
 			break;
 		case DONE:
+			end();
 			break;
 		}
 		
@@ -105,7 +104,7 @@ public class ThrowBall extends Command implements SmartdashBoardLoggable {
 	
 	@Override
 	protected boolean isFinished() {
-		return /*(mode == Mode.DONE && timer.isFinished()) || */Robot.oi.getCommandCancel();
+		return Robot.oi.getCommandCancel();
 	}
 	
 	@Override
@@ -118,10 +117,7 @@ public class ThrowBall extends Command implements SmartdashBoardLoggable {
 	
 	@Override
 	protected void interrupted() {
-		launcher.setAimSetpoint(0);
-		launcher.setIntakeSpeed(0);
-		intakeAssist.setWheelSpeeds(0d);
-		launcher.setPuncher(false);
+		end();
 	}
 
 	@Override
