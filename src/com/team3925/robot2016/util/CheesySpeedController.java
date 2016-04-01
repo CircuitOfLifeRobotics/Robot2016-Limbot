@@ -4,6 +4,11 @@ import com.team3925.robot2016.RobotMap;
 
 import edu.wpi.first.wpilibj.SpeedController;
 
+/**
+ * Implementation for multiple speed controllers functioning in tandem
+ * 
+ * @author Team254
+ */
 public class CheesySpeedController implements SpeedController {
     protected SpeedController[] m_controllers;
     protected int[] m_pdp_slots;

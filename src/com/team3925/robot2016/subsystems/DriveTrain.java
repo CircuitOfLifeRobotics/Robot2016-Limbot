@@ -5,8 +5,8 @@ import static com.team3925.robot2016.Constants.GLOBAL_MAX_DRIVE_TRAIN_PWR;
 import com.team3925.robot2016.RobotMap;
 import com.team3925.robot2016.commands.ManualDrive;
 import com.team3925.robot2016.subsystems.components.DriveSide;
+import com.team3925.robot2016.util.DriveTrainPose;
 import com.team3925.robot2016.util.DriveTrainSignal;
-import com.team3925.robot2016.util.DrivetrainPose;
 import com.team3925.robot2016.util.MiscUtil;
 import com.team3925.robot2016.util.SmartdashBoardLoggable;
 
@@ -20,7 +20,15 @@ public class DriveTrain extends Subsystem implements SmartdashBoardLoggable {
 	private final DriveSide sideLeft, sideRight;
     private final DoubleSolenoid shifterSolenoid = RobotMap.driveTrainShifterSolenoid;
     
-    private DrivetrainPose cached_pose = new DrivetrainPose(0, 0, 0, 0, 0, 0);
+//    private GyroDrive gyroDrive;
+    
+    private DriveTrainPose cached_pose = new DriveTrainPose(0, 0, 0, 0, 0, 0);
+    
+//    public static interface DriveController {
+//        DriveTrainSignal update(DriveTrainPose pose);
+//
+//        public boolean isFinished();
+//    }
     
     public DriveTrain() {
     	sideLeft = new DriveSide(RobotMap.driveTrainMotorLeftA, RobotMap.driveTrainMotorLeftB);
@@ -31,6 +39,16 @@ public class DriveTrain extends Subsystem implements SmartdashBoardLoggable {
     	sideLeft.setSpeed(MiscUtil.limit(input.left) * GLOBAL_MAX_DRIVE_TRAIN_PWR);
     	sideRight.setSpeed(MiscUtil.limit(input.right) * GLOBAL_MAX_DRIVE_TRAIN_PWR);
     }
+    
+//    public void setGyroDrive(GyroDrive gyroDrive) {
+//    	if (this.gyroDrive != null) {
+//			this.gyroDrive.cancel();
+//			this.gyroDrive = null;
+//		}
+//    	
+//    	this.gyroDrive = gyroDrive;
+//    	this.gyroDrive.start();
+//    }
     
     public void setHighGear(boolean highGear) {
     	shifterSolenoid.set(highGear ? Value.kReverse : Value.kForward);
@@ -46,6 +64,8 @@ public class DriveTrain extends Subsystem implements SmartdashBoardLoggable {
     	return shifterSolenoid.get() == Value.kReverse;
     }
     
+    public void startController(DriveTrain gyroDrive) {
+    }
     
     public void setBrakeMode(boolean enabled) {
     	sideLeft.setBrakeMode(enabled);
@@ -56,7 +76,7 @@ public class DriveTrain extends Subsystem implements SmartdashBoardLoggable {
      * @return The pose according to the current sensor state <p>
      * rate + heading are in degrees
      */
-    public DrivetrainPose getPhysicalPose() {
+    public DriveTrainPose getPhysicalPose() {
     	// TODO: cached_pose is not updated ever
 //    	cached_pose.reset(encoderLeft.getDistance(), encoderRight.getDistance(),
 //    			encoderLeft.getRate(), encoderRight.getRate(),
@@ -115,12 +135,11 @@ public class DriveTrain extends Subsystem implements SmartdashBoardLoggable {
 	
 	@Override
 	public void logData() {
+		// Temporary
 		putNumberSD("MotorLeft_Speed", sideLeft.getSpeed());
 		putNumberSD("MotorRight_Speed", sideRight.getSpeed());
 		
-		putNumberSD("EncoderLeft", sideLeft.getEncoderPosition());
-		
-		MiscUtil.putPoseSD(getFormattedName() + "PhysicalState_", getPhysicalPose());
+		putDriveTrainPoseSD(getPhysicalPose());
 		
 	}
 	
@@ -129,4 +148,3 @@ public class DriveTrain extends Subsystem implements SmartdashBoardLoggable {
     }
 
 }
-

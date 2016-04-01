@@ -6,15 +6,14 @@ import com.team3925.robot2016.subsystems.Launcher;
 
 import edu.wpi.first.wpilibj.command.Command;
 
-/**
- * Turns on intake until launcher has a ball
- */
 public class CollectBall extends Command {
 	
 	private final Launcher launcher = Robot.launcher;
 	private final IntakeAssist intakeAssist = Robot.intakeAssist;
 	
 	public CollectBall() {
+		super("CollectBall");
+		
 		requires(launcher);
 		requires(intakeAssist);
 	}

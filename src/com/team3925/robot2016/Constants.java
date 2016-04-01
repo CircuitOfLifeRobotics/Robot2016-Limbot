@@ -11,7 +11,7 @@ public class Constants {
 	
 	public static final boolean DO_LOG_AHRS_VALUES = false;//Robot.prefs.getBoolean("Do Log AHRS Vals", false);
 	public static final boolean DO_LOG_PDP_VALUES = false;//Robot.prefs.getBoolean("Do Log PDP Vals", false);
-	public static final boolean DO_LOG_GRIP_VALUES = false;//Robot.prefs.getBoolean("Do Log GRIP Vals", false);
+	public static final boolean DO_LOG_MOVEMENT_CONSTANTS = false;
 	
 	public static final double AXIS_TOLERANCE = 0.05;
 	

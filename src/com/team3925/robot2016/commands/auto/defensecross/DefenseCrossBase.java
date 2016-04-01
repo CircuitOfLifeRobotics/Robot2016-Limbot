@@ -1,8 +1,9 @@
-package com.team3925.robot2016.commands.auto;
+package com.team3925.robot2016.commands.auto.defensecross;
 
 import com.kauailabs.navx.frc.AHRS;
 import com.team3925.robot2016.Constants;
 import com.team3925.robot2016.Robot;
+import com.team3925.robot2016.commands.auto.GyroDrive;
 import com.team3925.robot2016.subsystems.DriveTrain;
 import com.team3925.robot2016.util.DriveTrainSignal;
 import com.team3925.robot2016.util.SmartdashBoardLoggable;

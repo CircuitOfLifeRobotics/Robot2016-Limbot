@@ -32,9 +32,7 @@ public final class Launcher extends Subsystem implements SmartdashBoardLoggable 
     private LimitPIDController aimPidLoop = new LimitPIDController();
     
     private boolean aimEnabled = false,
-    		intakeEnabled = true,
-    		aimOnTarget = false,
-    		intakeOnTarget = false;
+    		aimOnTarget = false;
 	private double aimSetpoint,
 			aimSetpointDiff,
 			aimLastSetpoint,
@@ -45,6 +43,7 @@ public final class Launcher extends Subsystem implements SmartdashBoardLoggable 
     
 	public void init() {
 		aimPidLoop.setPID(LAUNCHER_AIM_KP, LAUNCHER_AIM_KI, LAUNCHER_AIM_KD);
+		// TODO: If the limits are this high, can this be replaced with a normal PID controller?
 		aimPidLoop.setPIDLimits(10000, 10000, 10000, 10000, -10000, -10000, -10000, -10000);
 		
 		setAimSetpoint(0);
@@ -57,6 +56,8 @@ public final class Launcher extends Subsystem implements SmartdashBoardLoggable 
 	}
     
 	public void initDefaultCommand() {
+		// a default command should not be run
+		// only shoot when requested
 	}
 
 	public void update() {
@@ -99,19 +100,17 @@ public final class Launcher extends Subsystem implements SmartdashBoardLoggable 
 				if (doRunAim) {
 					motorAim.set(aimOutput);
 				} else {
-					motorAim.set((double) 0);
+					motorAim.set(0d);
 				}
 			} else {
-				motorAim.set((double) 0);
+				motorAim.set(0d);
 			}
 			
-			if (intakeEnabled) {
-				motorLeft.set(-intakeSpeed);
-				motorRight.set(intakeSpeed);
-			} else {
-				motorLeft.set(-((double) 0));
-				motorRight.set((double) 0);
-			}
+			
+			// FLYWHEELS
+			
+			motorLeft.set(-intakeSpeed);
+			motorRight.set(intakeSpeed);
 			
 		}
 
@@ -130,10 +129,11 @@ public final class Launcher extends Subsystem implements SmartdashBoardLoggable 
 		aimEnabled = isEnable;
 	}
 	
-	public void enableIntake(boolean isEnable) {
-		intakeEnabled = isEnable;
-	}
-	
+	/**
+	 * Launcher maintains intake speeds
+	 * 
+	 * @param speed PercentVBus; positive = out, negative = in
+	 */
 	public void setIntakeSpeed(double speed) {
 		intakeSpeed = speed;
 	}
@@ -146,10 +146,6 @@ public final class Launcher extends Subsystem implements SmartdashBoardLoggable 
 	
 	public boolean getAimEnabled() {
 		return aimEnabled;
-	}
-	
-	public boolean getIntakeEnabled() {
-		return intakeEnabled;
 	}
 	
 	/**

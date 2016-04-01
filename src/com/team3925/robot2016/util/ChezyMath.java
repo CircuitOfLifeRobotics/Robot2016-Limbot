@@ -1,10 +1,12 @@
 package com.team3925.robot2016.util;
 
 /**
- * Hey look! It's 254's code!
+ * Hey look! It's 254's code! <p>
  * 
  * This class holds a bunch of static methods and variables needed for
  * mathematics
+ * 
+ * @author Team254
  */
 public class ChezyMath {
 	
@@ -76,6 +78,6 @@ public class ChezyMath {
         return angle;
     }
 
-    public ChezyMath() {
+    private ChezyMath() {
     }
 }

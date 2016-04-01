@@ -2,10 +2,10 @@ package com.team3925.robot2016;
 
 
 import static com.team3925.robot2016.Constants.DO_LOG_AHRS_VALUES;
+import static com.team3925.robot2016.Constants.DO_LOG_MOVEMENT_CONSTANTS;
 import static com.team3925.robot2016.Constants.DO_LOG_PDP_VALUES;
 
 import com.kauailabs.navx.frc.AHRS;
-import com.team3925.robot2016.commands.ManualDrive;
 import com.team3925.robot2016.commands.auto.GyroDrive;
 import com.team3925.robot2016.commands.auto.GyroTurn;
 import com.team3925.robot2016.subsystems.DriveTrain;
@@ -22,7 +22,6 @@ import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.CommandGroup;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
@@ -51,18 +50,13 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 	public static USBCamera usbCamera;
 	public static CameraServer cameraServer;
 	private static TimeoutAction brakeBeforeMatchEnd = new TimeoutAction();
-	private static TimeoutAction armsDownInit = new TimeoutAction();
 	
 	//Commands
-	CommandGroup autoRoutine;
-	Command trapMotionTest;
-	Command manualDrive;
-	Command manualCandyCanes;
-	Command manualArms;
-	Command visionTest;
-	Command launchBallHigh;
-	Command gyroTurn;
-	Command gyroDrive;
+	private CommandGroup autoRoutine;
+//	private ManualDrive manualDrive;
+//	private ManualIntakeAssist manualIntakeAssist;
+	private GyroTurn testing_GyroTurn;
+	private GyroDrive testing_GyroDrive;
 	
 	//Variables
 	public static double deltaTime = 0;
@@ -116,9 +110,8 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 		}
 		
 		//Creating Commands
-		manualDrive = new ManualDrive();
-		gyroTurn = new GyroTurn(45);
-		gyroDrive = new GyroDrive();
+		testing_GyroTurn = new GyroTurn(45);
+		testing_GyroDrive = new GyroDrive();
 		
 		reset();
 	}
@@ -164,8 +157,6 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 		driveTrain.setHighGear(false);
 		reset();
 		
-		armsDownInit.config(.7);
-		
 		launcher.init();
 		
 		autoRoutine.start();
@@ -176,9 +167,9 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 	 */
 	public void autonomousPeriodic() {
 		Scheduler.getInstance().run();
-		logData();
 		
-		launcher.update();
+		updateSubsystems();
+		logData();
 	}
 
 	public void teleopInit() {
@@ -191,9 +182,9 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 		
 		brakeBeforeMatchEnd.config(135 - Constants.DRIVETRAIN_BREAK_MODE_ENABLE);
 		
-		
-		manualDrive.start();
-		manualArms.start();
+		// should be handled by default commands
+//		manualDrive.start();
+//		manualIntakeAssist.start();
 		
 		launcher.init();
 	}
@@ -204,29 +195,10 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 	public void teleopPeriodic() {
 		Scheduler.getInstance().run();
 		
-		launcher.update();
-		
-		// too lazy to make a new command just for this
-		
-		if (oi.getIntakeAssist_ArmValue_Down() && oi.getIntakeAssist_ArmValue_Up()) {
-			intakeAssist.setArmSpeed(0);
-			SmartDashboard.putNumber("IntakeAssistSpeed" ,0);
-		} else {
-			if (oi.getIntakeAssist_ArmValue_Up()) {
-				intakeAssist.setArmSpeed(1);
-				SmartDashboard.putNumber("IntakeAssistSpeed" ,1);
-			} else if (oi.getIntakeAssist_ArmValue_Down()) {
-				intakeAssist.setArmSpeed(-0.5);
-				SmartDashboard.putNumber("IntakeAssistSpeed" ,-0.5);
-			} else {
-				intakeAssist.setArmSpeed(0);
-				SmartDashboard.putNumber("IntakeAssistSpeed" ,0);
-			}		
-		}
+		updateSubsystems();
 		
 		if (brakeBeforeMatchEnd.isFinished()) {
 			driveTrain.setBrakeMode(true);
-			DriverStation.reportError("BrakeModeEnabled!", false);
 		}
 		
 		logData();
@@ -239,12 +211,15 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 		LiveWindow.run();
 	}
 	
+	private void updateSubsystems() {
+		launcher.update();
+		intakeAssist.update();
+	}
+	
 	@Override
 	public void logData() {
 //		driveTrain.logData();
 //		launcher.logData();
-//		plexiArms.logData();
-//		candyCanes.logData();
 //		intakeAssist.logData();
 		
 		double now = Timer.getFPGATimestamp();
@@ -252,6 +227,38 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 		lastTimestamp = now;
 		
 		
+
+		
+		
+		putNumberSD("DeltaTime", deltaTime);
+		
+		
+		if (DO_LOG_AHRS_VALUES) {
+			if (navx != null) {
+				logNavXData();
+			}
+		}
+		
+		if (DO_LOG_PDP_VALUES) {
+			if (pdp != null) {
+				putDataSD("PDP", pdp);
+			}
+		}
+		
+		if (DO_LOG_MOVEMENT_CONSTANTS) {
+			if (pdp != null) {
+				calcMovementConstants();
+			}
+		}
+		
+	}
+	
+	@Override
+	public String getFormattedName() {
+		return "Robot_";
+	}
+	
+	private void calcMovementConstants() {
 		double curVel = Math.toRadians(navx.getRate());
 		deltaRotation = curVel - lastRotationStamp;
 		lastRotationStamp = curVel;
@@ -262,32 +269,6 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 		
 		maxRotationVel = Math.max(maxRotationVel, Math.toRadians(navx.getRate()));
 		maxRotationAccel = Math.max(maxRotationAccel, deltaRotation / deltaTime );
-		
-		
-		putNumberSD("DeltaTime", deltaTime);
-		
-		
-		if (DO_LOG_AHRS_VALUES) {
-			if (navx != null) {
-				logNavXData();
-			} else {
-				putStringSD("NavXLogger", "Cannot log NavX values while null!");
-			}
-		}
-		
-		if (DO_LOG_PDP_VALUES) {
-			if (pdp != null) {
-				putDataSD("PDP", pdp);
-			} else {
-				putStringSD("PDPLogger", "Cannot log PDP values while null!");
-			}
-		}
-		
-	}
-
-	@Override
-	public String getFormattedName() {
-		return "Robot_";
 	}
 	
 	private void logNavXData() {

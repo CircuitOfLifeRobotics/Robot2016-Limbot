@@ -1,6 +1,5 @@
 package com.team3925.robot2016.commands;
 
-import com.team3925.robot2016.Constants;
 import com.team3925.robot2016.Robot;
 import com.team3925.robot2016.subsystems.IntakeAssist;
 import com.team3925.robot2016.subsystems.Launcher;
@@ -10,7 +9,7 @@ import com.team3925.robot2016.util.TimeoutAction;
 import edu.wpi.first.wpilibj.command.Command;
 
 enum Mode {
-	WAIT_FOR_AIM, SHOOT, DONE;
+	WAIT_FOR_AIM, SHOOT, HOLD_ANGLE;
 }
 
 public class ThrowBall extends Command implements SmartdashBoardLoggable {
@@ -18,23 +17,17 @@ public class ThrowBall extends Command implements SmartdashBoardLoggable {
 	private double intakeSpeed;
 	private double angle;
 	private double timeout;
-	private double wheelSpeed;
 	private final Launcher launcher = Robot.launcher;
 	private final IntakeAssist intakeAssist = Robot.intakeAssist;
 	
 	private final TimeoutAction timer = new TimeoutAction();
-	private final TimeoutAction buttonTimer = new TimeoutAction();
+	private final TimeoutAction shootTimer = new TimeoutAction();
+	private final TimeoutAction holdAngle = new TimeoutAction();
+	
 	private Mode mode;
 	
-	public ThrowBall() {
-		this(Constants.LAUNCHER_MAX_INTAKE_SPEED);
-	}
-	
-	/**
-	 * @param intakeSpeed in native units of encoder ticks/100ms
-	 */
-	public ThrowBall(double intakeSpeed) {
-		this(80d, intakeSpeed);
+	public ThrowBall(double angle) {
+		this(angle, 0);
 	}
 	
 	/**
@@ -42,23 +35,21 @@ public class ThrowBall extends Command implements SmartdashBoardLoggable {
 	 * @param intakeSpeed in native units of encoder ticks/100ms
 	 */
 	public ThrowBall(double angle, double intakeSpeed) {
-		this(angle, intakeSpeed, 5, 0);
+		this(angle, intakeSpeed, 5);
 	}
 	
 	/**
 	 * @param angle in degrees
-	 * @param intakeSpeed in native units of encoder ticks/100ms
-	 * @param timeOut timeout
+	 * @param intakeSpeed power to give to intake assist subsystem
+	 * @param timeOut timeout to get to launcher angle
 	 */
 	public ThrowBall(double angle, double intakeSpeed, double timeOut) {
-		this(angle, intakeSpeed, timeOut, 0);
-	}
-	
-	public ThrowBall(double angle, double intakeSpeed, double timeout, double wheelSpeed) {
+		super("ThrowBall");
+		
 		this.intakeSpeed = intakeSpeed;
 		this.angle = angle;
-		this.timeout = timeout;
-		this.wheelSpeed = wheelSpeed;
+		this.timeout = timeOut;
+		
 		requires(launcher);
 		requires(intakeAssist);
 	}
@@ -67,35 +58,41 @@ public class ThrowBall extends Command implements SmartdashBoardLoggable {
 	protected void initialize() {
 		mode = Mode.WAIT_FOR_AIM;
 		
-		buttonTimer.config(0.3);
 		timer.config(timeout);
 	}
 
 	@Override
 	protected void execute() {
+		intakeAssist.setWheelSpeeds(intakeSpeed);
+		
 		switch (mode) {
 		case WAIT_FOR_AIM:
 			launcher.setPuncher(false);
 			launcher.enableAim(true);
-			launcher.enableIntake(true);
 			launcher.setAimSetpoint(angle);
-			intakeAssist.setWheelSpeeds(wheelSpeed);
-		
-			if ((launcher.isAimOnSetpoint() || timer.isFinished()) && buttonTimer.isFinished()) {
+			
+			if (launcher.isAimOnSetpoint() || timer.isFinished()) {
 				mode = Mode.SHOOT;
-				launcher.setIntakeSpeed(intakeSpeed);
-				timer.config(0.4);
+				shootTimer.config(0.4); // wait to spin up fly wheels
 			}
 			break;
+			
 		case SHOOT:
-			if (timer.isFinished()) {
+			launcher.setIntakeSpeed(1d); // always fire at max flywheel speeds
+			
+			if (shootTimer.isFinished()) {
 				launcher.setPuncher(true);
-				timer.config(0.5);
-				mode = Mode.DONE;
+				holdAngle.config(0.4); // wait a moment after punching solenoid
+				mode = Mode.HOLD_ANGLE;
 			}
 			break;
-		case DONE:
-			end();
+			
+		case HOLD_ANGLE:
+			// launcher holds its aim setpoints already
+			
+			if (holdAngle.isFinished()) {
+				end();
+			}
 			break;
 		}
 		
@@ -122,7 +119,7 @@ public class ThrowBall extends Command implements SmartdashBoardLoggable {
 
 	@Override
 	public void logData() {
-		putNumberSD("IntakeSpeed", intakeSpeed);
+		putNumberSD("IntakeAssistSpeed", intakeSpeed);
 		putNumberSD("Angle", angle);
 		putBooleanSD("AimOnSetpoint", launcher.isAimOnSetpoint());
 		putNumberSD("AimOnSetpoint", launcher.isAimOnSetpoint() ? 1:0);
@@ -131,7 +128,7 @@ public class ThrowBall extends Command implements SmartdashBoardLoggable {
 
 	@Override
 	public String getFormattedName() {
-		return "ThrowBall_";
+		return getName() + "_";
 	}
 
 }
