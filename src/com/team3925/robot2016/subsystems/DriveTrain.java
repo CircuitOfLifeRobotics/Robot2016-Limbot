@@ -2,105 +2,86 @@ package com.team3925.robot2016.subsystems;
 
 import static com.team3925.robot2016.Constants.GLOBAL_MAX_DRIVE_TRAIN_PWR;
 
-import com.kauailabs.navx.frc.AHRS;
-import com.team3925.robot2016.Robot;
 import com.team3925.robot2016.RobotMap;
 import com.team3925.robot2016.commands.ManualDrive;
-import com.team3925.robot2016.util.CheesySpeedController;
+import com.team3925.robot2016.subsystems.components.DriveSide;
+import com.team3925.robot2016.util.DriveTrainPose;
 import com.team3925.robot2016.util.DriveTrainSignal;
 import com.team3925.robot2016.util.MiscUtil;
-import com.team3925.robot2016.util.DrivetrainPose;
 import com.team3925.robot2016.util.SmartdashBoardLoggable;
 
-import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
-import edu.wpi.first.wpilibj.Encoder;
-import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.command.Subsystem;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 
 public class DriveTrain extends Subsystem implements SmartdashBoardLoggable {
 
-	private final AHRS navx = Robot.navx;
-	private final CANTalon motorLeftA = RobotMap.driveTrainMotorLeftA;
-	private final CANTalon motorRightA = RobotMap.driveTrainMotorRightA;
-	private final CANTalon motorLeftB = RobotMap.driveTrainMotorLeftB;
-	private final CANTalon motorRightB = RobotMap.driveTrainMotorRightB;
-//	private final CANTalon motorLeftC = RobotMap.driveTrainMotorLeftC;
-//	private final CANTalon motorRightC = RobotMap.driveTrainMotorRightC;
-    private final Encoder encoderLeft = RobotMap.driveTrainEncoderLeft;
-    private final Encoder encoderRight = RobotMap.driveTrainEncoderRight;
+	private final DriveSide sideLeft, sideRight;
     private final DoubleSolenoid shifterSolenoid = RobotMap.driveTrainShifterSolenoid;
-    //DELETE ON COMP BOT
-    private final PIDController pidLeft = RobotMap.driveTrainPIDLeft;
-    private final PIDController pidRight = RobotMap.driveTrainPIDRight;
-    //END DELETE ON COMP BOT
     
-    private DrivetrainPose cached_pose = new DrivetrainPose(0, 0, 0, 0, 0, 0);
-    private double maxErrorLeft = 0;
-    private double maxErrorRight = 0;
+//    private GyroDrive gyroDrive;
     
+    private DriveTrainPose cached_pose = new DriveTrainPose(0, 0, 0, 0, 0, 0);
     
+//    public static interface DriveController {
+//        DriveTrainSignal update(DriveTrainPose pose);
+//
+//        public boolean isFinished();
+//    }
     
-    public void setMotorSpeeds(DriveTrainSignal input) {
-    	//DELETE ON COMP BOT
-    	motorLeftA.set(MiscUtil.limit(input.left * GLOBAL_MAX_DRIVE_TRAIN_PWR));
-    	motorRightA.set(MiscUtil.limit(input.right * GLOBAL_MAX_DRIVE_TRAIN_PWR));
-    	//END DELETE ON COMP BOT
-    	motorLeftB.set(MiscUtil.limit(input.left * GLOBAL_MAX_DRIVE_TRAIN_PWR));
-    	motorRightB.set(MiscUtil.limit(input.right * GLOBAL_MAX_DRIVE_TRAIN_PWR));
-//    	motorLeftC.set(MiscUtil.limit(input.left * GLOBAL_MAX_DRIVE_TRAIN_PWR));
-//    	motorRightC.set(MiscUtil.limit(input.right * GLOBAL_MAX_DRIVE_TRAIN_PWR));
+    public DriveTrain() {
+    	sideLeft = new DriveSide(RobotMap.driveTrainMotorLeftA, RobotMap.driveTrainMotorLeftB);
+    	sideRight = new DriveSide(RobotMap.driveTrainMotorRightA, RobotMap.driveTrainMotorRightB);
     }
     
-//    public void setSetpoint(DriveTrainSignal setpoints) {
-//    	pidLeft.setSetpoint(setpoints.left);
-//    	pidRight.setSetpoint(setpoints.right);
+    public void setMotorSpeeds(DriveTrainSignal input) {
+    	sideLeft.setSpeed(MiscUtil.limit(input.left) * GLOBAL_MAX_DRIVE_TRAIN_PWR);
+    	sideRight.setSpeed(MiscUtil.limit(input.right) * GLOBAL_MAX_DRIVE_TRAIN_PWR);
+    }
+    
+//    public void setGyroDrive(GyroDrive gyroDrive) {
+//    	if (this.gyroDrive != null) {
+//			this.gyroDrive.cancel();
+//			this.gyroDrive = null;
+//		}
+//    	
+//    	this.gyroDrive = gyroDrive;
+//    	this.gyroDrive.start();
 //    }
     
     public void setHighGear(boolean highGear) {
-//    	shifterSolenoid.set(highGear ? Value.kReverse : Value.kForward);
+    	shifterSolenoid.set(highGear ? Value.kReverse : Value.kForward);
     }
     
     public void resetEncoders() {
-    	encoderLeft.reset();
-    	encoderRight.reset();
+    	// TODO: implement encoders
+//    	encoderLeft.reset();
+//    	encoderRight.reset();
     }
     
     public boolean isHighGear() {
-//    	return shifterSolenoid.get() == Value.kReverse;
-    	return false;
+    	return shifterSolenoid.get() == Value.kReverse;
     }
     
-//    public void setPIDEnabled(boolean enabled) {
-//    	if (enabled) {
-//			pidLeft.reset();
-//			pidRight.reset();
-//			maxErrorLeft = maxErrorRight = 0;
-//		} else {
-//			pidLeft.disable();
-//			pidRight.disable();
-//		}
-//    }
+    public void startController(DriveTrain gyroDrive) {
+    }
     
-//    public boolean getPIDEnabled() {
-//    	return pidLeft.isEnabled() == pidRight.isEnabled() == true;
-//    }
-    
-//	public boolean onTarget() {
-//		return pidLeft.onTarget() && pidRight.onTarget();
-//	}
+    public void setBrakeMode(boolean enabled) {
+    	sideLeft.setBrakeMode(enabled);
+    	sideRight.setBrakeMode(enabled);
+    }
     
     /**
-     * @return The pose according to the current sensor state
+     * @return The pose according to the current sensor state <p>
+     * rate + heading are in degrees
      */
-    public DrivetrainPose getPhysicalPose() {
-    	cached_pose.reset(encoderLeft.getDistance(), encoderRight.getDistance(),
-    			encoderLeft.getRate(), encoderRight.getRate(),
-    			Math.toRadians(navx.getFusedHeading()),
-    			Math.toRadians(navx.getRate()));
+    public DriveTrainPose getPhysicalPose() {
+    	// TODO: cached_pose is not updated ever
+//    	cached_pose.reset(encoderLeft.getDistance(), encoderRight.getDistance(),
+//    			encoderLeft.getRate(), encoderRight.getRate(),
+//    			navx.getFusedHeading(),
+//    			navx.getRate());
     	return cached_pose;
     }
     
@@ -147,68 +128,23 @@ public class DriveTrain extends Subsystem implements SmartdashBoardLoggable {
 		setMotorSpeeds(new DriveTrainSignal(leftMotorSpeed, rightMotorSpeed));
 	}
     
+	@Override
 	public String getFormattedName() {
 		return "DriveTrain_";
 	}
 	
 	@Override
 	public void logData() {
-		putNumberSD("MotorLeft_Speed", motorLeftA.get());
-		putNumberSD("MotorRight_Speed", motorRightA.get());
+		// Temporary
+		putNumberSD("MotorLeft_Speed", sideLeft.getSpeed());
+		putNumberSD("MotorRight_Speed", sideRight.getSpeed());
 		
-		putNumberSD("MotorLeftA_V", motorLeftA.getOutputVoltage());
-		putNumberSD("MotorLeftB_V", motorLeftB.getOutputVoltage());
-//		putNumberSD("MotorLeftC_V", motorLeftC.getOutputVoltage());
-		putNumberSD("MotorRightA_V", motorRightA.getOutputVoltage());
-		putNumberSD("MotorRightB_V", motorRightB.getOutputVoltage());
-//		putNumberSD("MotorRightC_V", motorRightC.getOutputVoltage());
-		
-//		putNumberSD("MotorLeftA_C", motorLeftA.getOutputCurrent());
-//		putNumberSD("MotorLeftB_C", motorLeftB.getOutputCurrent());
-//		putNumberSD("MotorLeftC_C", motorLeftC.getOutputCurrent());
-//		putNumberSD("MotorRightA_C", motorRightA.getOutputCurrent());
-//		putNumberSD("MotorRightB_C", motorRightB.getOutputCurrent());
-//		putNumberSD("MotorRightC_C", motorRightC.getOutputCurrent());
-		
-		//Commented out due to not using PID with drive train yet
-//		putDataSD("PIDControllerLeft", pidLeft);
-//		putDataSD("PIDControllerRight", pidRight);
-		
-//		putBooleanSD("PIDEnabled", getPIDEnabled());
-//		putNumberSD("PIDLeftSetpoint", pidLeft.get());
-//		putNumberSD("PIDRightSetpoint", pidRight.get());
-//		putNumberSD("PIDLeftError", pidLeft.getError());
-//		putNumberSD("PIDRightError", pidRight.getError());
-//		putNumberSD("PIDLeftDeltaSetpoint", pidLeft.getDeltaSetpoint());
-//		putNumberSD("PIDRightDeltaSetpoint", pidRight.getDeltaSetpoint());
-//		putNumberSD("PIDLeftAverageError", pidLeft.getAvgError());
-//		putNumberSD("PIDRightAverageError", pidRight.getAvgError());
-//		maxErrorLeft = Math.max(maxErrorLeft, pidLeft.getError());
-//		maxErrorRight = Math.max(maxErrorRight, pidRight.getError());
-//		putNumberSD("PIDLeftMaxError", maxErrorLeft);
-//		putNumberSD("PIDRightMaxError", maxErrorRight);
-		
-		
-//		Commented out due to bugs with PDP and Null Pointers
-//		maxCurLeftAbs = Math.max( Math.abs(motorsLeft.getCurrent()), maxCurLeftAbs );
-//		maxCurRightAbs = Math.max( Math.abs(motorsRight.getCurrent()), maxCurRightAbs );
-//		
-//		putNumberSD("LeftMotors_SignedCurent", motorsLeft.getSignedCurrent());
-//		putNumberSD("RightMotors_SignedCurent", motorsRight.getSignedCurrent());
-//		putNumberSD("LeftMotors_MaxAbsCurrent", maxCurLeftAbs);
-//		putNumberSD("RightMotors_MaxAbxCurrent", maxCurRightAbs);
-		
-//		putBooleanSD("HighGear", isHighGear());
-		
-		MiscUtil.putPoseSD(getFormattedName() + "PhysicalState_", getPhysicalPose());
+		putDriveTrainPoseSD(getPhysicalPose());
 		
 	}
 	
     public void initDefaultCommand() {
-        // Set the default command for a subsystem here.
-        // setDefaultCommand(new MySpecialCommand());
     	setDefaultCommand(new ManualDrive());
     }
 
 }
-

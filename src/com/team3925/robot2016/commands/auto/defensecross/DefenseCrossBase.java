@@ -1,9 +1,10 @@
-package com.team3925.robot2016.commands.defensecommands;
+package com.team3925.robot2016.commands.auto.defensecross;
 
 import com.kauailabs.navx.frc.AHRS;
+import com.team3925.robot2016.Constants;
 import com.team3925.robot2016.Robot;
+import com.team3925.robot2016.commands.auto.GyroDrive;
 import com.team3925.robot2016.subsystems.DriveTrain;
-import com.team3925.robot2016.subsystems.PlexiArms;
 import com.team3925.robot2016.util.DriveTrainSignal;
 import com.team3925.robot2016.util.SmartdashBoardLoggable;
 import com.team3925.robot2016.util.TimeoutAction;
@@ -18,24 +19,28 @@ import edu.wpi.first.wpilibj.command.Command;
 public abstract class DefenseCrossBase extends Command implements SmartdashBoardLoggable {
 	
 	protected final DriveTrain driveTrain = Robot.driveTrain;
-	protected final PlexiArms arms = Robot.plexiArms;
 	protected final AHRS navx = Robot.navx;
 	protected State state = State.START;
 	protected double currentRoll, lastRoll, deltaRoll;
 	private final TimeoutAction timeout;
+	private final GyroDrive gyroDrive;
+	private final boolean runGyroDrive;
 	
 	enum State {
 		START, CROSSING, CROSSED;
 	}
 	
     public DefenseCrossBase() {
-        // Use requires() here to declare subsystem dependencies
-        // eg. requires(chassis);
-    	requires(Robot.driveTrain);
-    	requires(Robot.candyCanes);
-    	timeout = new TimeoutAction();
+    	this(true);
     }
-
+    
+    protected DefenseCrossBase(boolean runGyroDrive) {
+    	requires(Robot.driveTrain);
+		timeout = new TimeoutAction();
+		gyroDrive = new GyroDrive(0, true, Constants.AUTONOMOUS_CROSS_DEFENSE_DRIVE_TIME, 1);
+		this.runGyroDrive = runGyroDrive;
+    }
+    
     // Called just before this Command runs the first time
     protected void initialize() {
     	state = State.START;
@@ -43,6 +48,10 @@ public abstract class DefenseCrossBase extends Command implements SmartdashBoard
     	navx.resetDisplacement();
     	currentRoll = lastRoll = navx.getRoll();
     	deltaRoll = 0;
+    	
+    	if (runGyroDrive) {
+			gyroDrive.start();
+		}
     }
 
     // Called repeatedly when this Command is scheduled to run
@@ -85,6 +94,10 @@ public abstract class DefenseCrossBase extends Command implements SmartdashBoard
     	return state == State.CROSSED;
     }
     
+    public boolean gyroDriveFinished() {
+    	return gyroDrive.isRunning();
+    }
+    
     @Override
     public void logData() {
     	putStringSD("State", state.toString());
@@ -106,13 +119,11 @@ public abstract class DefenseCrossBase extends Command implements SmartdashBoard
     // Called once after isFinished returns true
     protected void end() {
     	driveTrain.setMotorSpeeds(DriveTrainSignal.NEUTRAL);
-    	arms.setArmUp(true);
     }
 
     // Called when another command which requires one or more of the same
     // subsystems is scheduled to run
     protected void interrupted() {
     	driveTrain.setMotorSpeeds(DriveTrainSignal.NEUTRAL);
-    	arms.setArmUp(true);
     }
 }

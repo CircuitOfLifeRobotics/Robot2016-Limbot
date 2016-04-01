@@ -2,35 +2,31 @@ package com.team3925.robot2016;
 
 
 import static com.team3925.robot2016.Constants.DO_LOG_AHRS_VALUES;
+import static com.team3925.robot2016.Constants.DO_LOG_MOVEMENT_CONSTANTS;
 import static com.team3925.robot2016.Constants.DO_LOG_PDP_VALUES;
 
 import com.kauailabs.navx.frc.AHRS;
-import com.team3925.robot2016.commands.Climb;
-import com.team3925.robot2016.commands.GyroTurn;
-import com.team3925.robot2016.commands.LaunchBallHigh;
-import com.team3925.robot2016.commands.ManualDrive;
-import com.team3925.robot2016.commands.ManualPlexiArms;
-import com.team3925.robot2016.commands.TrapzoidalMotionTest;
-import com.team3925.robot2016.commands.defensecommands.CrossDefault;
-import com.team3925.robot2016.subsystems.Climber;
+import com.team3925.robot2016.commands.auto.GyroDrive;
+import com.team3925.robot2016.commands.auto.GyroTurn;
 import com.team3925.robot2016.subsystems.DriveTrain;
+import com.team3925.robot2016.subsystems.IntakeAssist;
 import com.team3925.robot2016.subsystems.Launcher;
-import com.team3925.robot2016.subsystems.PlexiArms;
 import com.team3925.robot2016.util.DriveTrainSignal;
 import com.team3925.robot2016.util.SmartdashBoardLoggable;
-import com.team3925.robot2016.util.XboxHelper;
+import com.team3925.robot2016.util.TimeoutAction;
+import com.team3925.robot2016.util.hidhelpers.XboxHelper;
 
+import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
-import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.CommandGroup;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.vision.USBCamera;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -44,27 +40,23 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 	//Subsystems
 	public static DriveTrain driveTrain;
 	public static Launcher launcher;
-	public static Climber candyCanes;
-	public static PlexiArms plexiArms;
+	public static IntakeAssist intakeAssist;
 	
 	//Other
-	public static Preferences prefs;
 	public static AHRS navx = null;
 	public static PowerDistributionPanel pdp;
 	public static OI oi;
 	public static CheesyDriveHelper cdh;
+	public static USBCamera usbCamera;
+	public static CameraServer cameraServer;
+	private static TimeoutAction brakeBeforeMatchEnd = new TimeoutAction();
 	
 	//Commands
-	CommandGroup autoRoutine;
-	Command trapMotionTest;
-	Command manualDrive;
-	Command manualCandyCanes;
-	Command manualArms;
-	Command visionTest;
-	Command launchBallHigh;
-	Command gyroTurn;
-	Command gyroDrive;
-	
+	private CommandGroup autoRoutine;
+//	private ManualDrive manualDrive;
+//	private ManualIntakeAssist manualIntakeAssist;
+	private GyroTurn testing_GyroTurn;
+	private GyroDrive testing_GyroDrive;
 	
 	//Variables
 	public static double deltaTime = 0;
@@ -75,7 +67,6 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 	private static double maxVel = 0;
 	private static double maxRotationVel = 0;
 	private static double maxRotationAccel = 0;
-	private double[] defaultVal  = new double[0];
 	
 	public Robot() {
 		try {
@@ -91,15 +82,13 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 	 * used for any initialization code.
 	 */
 	public void robotInit() {
-		Constants.initLauncherIntakeTable();
 		RobotMap.init();
 		
 		//Creating Subsystems and Related Processes
 		driveTrain = new DriveTrain();
 		launcher = new Launcher();
-		candyCanes = new Climber();
-		plexiArms = new PlexiArms();
-		Preferences.getInstance();
+		intakeAssist = new IntakeAssist();
+//		prefs = Preferences.getInstance();
 		pdp = RobotMap.pdp;
 		
 		// OI must be constructed after subsystems. If the OI creates Commands
@@ -110,15 +99,19 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 		XboxHelper.init();
 		cdh = new CheesyDriveHelper(driveTrain);
 		
-		//Creating Commands
-		manualArms = new ManualPlexiArms();
-		manualDrive = new ManualDrive();
-		trapMotionTest = new TrapzoidalMotionTest();
-		manualCandyCanes = new Climb();
-		launchBallHigh = new LaunchBallHigh();
-		gyroTurn = new GyroTurn(45);
-		gyroDrive = new CrossDefault();
+		try {
+			usbCamera = new USBCamera("cam1");
+			usbCamera.setBrightness(0);
+			usbCamera.updateSettings();
+			cameraServer = CameraServer.getInstance();
+			cameraServer.startAutomaticCapture(usbCamera);
+		} catch (Exception e) {
+			DriverStation.reportError("Could not find USBCamera!", true);
+		}
 		
+		//Creating Commands
+		testing_GyroTurn = new GyroTurn(45);
+		testing_GyroDrive = new GyroDrive();
 		
 		reset();
 	}
@@ -127,6 +120,7 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 	 * Resets lastTimestamp, the IMU, max unit testers, encoders, and launcherPID
 	 */
 	private void reset() {
+		driveTrain.setBrakeMode(false);
 		driveTrain.resetEncoders();
 		lastTimestamp = Timer.getFPGATimestamp();
 		lastRotationStamp = navx.getRate();
@@ -163,14 +157,9 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 		driveTrain.setHighGear(false);
 		reset();
 		
-//		launchBallTest.start();
-//		launchBallHigh.start();
-//		gyroTurn.start();
-//		gyroDrive.start();
-		
 		launcher.init();
 		
-//		autoRoutine.start();
+		autoRoutine.start();
 	}
 	
 	/**
@@ -178,9 +167,9 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 	 */
 	public void autonomousPeriodic() {
 		Scheduler.getInstance().run();
-		logData();
 		
-		launcher.update();
+		updateSubsystems();
+		logData();
 	}
 
 	public void teleopInit() {
@@ -189,16 +178,13 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 		// teleop starts running. If you want the autonomous to
 		// continue until interrupted by another command, remove
 		// this line or comment it out.
-		
-		manualDrive.start();
-		
 		reset();
-//		driveTrain.setPIDEnabled(false);
-		candyCanes.startTimeOut();
-//		manualCandyCanes.start();
-//		visionTest.start();
 		
-		manualArms.start();
+		brakeBeforeMatchEnd.config(135 - Constants.DRIVETRAIN_BREAK_MODE_ENABLE);
+		
+		// should be handled by default commands
+//		manualDrive.start();
+//		manualIntakeAssist.start();
 		
 		launcher.init();
 	}
@@ -208,17 +194,12 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 	 */
 	public void teleopPeriodic() {
 		Scheduler.getInstance().run();
-//		if (XboxHelper.getShooterButton(XboxHelper.STICK_RIGHT)) {
-//			Object selected = oi.throwBallTesting.getSelected();
-//			if (selected instanceof Command) {
-//				Command c = (Command) selected;
-//				c.start();
-//			} else {
-//				DriverStation.reportError("Tried to start a throwballtest but it could not be cast to a command!", true);
-//			}
-//		}
 		
-		launcher.update();
+		updateSubsystems();
+		
+		if (brakeBeforeMatchEnd.isFinished()) {
+			driveTrain.setBrakeMode(true);
+		}
 		
 		logData();
 	}
@@ -230,18 +211,54 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 		LiveWindow.run();
 	}
 	
+	private void updateSubsystems() {
+		launcher.update();
+		intakeAssist.update();
+	}
+	
 	@Override
 	public void logData() {
 //		driveTrain.logData();
-		launcher.logData();
-		plexiArms.logData();
-//		candyCanes.logData();
+//		launcher.logData();
+//		intakeAssist.logData();
 		
 		double now = Timer.getFPGATimestamp();
 		deltaTime = now - lastTimestamp;
 		lastTimestamp = now;
 		
 		
+
+		
+		
+		putNumberSD("DeltaTime", deltaTime);
+		
+		
+		if (DO_LOG_AHRS_VALUES) {
+			if (navx != null) {
+				logNavXData();
+			}
+		}
+		
+		if (DO_LOG_PDP_VALUES) {
+			if (pdp != null) {
+				putDataSD("PDP", pdp);
+			}
+		}
+		
+		if (DO_LOG_MOVEMENT_CONSTANTS) {
+			if (pdp != null) {
+				calcMovementConstants();
+			}
+		}
+		
+	}
+	
+	@Override
+	public String getFormattedName() {
+		return "Robot_";
+	}
+	
+	private void calcMovementConstants() {
 		double curVel = Math.toRadians(navx.getRate());
 		deltaRotation = curVel - lastRotationStamp;
 		lastRotationStamp = curVel;
@@ -252,45 +269,6 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 		
 		maxRotationVel = Math.max(maxRotationVel, Math.toRadians(navx.getRate()));
 		maxRotationAccel = Math.max(maxRotationAccel, deltaRotation / deltaTime );
-		
-		
-//		putNumberSD("MaxAcceleration", maxAccel);
-//		putNumberSD("MaxVelocity", maxVel);
-//		
-//		putNumberSD("MaxRotationVelocity", maxRotationVel);
-//		putNumberSD("MaxRotationAccel", maxRotationAccel);
-//		
-//		putNumberSD("CurrentTime", Timer.getFPGATimestamp());
-		putNumberSD("DeltaTime", deltaTime);
-//		
-//		putDataSD("Autonomous Chooser", autoChooser);
-//		putNamedDataSD(Scheduler.getInstance());
-		
-//    	SmartDashboard.putData("Autonomous Routing Chooser", oi.autoChooser);
-//    	SmartDashboard.putData("Throw Ball Testing", oi.throwBallTesting);
-//    	SmartDashboard.putData("Autonomous Position Chooser", oi.positionChooser);
-    	
-		if (DO_LOG_AHRS_VALUES) {
-			if (navx != null) {
-				logNavXData();
-			} else {
-				putStringSD("NavXLogger", "Cannot log NavX values while null!");
-			}
-		}
-		
-		if (DO_LOG_PDP_VALUES) {
-			if (pdp != null) {
-				logPDPData();
-			} else {
-				putStringSD("PDPLogger", "Cannot log PDP values while null!");
-			}
-		}
-		
-	}
-
-	@Override
-	public String getFormattedName() {
-		return "Robot_";
 	}
 	
 	private void logNavXData() {
@@ -373,16 +351,6 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 		/* Connectivity Debugging Support                                           */
 		SmartDashboard.putNumber(   "IMU_Byte_Count",       navx.getByteCount());
 		SmartDashboard.putNumber(   "IMU_Update_Count",     navx.getUpdateCount());
-	}
-	
-	private void logPDPData() {
-		SmartDashboard.putData("PDP", pdp);
-		/*
-		SmartDashboard.putNumber("PDP_Temperature", pdp.getTemperature());
-//		SmartDashboard.putNumber("PDP_Total_Current", pdp.getTotalCurrent());
-		SmartDashboard.putNumber("PDP_Total_Energy", pdp.getTotalEnergy()); // in milliJoules
-		SmartDashboard.putNumber("PDP_Total_Power", pdp.getTotalPower());
-//		SmartDashboard.putNumber("PDP_Voltage", pdp.getVoltage()); */
 	}
 	
 }

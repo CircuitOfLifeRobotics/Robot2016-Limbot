@@ -1,4 +1,4 @@
-package com.team3925.robot2016.commands;
+package com.team3925.robot2016.commands.auto;
 
 import com.kauailabs.navx.frc.AHRS;
 import com.team3925.robot2016.Constants;
@@ -84,12 +84,14 @@ public class GyroTurn extends PIDCommand implements SmartdashBoardLoggable {
 	protected void end() {
 		driveTrain.setMotorSpeeds(DriveTrainSignal.NEUTRAL);
 		isRunning = false;
+		driveTrain.setBrakeMode(true);
 	}
 	
 	@Override
 	protected void interrupted() {
 		driveTrain.setMotorSpeeds(DriveTrainSignal.NEUTRAL);
 		isRunning = false;
+		driveTrain.setBrakeMode(true);
 	}
 	
 	@Override

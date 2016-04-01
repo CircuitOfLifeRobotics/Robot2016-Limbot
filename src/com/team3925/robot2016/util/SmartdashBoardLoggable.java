@@ -1,13 +1,13 @@
 package com.team3925.robot2016.util;
 
-import edu.wpi.first.wpilibj.NamedSendable;
 import edu.wpi.first.wpilibj.Sendable;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
- * 	An interface for classes that put values on SmartDashboard
- * 
- * @author Bryan
+ * 	A mixin for classes that put values on SmartDashboard.
+ * 	Used to reinforce the source of information.
+ *  <p>
+ *  Subsytems that use this mixin should put their logData inside Robot's logData() 
  */
 public interface SmartdashBoardLoggable {
 	
@@ -31,8 +31,13 @@ public interface SmartdashBoardLoggable {
 		SmartDashboard.putData(getFormattedName() + key, data);
 	}
 	
-	default void putNamedDataSD(NamedSendable data) {
-		SmartDashboard.putData(data);
+	default void putDriveTrainPoseSD(DriveTrainPose pose) {
+		SmartDashboard.putNumber(getFormattedName() + "LeftDistance", pose.getLeftDistance());
+		SmartDashboard.putNumber(getFormattedName() + "RightDistance", pose.getRightDistance());
+		SmartDashboard.putNumber(getFormattedName() + "LeftVelocity", pose.getLeftVelocity());
+		SmartDashboard.putNumber(getFormattedName() + "RightVelocity", pose.getRightVelocity());
+		SmartDashboard.putNumber(getFormattedName() + "Heading", pose.getHeading());
+		SmartDashboard.putNumber(getFormattedName() + "HeadingVelocity", pose.getHeadingVelocity());
 	}
 	
 }

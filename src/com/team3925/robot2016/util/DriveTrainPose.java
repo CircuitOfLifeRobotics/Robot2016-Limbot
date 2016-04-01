@@ -1,7 +1,7 @@
 package com.team3925.robot2016.util;
 
-public class DrivetrainPose {
-    public DrivetrainPose(double leftDistance, double rightDistance, double leftVelocity,
+public class DriveTrainPose {
+    public DriveTrainPose(double leftDistance, double rightDistance, double leftVelocity,
                 double rightVelocity, double heading, double headingVelocity) {
         this.m_left_distance = leftDistance;
         this.m_right_distance = rightDistance;
@@ -53,14 +53,14 @@ public class DrivetrainPose {
     }
 
     public class RelativePoseGenerator {
-        private DrivetrainPose m_base_pose;
+        private DriveTrainPose m_base_pose;
 
         public RelativePoseGenerator() {
-            m_base_pose = DrivetrainPose.this;
+            m_base_pose = DriveTrainPose.this;
         }
 
-        public DrivetrainPose get(DrivetrainPose pose) {
-            return new DrivetrainPose(
+        public DriveTrainPose get(DriveTrainPose pose) {
+            return new DriveTrainPose(
                     pose.getLeftDistance() - m_base_pose.getLeftDistance(),
                     pose.getRightDistance() - m_base_pose.getRightDistance(),
                     m_base_pose.getLeftVelocity() - pose.getLeftVelocity(),
@@ -73,11 +73,11 @@ public class DrivetrainPose {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof DrivetrainPose))
+        if (!(obj instanceof DriveTrainPose))
             return false;
         if (obj == this)
             return true;
-        DrivetrainPose other_pose = (DrivetrainPose) obj;
+        DriveTrainPose other_pose = (DriveTrainPose) obj;
         return other_pose.getLeftDistance() == getLeftDistance()
                 && other_pose.getRightDistance() == getRightDistance()
                 && other_pose.getLeftVelocity() == getLeftVelocity()

@@ -1,7 +1,5 @@
 package com.team3925.robot2016.util;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-
 public class MiscUtil {
 	
 	/**
@@ -25,15 +23,6 @@ public class MiscUtil {
     public static double limit(double value, double limit) {
         return (Math.abs(value) < limit) ? value : limit * (value < 0 ? -1 : 1);
     }
-	
-	public static void putPoseSD(String prefix, DrivetrainPose pose) {
-		SmartDashboard.putNumber(prefix + "LeftDistance", pose.getLeftDistance());
-		SmartDashboard.putNumber(prefix + "RightDistance", pose.getRightDistance());
-		SmartDashboard.putNumber(prefix + "LeftVelocity", pose.getLeftVelocity());
-		SmartDashboard.putNumber(prefix + "RightVelocity", pose.getRightVelocity());
-		SmartDashboard.putNumber(prefix + "Heading", pose.getHeading());
-		SmartDashboard.putNumber(prefix + "HeadingVelocity", pose.getHeadingVelocity());
-	}
 	
 	/**
 	 * Get the angle setpoint from joystick value
@@ -66,7 +55,9 @@ public class MiscUtil {
 	 * @return degrees
 	 */
 	public static double aimEncoderTicksToDegrees(double encoderTicks) {
-		return (encoderTicks + 36)/11.377777778;
+//		return (encoderTicks + 36)/11.377777778;
+//		return (encoderTicks/8) + 5;
+		return encoderTicks * (60d/765d);
 	}
 	
 }

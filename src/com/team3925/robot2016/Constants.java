@@ -1,7 +1,5 @@
 package com.team3925.robot2016;
 
-import com.team3925.robot2016.trajectory.LauncherTrajectoryTable;
-
 /**
  *	A class holding all the constants of the project
  */
@@ -13,11 +11,9 @@ public class Constants {
 	
 	public static final boolean DO_LOG_AHRS_VALUES = false;//Robot.prefs.getBoolean("Do Log AHRS Vals", false);
 	public static final boolean DO_LOG_PDP_VALUES = false;//Robot.prefs.getBoolean("Do Log PDP Vals", false);
-	public static final boolean DO_LOG_GRIP_VALUES = false;//Robot.prefs.getBoolean("Do Log GRIP Vals", false);
+	public static final boolean DO_LOG_MOVEMENT_CONSTANTS = false;
 	
-	public static final double XBOX_AXIS_TOLERANCE = 0.05;
-	
-	public static final boolean DO_MANUAL_CLIMBER = true;
+	public static final double AXIS_TOLERANCE = 0.05;
 	
 	
 	
@@ -32,6 +28,7 @@ public class Constants {
 	
     // CAMERA CONSTANTS
 	
+	public static final double PIXY_FOV = 76; //degrees
 	public static final String AXIS_CAMERA_IP = "192.168.0.90";
     public static final double CAMERA_AIMED_X = 159;
     public static final double CAMERA_FOV_DEG = 45.134;
@@ -50,17 +47,23 @@ public class Constants {
     // CLIMBER CONSTANTS
     public static final double CLIMBER_MAX_VALUE = 20_000; // TODO Get true limit
 //    public static final double CLIMBER_ACTIVE_TIME = 125d; // the 20 seconds at end of match
-    public static final double CLIMBER_ACTIVE_TIME = 135d; // the 20 seconds at end of match
+    public static final double CLIMBER_ACTIVE_TIME = 30; // calculated from end of match
+	public static final boolean DO_MANUAL_CLIMBER = true;
+    
+    
+    
+    // INTAKE ASSIST CONSTANTS
+    public static final double INTAKE_ASSIST_UP_POSITION = 140;
+    public static final double INTAKE_ASSIST_P = 0.1;
+    public static final double INTAKE_ASSIST_I = 0;
+    public static final double INTAKE_ASSIST_D = 0;
     
     
     
 	// LAUNCHER CONSTANTS
-	public static final double LAUNCHER_TESTING_ANGLE = 45d; // degrees
+    public static final double LAUNCHER_THROWBALL_FAR_ANGLE = 62; //degrees
+    public static final double LAUNCHER_THROWBALL_NEAR_ANGLE = 53; //degrees
     
-	public static final LauncherTrajectoryTable TABLE = new LauncherTrajectoryTable(11, LAUNCHER_TESTING_ANGLE);
-	public static final void initLauncherIntakeTable() {
-		// TODO Add implementation and get debug values
-	}
     public static final double LAUNCHER_GLOBAL_MAX_POWER = 1;//Robot.prefs.getDouble("Max Shooter Pwr", 1);
     public static final double LAUNCHER_AIM_MOTOR_SPEED_MULTIPLIED = 1;
 	public static final double LAUNCHER_MAX_INTAKE_SPEED = 25_000; //TODO get actual max speed
@@ -69,14 +72,14 @@ public class Constants {
 	public static final double LAUNCHER_MAX_HEIGHT = 700; // in encoder ticks
 	public static final double LAUNCHER_MIN_HEIGHT = 50; // in encoder ticks
 	
-	public static final double LAUNCHER_AIM_TOLERANCE = 3;
+	public static final double LAUNCHER_AIM_TOLERANCE = 1.5;
 	public static final double LAUNCHER_AIM_SLOWDOWN = 40;
 	public static final double LAUNCHER_AIM_INCREMENT = 18;
 	public static final double LAUNCHER_INTAKE_INCREMENT = 1000;
 	//TODO: tune shooter pid
-	public static final double LAUNCHER_AIM_KP = /*400d/10_000d;*/   240d/10000d;
-	public static final double LAUNCHER_AIM_KI = /*16d/10_000d; */   8d/10000d;
-	public static final double LAUNCHER_AIM_KD = /*950d/10_000d;*/   250d/10000d;
+	public static final double LAUNCHER_AIM_KP = /*400d/10_000d;*/   /*240d/10000d;*/    420d/10000d;
+	public static final double LAUNCHER_AIM_KI = /*16d/10_000d; */   /*8d/10000d;  */    16d/10000d;
+	public static final double LAUNCHER_AIM_KD = /*950d/10_000d;*/   /*250d/10000d;*/    950d/10000d;
 	public static final double LAUNCHER_AIM_KF = 0.0;
 	public static final double LAUNCHER_AIM_RAMP_RATE = 5;//ramp rate is maximum acceleration in voltage/second
 	public static final int LAUNCHER_AIM_IZONE = 0; // izone eliminates
@@ -95,12 +98,14 @@ public class Constants {
 	public static double kDriveSensitivity = 0.75;
 	public static final double GLOBAL_MAX_DRIVE_TRAIN_PWR = 0.8;//Robot.prefs.getDouble("Max DriveTrain Pwr", 1);
 	public static final double DRIVE_TRAIN_VOLTAGE_RAMP_RATE = 1;
+	public static final double DRIVETRAIN_BREAK_MODE_ENABLE = 0.25; // calculated from end of the match
 	
 //	Straight Gyro Drive PID Constants
 	//TODO: tune gyro straight drive PID
 	public static final double GYRO_DRIVE_KP = 0.1;
 	public static final double GYRO_DRIVE_KI = 0;
 	public static final double GYRO_DRIVE_KD = 0;
+	public static final double GYRO_DRIVE_ON_TARGET_ERROR_INCHES = 5;
 	
 	
 //	Drivetrain PID Constants
@@ -143,115 +148,11 @@ public class Constants {
 	
     public static final double GYROTURN_POS_TOLERANCE = 1;
     public static final double GYROTURN_RATE_TOLERANCE = 0.1;
+
     
-    //Default Motion Profiles
-    //{Position (rotations), Velocity (RPM), Duration (ms)}
-    public static final double[][] MOTION_PROFILE_HOLD = {
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    		{0,	0,	10},
-    };
-
-
-
-
-
-
+    
+    // AUTONOMOUS CONSTANTS
+	public static final double AUTONOMOUS_SHOOT_ANGLE = LAUNCHER_THROWBALL_FAR_ANGLE;
+	public static final double AUTONOMOUS_CROSS_DEFENSE_DRIVE_TIME = 2.5d;
+    
 }

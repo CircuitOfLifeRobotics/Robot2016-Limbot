@@ -2,6 +2,13 @@ package com.team3925.robot2016.util;
 
 import edu.wpi.first.wpilibj.Timer;
 
+/**
+ * A class that creates timeout functionality
+ * <p>
+ * <b>NOTE:</b> {@link Timer} performs the same function
+ * 
+ * @author Team254
+ */
 public class TimeoutAction {
 	private double m_timeout;
     private double m_time_start;
