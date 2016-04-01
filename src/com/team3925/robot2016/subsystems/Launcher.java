@@ -133,6 +133,10 @@ public final class Launcher extends Subsystem implements SmartdashBoardLoggable 
 	public void enableIntake(boolean isEnable) {
 		intakeEnabled = isEnable;
 	}
+	
+	public void setIntakeSpeed(double speed) {
+		intakeSpeed = speed;
+	}
 
 	
 	public void setPuncher(boolean isHigh) {
