@@ -1,8 +1,8 @@
-package com.team3925.robot2016.commands;
+package com.team3925.robot2016.commands.auto;
 
 import com.team3925.robot2016.Constants;
 import com.team3925.robot2016.Robot;
-import com.team3925.robot2016.commands.defensecommands.DefenseCrossBase;
+import com.team3925.robot2016.commands.IntakeAssistArmControl;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
 import edu.wpi.first.wpilibj.command.WaitCommand;

@@ -1,6 +1,7 @@
 package com.team3925.robot2016.commands;
 
 import com.team3925.robot2016.Robot;
+import com.team3925.robot2016.commands.auto.GyroTurn;
 import com.team3925.robot2016.subsystems.Launcher;
 import com.team3925.robot2016.util.SmartdashBoardLoggable;
 import com.team3925.robot2016.util.TimeoutAction;

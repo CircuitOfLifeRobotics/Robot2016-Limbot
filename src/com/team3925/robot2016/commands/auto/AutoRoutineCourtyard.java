@@ -1,6 +1,7 @@
-package com.team3925.robot2016.commands;
+package com.team3925.robot2016.commands.auto;
 
 import com.team3925.robot2016.Constants;
+import com.team3925.robot2016.commands.ThrowBall;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
 import edu.wpi.first.wpilibj.command.WaitCommand;

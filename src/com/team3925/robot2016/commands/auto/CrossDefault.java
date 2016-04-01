@@ -1,4 +1,4 @@
-package com.team3925.robot2016.commands.defensecommands;
+package com.team3925.robot2016.commands.auto;
 
 import com.team3925.robot2016.Robot;
 import com.team3925.robot2016.util.SmartdashBoardLoggable;

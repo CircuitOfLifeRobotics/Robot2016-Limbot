@@ -5,9 +5,9 @@ import static com.team3925.robot2016.Constants.DO_LOG_AHRS_VALUES;
 import static com.team3925.robot2016.Constants.DO_LOG_PDP_VALUES;
 
 import com.kauailabs.navx.frc.AHRS;
-import com.team3925.robot2016.commands.GyroDrive;
-import com.team3925.robot2016.commands.GyroTurn;
 import com.team3925.robot2016.commands.ManualDrive;
+import com.team3925.robot2016.commands.auto.GyroDrive;
+import com.team3925.robot2016.commands.auto.GyroTurn;
 import com.team3925.robot2016.subsystems.DriveTrain;
 import com.team3925.robot2016.subsystems.IntakeAssist;
 import com.team3925.robot2016.subsystems.Launcher;

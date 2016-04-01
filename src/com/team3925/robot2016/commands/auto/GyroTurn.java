@@ -1,4 +1,4 @@
-package com.team3925.robot2016.commands;
+package com.team3925.robot2016.commands.auto;
 
 import com.kauailabs.navx.frc.AHRS;
 import com.team3925.robot2016.Constants;

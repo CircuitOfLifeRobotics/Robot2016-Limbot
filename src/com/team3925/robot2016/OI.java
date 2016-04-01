@@ -4,10 +4,10 @@ import static com.team3925.robot2016.util.hidhelpers.XboxHelper.START;
 
 import java.text.DecimalFormat;
 
-import com.team3925.robot2016.commands.AutoRoutineCenter;
 import com.team3925.robot2016.commands.CollectBall;
 import com.team3925.robot2016.commands.ThrowBall;
-import com.team3925.robot2016.commands.defensecommands.CrossDefault;
+import com.team3925.robot2016.commands.auto.AutoRoutineCenter;
+import com.team3925.robot2016.commands.auto.CrossDefault;
 import com.team3925.robot2016.util.hidhelpers.XboxHelper;
 
 import edu.wpi.first.wpilibj.Joystick;
