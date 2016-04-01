@@ -2,45 +2,34 @@ package com.team3925.robot2016.subsystems;
 
 import static com.team3925.robot2016.Constants.GLOBAL_MAX_DRIVE_TRAIN_PWR;
 
-import com.kauailabs.navx.frc.AHRS;
-import com.team3925.robot2016.Robot;
 import com.team3925.robot2016.RobotMap;
 import com.team3925.robot2016.commands.ManualDrive;
-import com.team3925.robot2016.util.CheesySpeedController;
+import com.team3925.robot2016.subsystems.components.DriveSide;
 import com.team3925.robot2016.util.DriveTrainSignal;
-import com.team3925.robot2016.util.MiscUtil;
 import com.team3925.robot2016.util.DrivetrainPose;
+import com.team3925.robot2016.util.MiscUtil;
 import com.team3925.robot2016.util.SmartdashBoardLoggable;
 
-import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
-import edu.wpi.first.wpilibj.Encoder;
-import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.command.Subsystem;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 
 public class DriveTrain extends Subsystem implements SmartdashBoardLoggable {
 
-	private final AHRS navx = Robot.navx;
-	private final CANTalon motorLeftA = RobotMap.driveTrainMotorLeftA;
-	private final CANTalon motorRightA = RobotMap.driveTrainMotorRightA;
-	private final CANTalon motorLeftB = RobotMap.driveTrainMotorLeftB;
-	private final CANTalon motorRightB = RobotMap.driveTrainMotorRightB;
+	private final DriveSide sideLeft, sideRight;
     private final DoubleSolenoid shifterSolenoid = RobotMap.driveTrainShifterSolenoid;
     
     private DrivetrainPose cached_pose = new DrivetrainPose(0, 0, 0, 0, 0, 0);
-    private double maxErrorLeft = 0;
-    private double maxErrorRight = 0;
     
-    
+    public DriveTrain() {
+    	sideLeft = new DriveSide(RobotMap.driveTrainMotorLeftA, RobotMap.driveTrainMotorLeftB);
+    	sideRight = new DriveSide(RobotMap.driveTrainMotorRightA, RobotMap.driveTrainMotorRightB);
+    }
     
     public void setMotorSpeeds(DriveTrainSignal input) {
-    	motorLeftA.set(MiscUtil.limit(input.left * GLOBAL_MAX_DRIVE_TRAIN_PWR));
-    	motorRightA.set(MiscUtil.limit(input.right * GLOBAL_MAX_DRIVE_TRAIN_PWR));
-    	motorLeftB.set(MiscUtil.limit(input.left * GLOBAL_MAX_DRIVE_TRAIN_PWR));
-    	motorRightB.set(MiscUtil.limit(input.right * GLOBAL_MAX_DRIVE_TRAIN_PWR));
+    	sideLeft.setSpeed(MiscUtil.limit(input.left * GLOBAL_MAX_DRIVE_TRAIN_PWR));
+    	sideRight.setSpeed(MiscUtil.limit(input.right * GLOBAL_MAX_DRIVE_TRAIN_PWR));
     }
     
     public void setHighGear(boolean highGear) {
@@ -48,21 +37,19 @@ public class DriveTrain extends Subsystem implements SmartdashBoardLoggable {
     }
     
     public void resetEncoders() {
+    	// TODO: implement encoders
 //    	encoderLeft.reset();
 //    	encoderRight.reset();
     }
     
     public boolean isHighGear() {
     	return shifterSolenoid.get() == Value.kReverse;
-//    	return false;
     }
     
     
     public void setBrakeMode(boolean enabled) {
-    	motorLeftA.enableBrakeMode(enabled);
-    	motorLeftB.enableBrakeMode(enabled);
-    	motorRightA.enableBrakeMode(enabled);
-    	motorRightB.enableBrakeMode(enabled);
+    	sideLeft.setBrakeMode(enabled);
+    	sideRight.setBrakeMode(enabled);
     }
     
     /**
@@ -70,6 +57,7 @@ public class DriveTrain extends Subsystem implements SmartdashBoardLoggable {
      * rate + heading are in degrees
      */
     public DrivetrainPose getPhysicalPose() {
+    	// TODO: cached_pose is not updated ever
 //    	cached_pose.reset(encoderLeft.getDistance(), encoderRight.getDistance(),
 //    			encoderLeft.getRate(), encoderRight.getRate(),
 //    			navx.getFusedHeading(),
@@ -120,24 +108,23 @@ public class DriveTrain extends Subsystem implements SmartdashBoardLoggable {
 		setMotorSpeeds(new DriveTrainSignal(leftMotorSpeed, rightMotorSpeed));
 	}
     
+	@Override
 	public String getFormattedName() {
 		return "DriveTrain_";
 	}
 	
 	@Override
 	public void logData() {
-		putNumberSD("MotorLeft_Speed", motorLeftA.get());
-		putNumberSD("MotorRight_Speed", motorRightA.get());
+		putNumberSD("MotorLeft_Speed", sideLeft.getSpeed());
+		putNumberSD("MotorRight_Speed", sideRight.getSpeed());
 		
-		putNumberSD("EncoderLeft", motorRightA.getEncPosition());
+		putNumberSD("EncoderLeft", sideLeft.getEncoderPosition());
 		
 		MiscUtil.putPoseSD(getFormattedName() + "PhysicalState_", getPhysicalPose());
 		
 	}
 	
     public void initDefaultCommand() {
-        // Set the default command for a subsystem here.
-        // setDefaultCommand(new MySpecialCommand());
     	setDefaultCommand(new ManualDrive());
     }
 
