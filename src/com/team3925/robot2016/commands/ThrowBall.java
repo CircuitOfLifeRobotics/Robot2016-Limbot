@@ -25,8 +25,6 @@ public class ThrowBall extends Command implements SmartdashBoardLoggable {
 	private final TimeoutAction timer = new TimeoutAction();
 	private final TimeoutAction buttonTimer = new TimeoutAction();
 	private Mode mode;
-	private double lowestValSinceSetpoint = (30000*100/4096) * Constants.LAUNCHER_WHEEL_CIRCUM;
-	
 	
 	public ThrowBall() {
 		this(Constants.LAUNCHER_MAX_INTAKE_SPEED);
@@ -65,14 +63,6 @@ public class ThrowBall extends Command implements SmartdashBoardLoggable {
 		requires(intakeAssist);
 	}
 	
-//	public void setAngle(double angle) {
-//		this.angle = angle;
-//	}
-//	
-//	public void setIntakeSpeed(double speed) {
-//		intakeSpeed = speed;
-//	}
-	
 	@Override
 	protected void initialize() {
 		mode = Mode.WAIT_FOR_AIM;
@@ -94,14 +84,12 @@ public class ThrowBall extends Command implements SmartdashBoardLoggable {
 			if (((launcher.isAimOnSetpoint()/* && launcher.isIntakeOnSetpoint()*/) || 
 					timer.isFinished() || Robot.oi.getThrowBall_LaunchBallOverride()) && buttonTimer.isFinished()) {
 				mode = Mode.SHOOT;
-				launcher.setIntakeSetpoint(intakeSpeed);
+				launcher.setIntakeSpeed(intakeSpeed);
 //				launcher.setPuncher(true);
 				timer.config(0.4);
 			}
 			break;
 		case SHOOT:
-			lowestValSinceSetpoint = Math.min(lowestValSinceSetpoint, Math.abs((launcher.getIntakeSpeedLeft()*100/4096) * Constants.LAUNCHER_WHEEL_CIRCUM));
-			lowestValSinceSetpoint = Math.min(lowestValSinceSetpoint, Math.abs((launcher.getIntakeSpeedRight()*100/4096) * Constants.LAUNCHER_WHEEL_CIRCUM));
 			if (timer.isFinished()) {
 				launcher.setPuncher(true);
 				timer.config(0.5);
@@ -123,7 +111,7 @@ public class ThrowBall extends Command implements SmartdashBoardLoggable {
 	@Override
 	protected void end() {
 		launcher.setAimSetpoint(0);
-		launcher.setIntakeSetpoint(0);
+		launcher.setIntakeSpeed(0);
 		intakeAssist.setWheelSpeeds(0d);
 		launcher.setPuncher(false);
 	}
@@ -131,7 +119,7 @@ public class ThrowBall extends Command implements SmartdashBoardLoggable {
 	@Override
 	protected void interrupted() {
 		launcher.setAimSetpoint(0);
-		launcher.setIntakeSetpoint(0);
+		launcher.setIntakeSpeed(0);
 		intakeAssist.setWheelSpeeds(0d);
 		launcher.setPuncher(false);
 	}
@@ -141,11 +129,8 @@ public class ThrowBall extends Command implements SmartdashBoardLoggable {
 		putNumberSD("IntakeSpeed", intakeSpeed);
 		putNumberSD("Angle", angle);
 		putBooleanSD("AimOnSetpoint", launcher.isAimOnSetpoint());
-		putBooleanSD("IntakeOnSetpoint", launcher.isIntakeOnSetpoint());
 		putNumberSD("AimOnSetpoint", launcher.isAimOnSetpoint() ? 1:0);
-		putNumberSD("IntakeOnSetpoint", launcher.isIntakeOnSetpoint() ? 1:0);
 		putStringSD("Mode", mode.toString());
-		putNumberSD("LowestValSinceMax", lowestValSinceSetpoint);
 	}
 
 	@Override

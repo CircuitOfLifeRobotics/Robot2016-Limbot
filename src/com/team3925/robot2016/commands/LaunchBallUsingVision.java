@@ -11,7 +11,7 @@ enum State {
 	BEGIN_WAIT, HORIZ_AIMING, VERT_AIMING, SHOOTING, DONE;
 }
 
-public class LaunchBall extends Command implements SmartdashBoardLoggable {
+public class LaunchBallUsingVision extends Command implements SmartdashBoardLoggable {
 	
 	GyroTurn turnCommand;
 	Launcher launcher = Robot.launcher;
@@ -20,14 +20,14 @@ public class LaunchBall extends Command implements SmartdashBoardLoggable {
 	
 	double horizDeltaSetpoint, horizDelta, vertSetpoint;
 	
-	public LaunchBall(double horizAimDeltaSetpoint, double vertAimSetpoint) {
+	public LaunchBallUsingVision(double horizAimDeltaSetpoint, double vertAimSetpoint) {
 		horizDeltaSetpoint = horizAimDeltaSetpoint;
 		vertSetpoint = vertAimSetpoint;
 	}
 	
 	public void reset() {
 		launcher.setAimSetpoint(0);
-		launcher.setIntakeSetpoint(0);
+		launcher.setIntakeSpeed(0);
 		timeout.config(0.2);
 	}
 	
@@ -53,13 +53,13 @@ public class LaunchBall extends Command implements SmartdashBoardLoggable {
 				launcher.enableAim(true);
 				launcher.enableIntake(true);
 				launcher.setAimSetpoint(vertSetpoint);
-				launcher.setIntakeSetpoint(20000);
+				launcher.setIntakeSpeed(1);
 				timeout.config(5);
 				state = State.VERT_AIMING;
 			}
 			break;
 		case VERT_AIMING:
-			if ((launcher.isAimOnSetpoint() && launcher.isIntakeOnSetpoint()) || timeout.isFinished()) {
+			if (launcher.isAimOnSetpoint() || timeout.isFinished()) {
 				launcher.setPuncher(true);
 				timeout.config(0.1);
 				state = State.SHOOTING;
@@ -68,7 +68,7 @@ public class LaunchBall extends Command implements SmartdashBoardLoggable {
 		case SHOOTING:
 			if (timeout.isFinished()) {
 				launcher.setPuncher(false);
-				launcher.setIntakeSetpoint(0);
+				launcher.setIntakeSpeed(0);
 				launcher.setAimSetpoint(0);
 				state = State.DONE;
 			}
@@ -92,7 +92,7 @@ public class LaunchBall extends Command implements SmartdashBoardLoggable {
 	@Override
 	protected void interrupted() {
 		launcher.setAimSetpoint(0);
-		launcher.setIntakeSetpoint(0);
+		launcher.setIntakeSpeed(0);
 	}
 
 	@Override
