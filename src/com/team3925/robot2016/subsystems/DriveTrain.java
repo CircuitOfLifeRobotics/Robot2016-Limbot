@@ -28,8 +28,8 @@ public class DriveTrain extends Subsystem implements SmartdashBoardLoggable {
     }
     
     public void setMotorSpeeds(DriveTrainSignal input) {
-    	sideLeft.setSpeed(MiscUtil.limit(input.left * GLOBAL_MAX_DRIVE_TRAIN_PWR));
-    	sideRight.setSpeed(MiscUtil.limit(input.right * GLOBAL_MAX_DRIVE_TRAIN_PWR));
+    	sideLeft.setSpeed(MiscUtil.limit(input.left) * GLOBAL_MAX_DRIVE_TRAIN_PWR);
+    	sideRight.setSpeed(MiscUtil.limit(input.right) * GLOBAL_MAX_DRIVE_TRAIN_PWR);
     }
     
     public void setHighGear(boolean highGear) {
