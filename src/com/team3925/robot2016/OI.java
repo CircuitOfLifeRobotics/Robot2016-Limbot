@@ -2,12 +2,13 @@ package com.team3925.robot2016;
 
 import static com.team3925.robot2016.util.hidhelpers.XboxHelper.START;
 
-import java.text.DecimalFormat;
-
 import com.team3925.robot2016.commands.CollectBall;
 import com.team3925.robot2016.commands.ThrowBall;
 import com.team3925.robot2016.commands.auto.AutoRoutineCenter;
+import com.team3925.robot2016.commands.auto.GyroTurn;
 import com.team3925.robot2016.commands.auto.defensecross.CrossDefault;
+import com.team3925.robot2016.util.hidhelpers.FlightStickHelper;
+import com.team3925.robot2016.util.hidhelpers.ThrustmasterHelper;
 import com.team3925.robot2016.util.hidhelpers.XboxHelper;
 
 import edu.wpi.first.wpilibj.Joystick;
@@ -58,19 +59,17 @@ public final class OI {
 	public Button startCollectBall;
 	public Button startThrowBallFar;
 	public Button startThrowBallNear;
-	public Button startLow;
-	public Button startVision;
+	public Button startThrowBallLow;
 	public Button cancelCommands;
 
 	public Command collectBall;
 	public Command throwBallFar;
 	public Command throwBallNear;
 	public Command throwBallLow;
-	//	public Command gyroTurn;
+	public GyroTurn gyroTurn;
 
 	public SendableChooser autoChooser;
 	public SendableChooser throwBallTesting;
-	private static DecimalFormat df = new DecimalFormat("#.##");
 
 	public SendableChooser positionChooser;
 
@@ -84,7 +83,6 @@ public final class OI {
 		throwBallFar = new ThrowBall(Constants.LAUNCHER_THROWBALL_FAR_ANGLE, 1, 5);
 		throwBallNear = new ThrowBall(Constants.LAUNCHER_THROWBALL_NEAR_ANGLE, 1, 5);
 		throwBallLow = new ThrowBall(0, 1, 1);
-
 
 		startCollectBall = new JoystickButton(xboxShooter, XboxHelper.A);
 		startCollectBall.whenPressed(collectBall);
@@ -103,20 +101,13 @@ public final class OI {
 		startThrowBallNear.cancelWhenPressed(throwBallFar);
 		startThrowBallNear.cancelWhenPressed(collectBall);
 		startThrowBallNear.cancelWhenPressed(throwBallLow);
-
-		startLow = new JoystickButton(xboxShooter, XboxHelper.B);
-		startLow.whenPressed(throwBallLow);
-		startLow.cancelWhenPressed(throwBallFar);
-		startLow.cancelWhenPressed(collectBall);
-		startLow.cancelWhenPressed(throwBallNear);
-
-		//		startVision = new JoystickButton(xboxDriver, XboxHelper.BACK);
-		//		startVision.whenPressed(visionShoot);
-		//		startVision.cancelWhenPressed(throwBallFar);
-		//		startVision.cancelWhenPressed(collectBall);
-		//		startVision.cancelWhenPressed(throwBallNear);
-		//		startVision.cancelWhenPressed(throwBallLow);
-
+		
+		startThrowBallLow = new JoystickButton(xboxShooter, XboxHelper.B);
+		startThrowBallLow.whenPressed(throwBallLow);
+		startThrowBallLow.cancelWhenPressed(throwBallFar);
+		startThrowBallLow.cancelWhenPressed(collectBall);
+		startThrowBallLow.cancelWhenPressed(throwBallNear);
+		
 		cancelCommands = new JoystickButton(xboxShooter, XboxHelper.START);
 		cancelCommands.cancelWhenPressed(collectBall);
 		cancelCommands.cancelWhenPressed(throwBallFar);
@@ -199,16 +190,6 @@ public final class OI {
 	}
 	
 	
-	
-	
-//	private double calcThrowBallSpeed(double percentage) {
-//		return Constants.LAUNCHER_MAX_INTAKE_SPEED * (double) percentage / 100d;
-//	}
-//
-//	private void addThrowBallValue(double percentage) {
-//		throwBallTesting.addObject("ThrowBall (" + df.format(calcThrowBallSpeed(percentage)) + ", " + percentage + "%)",
-//				new ThrowBall(calcThrowBallSpeed(percentage)));
-//	}
 
 	// ROBOT BEHAVIOR
 
@@ -216,10 +197,15 @@ public final class OI {
 		//		return XboxHelper.getDriverAxis(AXIS_LEFT_Y);
 		return xboxDriver.getRawAxis(1);
 	}
+	
+	public boolean getVisionShoot_GyroTurnEnable() {
+		return XboxHelper.getDriverAxis(XboxHelper.AXIS_TRIGGER_LEFT) > 0.2 ||
+				XboxHelper.getDriverAxis(XboxHelper.AXIS_TRIGGER_RIGHT) > 0.2; // slightly larger deadzone
+	}
 
 	public double getManualDrive_RotateValue() {
 		//		return -XboxHelper.getDriverAxis(AXIS_RIGHT_X);
-		return -wheel.getRawAxis(0); // TODO Get steering wheel helper class
+		return -ThrustmasterHelper.getAxis(ThrustmasterHelper.AXIS_WHEEL);
 	}
 
 	public boolean getManualDrive_HighGearToggle() {
@@ -227,8 +213,8 @@ public final class OI {
 	}
 
 	public boolean getManualDrive_QuickTurn() {
-		//		return XboxHelper.getDriverButton(XboxHelper.TRIGGER_RT);
-		return wheel.getRawButton(6) || wheel.getRawButton(5); // TODO Get steering wheel helper class
+		return ThrustmasterHelper.getButton(ThrustmasterHelper.PADDLE_LEFT) ||
+				ThrustmasterHelper.getButton(ThrustmasterHelper.PADDLE_RIGHT);
 	}
 
 	public boolean getStartCandyCanes() {
@@ -260,7 +246,8 @@ public final class OI {
 	}
 	
 	public boolean getManualArms_GetArmValue() {
-		return xboxDriver.getRawButton(1); // TODO Get flight stick helper class
+//		return xboxDriver.getRawButton(1);
+		return FlightStickHelper.getButton(FlightStickHelper.TRIGGER);
 	}
 
 	public boolean getCommandCancel() {

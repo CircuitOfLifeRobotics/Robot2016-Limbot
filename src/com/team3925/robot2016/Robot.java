@@ -12,11 +12,11 @@ import com.team3925.robot2016.subsystems.DriveTrain;
 import com.team3925.robot2016.subsystems.IntakeAssist;
 import com.team3925.robot2016.subsystems.Launcher;
 import com.team3925.robot2016.util.DriveTrainSignal;
+import com.team3925.robot2016.util.PixyCmu5;
 import com.team3925.robot2016.util.SmartdashBoardLoggable;
 import com.team3925.robot2016.util.TimeoutAction;
 import com.team3925.robot2016.util.hidhelpers.XboxHelper;
 
-import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
@@ -26,7 +26,6 @@ import edu.wpi.first.wpilibj.command.CommandGroup;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj.vision.USBCamera;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -47,15 +46,14 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 	public static PowerDistributionPanel pdp;
 	public static OI oi;
 	public static CheesyDriveHelper cdh;
-	public static USBCamera usbCamera;
-	public static CameraServer cameraServer;
+	public static PixyCmu5 pixy;
 	private static TimeoutAction brakeBeforeMatchEnd = new TimeoutAction();
 	
 	//Commands
 	private CommandGroup autoRoutine;
 //	private ManualDrive manualDrive;
 //	private ManualIntakeAssist manualIntakeAssist;
-	private GyroTurn testing_GyroTurn;
+	private GyroTurn visionGyroTurn = null;
 	private GyroDrive testing_GyroDrive;
 	
 	//Variables
@@ -74,6 +72,11 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 			navx = new AHRS(SPI.Port.kMXP);
 		} catch (RuntimeException e) {
 			DriverStation.reportError("There was an error instantiating the NavxMXP!\n" + e.getMessage(), true);
+		}
+		try {
+    	    pixy = new PixyCmu5(168, .25);
+		} catch (Exception e) {
+			DriverStation.reportError("There was an error instantiating the Pixy/Frames!" + e.getMessage(), true);
 		}
 	}
 
@@ -99,18 +102,8 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 		XboxHelper.init();
 		cdh = new CheesyDriveHelper(driveTrain);
 		
-		try {
-			usbCamera = new USBCamera("cam1");
-			usbCamera.setBrightness(0);
-			usbCamera.updateSettings();
-			cameraServer = CameraServer.getInstance();
-			cameraServer.startAutomaticCapture(usbCamera);
-		} catch (Exception e) {
-			DriverStation.reportError("Could not find USBCamera!", true);
-		}
-		
 		//Creating Commands
-		testing_GyroTurn = new GyroTurn(45);
+		visionGyroTurn = new GyroTurn(0);
 		testing_GyroDrive = new GyroDrive();
 		
 		reset();
@@ -196,6 +189,21 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 		Scheduler.getInstance().run();
 		
 		updateSubsystems();
+		
+		
+		// Driver Vision Control
+		
+		if (oi.getVisionShoot_GyroTurnEnable()) {
+			if (!visionGyroTurn.isRunning()) {
+				visionGyroTurn.setSetpointRelative(launcher.getTurnAngle());
+				visionGyroTurn.start();
+			}
+		} else {
+			if (visionGyroTurn.isRunning()) {
+				visionGyroTurn.cancel();
+			}
+		}
+		
 		
 		if (brakeBeforeMatchEnd.isFinished()) {
 			driveTrain.setBrakeMode(true);

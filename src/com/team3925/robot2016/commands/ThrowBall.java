@@ -73,7 +73,7 @@ public class ThrowBall extends Command implements SmartdashBoardLoggable {
 			
 			if (launcher.isAimOnSetpoint() || timer.isFinished()) {
 				mode = Mode.SHOOT;
-				shootTimer.config(0.4); // wait to spin up fly wheels
+				shootTimer.config(0.7); // wait to spin up fly wheels
 			}
 			break;
 			
@@ -82,7 +82,7 @@ public class ThrowBall extends Command implements SmartdashBoardLoggable {
 			
 			if (shootTimer.isFinished()) {
 				launcher.setPuncher(true);
-				holdAngle.config(0.4); // wait a moment after punching solenoid
+				holdAngle.config(0.2); // wait a moment after punching solenoid
 				mode = Mode.HOLD_ANGLE;
 			}
 			break;

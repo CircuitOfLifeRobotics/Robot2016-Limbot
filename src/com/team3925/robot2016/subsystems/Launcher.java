@@ -5,14 +5,18 @@ import static com.team3925.robot2016.Constants.LAUNCHER_AIM_KI;
 import static com.team3925.robot2016.Constants.LAUNCHER_AIM_KP;
 
 import com.team3925.robot2016.Constants;
+import com.team3925.robot2016.Robot;
 import com.team3925.robot2016.RobotMap;
-import com.team3925.robot2016.util.LimitPIDController;
 import com.team3925.robot2016.util.MiscUtil;
+import com.team3925.robot2016.util.PixyCmu5;
+import com.team3925.robot2016.util.PixyCmu5.PixyFrame;
 import com.team3925.robot2016.util.SmartdashBoardLoggable;
+import com.team3925.robot2016.util.SynchronousPID;
 
 import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -29,7 +33,10 @@ public final class Launcher extends Subsystem implements SmartdashBoardLoggable 
     private final CANTalon motorRight = RobotMap.launcherMotorRight;
     private final CANTalon motorAim = RobotMap.launcherMotorAim;
     private final DoubleSolenoid puncherSolenoid = RobotMap.launcherPuncherSolenoid;
-    private LimitPIDController aimPidLoop = new LimitPIDController();
+    private SynchronousPID aimPidLoop = new SynchronousPID();
+    private final PixyCmu5 pixy = Robot.pixy;
+    private PixyFrame latestFrame = null;
+    private double turnAngle = 0d;
     
     private boolean aimEnabled = false,
     		aimOnTarget = false;
@@ -44,7 +51,7 @@ public final class Launcher extends Subsystem implements SmartdashBoardLoggable 
 	public void init() {
 		aimPidLoop.setPID(LAUNCHER_AIM_KP, LAUNCHER_AIM_KI, LAUNCHER_AIM_KD);
 		// TODO: If the limits are this high, can this be replaced with a normal PID controller?
-		aimPidLoop.setPIDLimits(10000, 10000, 10000, 10000, -10000, -10000, -10000, -10000);
+//		aimPidLoop.setPIDLimits(10000, 10000, 10000, 10000, -10000, -10000, -10000, -10000);
 		
 		setAimSetpoint(0);
 		
@@ -62,6 +69,8 @@ public final class Launcher extends Subsystem implements SmartdashBoardLoggable 
 
 	public void update() {
 	
+		// AIM MOTOR
+		
 			// TODO: refactor so this isn't needed
 			if (aimEnabled) {
 				aimPosition = getAimMotorPosition();
@@ -112,6 +121,20 @@ public final class Launcher extends Subsystem implements SmartdashBoardLoggable 
 			motorLeft.set(-intakeSpeed);
 			motorRight.set(intakeSpeed);
 			
+			
+			// CAMERA
+			
+			if (pixy == null) { return; } // do not do vision if no camera is connected
+			
+			try {
+				latestFrame = pixy.getCurrentframes().get(0);
+			} catch (Exception e) {
+				DriverStation.reportWarning("Could not retrieve latest camera frame!", false);
+			}
+			
+			if (pixy.isObjectDetected()) {
+				turnAngle = PixyCmu5.degreesXFromCenter(latestFrame);
+			}
 		}
 
 	/**
@@ -158,6 +181,10 @@ public final class Launcher extends Subsystem implements SmartdashBoardLoggable 
 		return aimOnTarget;
 	}
 	
+	public double getTurnAngle() {
+		return turnAngle;
+	}
+
 	public double getAimMotorPosition() {
 		return MiscUtil.aimEncoderTicksToDegrees(-motorAim.getEncPosition());
 	}
@@ -189,6 +216,17 @@ public final class Launcher extends Subsystem implements SmartdashBoardLoggable 
 		putNumberSD("MotorAim_getOutputCurrent", motorAim.getOutputCurrent());
 		putNumberSD("MotorAim_getPosition", motorAim.getPosition());
 		putNumberSD("MotorAim_getSetpoint", motorAim.getSetpoint());
+		
+		// CAMERA
+		
+		if (pixy != null) {
+			putBooleanSD("Vision_Detected_Target", pixy.isObjectDetected());
+			
+			if (latestFrame != null) {
+				putBooleanSD("Vision_CanShoot", pixy.isInXCenter(latestFrame));
+			}
+		}
+		
 	}
 }
 
