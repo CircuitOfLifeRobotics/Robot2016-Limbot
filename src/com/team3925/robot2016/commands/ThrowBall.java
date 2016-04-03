@@ -80,14 +80,14 @@ public class ThrowBall extends Command implements SmartdashBoardLoggable {
 		case SHOOT:
 			launcher.setIntakeSpeed(1d); // always fire at max flywheel speeds
 			
-			if (shootTimer.isFinished()) {
-				launcher.setPuncher(true);
+			if (shootTimer.isFinished() && Robot.oi.getThrowBall_LaunchBallOverride()) {
 				holdAngle.config(0.2); // wait a moment after punching solenoid
 				mode = Mode.HOLD_ANGLE;
 			}
 			break;
 			
 		case HOLD_ANGLE:
+			launcher.setPuncher(true);
 			// launcher holds its aim setpoints already
 			
 			if (holdAngle.isFinished()) {

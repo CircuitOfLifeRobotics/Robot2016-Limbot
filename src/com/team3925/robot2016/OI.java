@@ -194,17 +194,16 @@ public final class OI {
 	// ROBOT BEHAVIOR
 
 	public double getManualDrive_ForwardValue() {
-		//		return XboxHelper.getDriverAxis(AXIS_LEFT_Y);
-		return xboxDriver.getRawAxis(1);
+//		return xboxDriver.getRawAxis(1);
+		return FlightStickHelper.getAxis(FlightStickHelper.AXIS_Y);
 	}
 	
 	public boolean getVisionShoot_GyroTurnEnable() {
 		return XboxHelper.getDriverAxis(XboxHelper.AXIS_TRIGGER_LEFT) > 0.2 ||
-				XboxHelper.getDriverAxis(XboxHelper.AXIS_TRIGGER_RIGHT) > 0.2; // slightly larger deadzone
+				XboxHelper.getDriverAxis(XboxHelper.AXIS_TRIGGER_RIGHT) > 0.2; // slightly larger deadzone for safety
 	}
 
 	public double getManualDrive_RotateValue() {
-		//		return -XboxHelper.getDriverAxis(AXIS_RIGHT_X);
 		return -ThrustmasterHelper.getAxis(ThrustmasterHelper.AXIS_WHEEL);
 	}
 
@@ -225,8 +224,11 @@ public final class OI {
 		return XboxHelper.getShooterButton(START);
 	}
 
+	/**
+	 * Prevents <code>ThrowBall</code> from launching ball until released
+	 */
 	public boolean getThrowBall_LaunchBallOverride() {
-		return XboxHelper.getDriverButton(XboxHelper.STICK_RIGHT);
+		return !XboxHelper.getShooterButton(XboxHelper.TRIGGER_LT);
 	}
 
 	public double getManualArms_ClimberValue() {
