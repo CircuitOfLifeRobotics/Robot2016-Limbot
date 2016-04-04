@@ -7,6 +7,7 @@ import com.team3925.robot2016.commands.ManualDrive;
 import com.team3925.robot2016.subsystems.components.DriveSide;
 import com.team3925.robot2016.util.DriveTrainPose;
 import com.team3925.robot2016.util.DriveTrainSignal;
+import com.team3925.robot2016.util.Loopable;
 import com.team3925.robot2016.util.MiscUtil;
 import com.team3925.robot2016.util.SmartdashBoardLoggable;
 
@@ -15,20 +16,19 @@ import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.command.Subsystem;
 
 
-public class DriveTrain extends Subsystem implements SmartdashBoardLoggable {
+public class DriveTrain extends Subsystem implements SmartdashBoardLoggable, Loopable {
+	public static interface DriveController extends SmartdashBoardLoggable /*SDL extention may be removed*/ {
+		DriveTrainSignal update(DriveTrainPose pose);
+		
+		public boolean isFinished();
+	}
 
+	
 	private final DriveSide sideLeft, sideRight;
     private final DoubleSolenoid shifterSolenoid = RobotMap.driveTrainShifterSolenoid;
     
-//    private GyroDrive gyroDrive;
-    
     private DriveTrainPose cached_pose = new DriveTrainPose(0, 0, 0, 0, 0, 0);
-    
-//    public static interface DriveController {
-//        DriveTrainSignal update(DriveTrainPose pose);
-//
-//        public boolean isFinished();
-//    }
+    private DriveController controller = null;
     
     public DriveTrain() {
     	sideLeft = new DriveSide(RobotMap.driveTrainMotorLeftA, RobotMap.driveTrainMotorLeftB);
@@ -39,16 +39,6 @@ public class DriveTrain extends Subsystem implements SmartdashBoardLoggable {
     	sideLeft.setSpeed(MiscUtil.limit(input.left) * GLOBAL_MAX_DRIVE_TRAIN_PWR);
     	sideRight.setSpeed(MiscUtil.limit(input.right) * GLOBAL_MAX_DRIVE_TRAIN_PWR);
     }
-    
-//    public void setGyroDrive(GyroDrive gyroDrive) {
-//    	if (this.gyroDrive != null) {
-//			this.gyroDrive.cancel();
-//			this.gyroDrive = null;
-//		}
-//    	
-//    	this.gyroDrive = gyroDrive;
-//    	this.gyroDrive.start();
-//    }
     
     public void setHighGear(boolean highGear) {
     	shifterSolenoid.set(highGear ? Value.kReverse : Value.kForward);
@@ -71,6 +61,13 @@ public class DriveTrain extends Subsystem implements SmartdashBoardLoggable {
     	sideLeft.setBrakeMode(enabled);
     	sideRight.setBrakeMode(enabled);
     }
+    
+	@Override
+	public void update() {
+		if (controller == null) { return; }
+		controller.update(getPhysicalPose());
+		controller.logData();
+	}
     
     /**
      * @return The pose according to the current sensor state <p>
@@ -141,6 +138,7 @@ public class DriveTrain extends Subsystem implements SmartdashBoardLoggable {
 		
 		putDriveTrainPoseSD(getPhysicalPose());
 		
+		putStringSD("Controller", (controller == null) ? "None" : MiscUtil.formattedNameToNormalName(controller.getFormattedName()));
 	}
 	
     public void initDefaultCommand() {

@@ -60,4 +60,16 @@ public class MiscUtil {
 		return encoderTicks * (60d/765d);
 	}
 	
+	/**
+	 * Convert {@link SmartdashBoardLoggable} <code>getFormattedName()<code> to a normal name without underscore at end
+	 * <p>
+	 * TODO Refactor {@link SmartdashBoardLoggable} to not need this helper method
+	 * 
+	 * @param formattedName String returned by <code>SmartDashboardLoggable.getFormattedName()</code>
+	 * @return String without the '_' at end
+	 */
+	public static String formattedNameToNormalName(String formattedName) {
+		return formattedName.substring(0, formattedName.length()-1);
+	}
+	
 }

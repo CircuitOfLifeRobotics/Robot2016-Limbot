@@ -7,6 +7,7 @@ import static com.team3925.robot2016.Constants.LAUNCHER_AIM_KP;
 import com.team3925.robot2016.Constants;
 import com.team3925.robot2016.Robot;
 import com.team3925.robot2016.RobotMap;
+import com.team3925.robot2016.util.Loopable;
 import com.team3925.robot2016.util.MiscUtil;
 import com.team3925.robot2016.util.PixyCmu5;
 import com.team3925.robot2016.util.PixyCmu5.PixyFrame;
@@ -27,7 +28,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  * 
  * @author Adam C
  */
-public final class Launcher extends Subsystem implements SmartdashBoardLoggable {
+public final class Launcher extends Subsystem implements SmartdashBoardLoggable, Loopable {
 	
     private final CANTalon motorLeft = RobotMap.launcherMotorLeft;
     private final CANTalon motorRight = RobotMap.launcherMotorRight;
@@ -66,7 +67,8 @@ public final class Launcher extends Subsystem implements SmartdashBoardLoggable 
 		// a default command should not be run
 		// only shoot when requested
 	}
-
+	
+	@Override
 	public void update() {
 	
 		// AIM MOTOR
