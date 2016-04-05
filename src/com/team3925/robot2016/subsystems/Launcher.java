@@ -126,17 +126,23 @@ public final class Launcher extends Subsystem implements SmartdashBoardLoggable,
 			
 			// CAMERA
 			
-			if (pixy == null) { return; } // do not do vision if no camera is connected
-			
-			try {
-				latestFrame = pixy.getCurrentframes().get(0);
-			} catch (Exception e) {
-				DriverStation.reportWarning("Could not retrieve latest camera frame!", false);
+			if (pixy != null) {
+				try {
+					latestFrame = pixy.getCurrentframes().get(0);
+				} catch (Exception e) {
+					DriverStation.reportWarning("Could not retrieve latest camera frame!", false);
+				}
+				
+				if (pixy.isObjectDetected()) {
+					turnAngle = PixyCmu5.degreesXFromCenter(latestFrame);
+				} else {
+					turnAngle = Double.NaN;
+				}
+				
+			} else {
+				turnAngle = Double.NaN;
 			}
 			
-			if (pixy.isObjectDetected()) {
-				turnAngle = PixyCmu5.degreesXFromCenter(latestFrame);
-			}
 		}
 
 	/**

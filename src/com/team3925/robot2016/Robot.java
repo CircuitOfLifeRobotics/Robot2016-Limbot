@@ -195,16 +195,20 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 		
 		if (oi.getVisionShoot_GyroTurnEnable()) {
 			if (!visionGyroTurn.isRunning()) {
-				visionGyroTurn.setSetpointRelative(launcher.getTurnAngle());
-				visionGyroTurn.start();
+				if (launcher.getTurnAngle() != Double.NaN) {
+					visionGyroTurn.setSetpointRelative(launcher.getTurnAngle());
+					visionGyroTurn.start();
+				} else {
+					DriverStation.reportWarning("Camera cannot detect object! GyroDrive not starting!", false);
+				}
 			}
 		} else {
 			if (visionGyroTurn.isRunning()) {
 				visionGyroTurn.cancel();
 			}
 		}
-		
-		
+
+
 		if (brakeBeforeMatchEnd.isFinished()) {
 			driveTrain.setBrakeMode(true);
 		}
