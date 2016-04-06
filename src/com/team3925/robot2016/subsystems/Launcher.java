@@ -37,7 +37,7 @@ public final class Launcher extends Subsystem implements SmartdashBoardLoggable,
     private SynchronousPID aimPidLoop = new SynchronousPID();
     private final PixyCmu5 pixy = Robot.pixy;
     private PixyFrame latestFrame = null;
-    private double turnAngle = 0d;
+    private double turnAngle = Double.NaN;
     
     private boolean aimEnabled = false,
     		aimOnTarget = false;
@@ -51,6 +51,8 @@ public final class Launcher extends Subsystem implements SmartdashBoardLoggable,
     
 	public void init() {
 		aimPidLoop.setPID(LAUNCHER_AIM_KP, LAUNCHER_AIM_KI, LAUNCHER_AIM_KD);
+		resetPID();
+		
 		// TODO: If the limits are this high, can this be replaced with a normal PID controller?
 //		aimPidLoop.setPIDLimits(10000, 10000, 10000, 10000, -10000, -10000, -10000, -10000);
 		
@@ -168,7 +170,11 @@ public final class Launcher extends Subsystem implements SmartdashBoardLoggable,
 	public void setIntakeSpeed(double speed) {
 		intakeSpeed = speed;
 	}
-
+	
+	
+	public void resetPID() {
+		aimPidLoop.reset();
+	}
 	
 	public void setPuncher(boolean isHigh) {
 		//reverse isHigh for practice bot
@@ -232,6 +238,7 @@ public final class Launcher extends Subsystem implements SmartdashBoardLoggable,
 			
 			if (latestFrame != null) {
 				putBooleanSD("Vision_CanShoot", pixy.isInXCenter(latestFrame));
+				putNumberSD("AngleToTarget", turnAngle);
 			}
 		}
 		

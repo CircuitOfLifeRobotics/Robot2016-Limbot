@@ -123,7 +123,7 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 		maxVel = 0;
 		maxRotationVel = 0;
 		maxRotationAccel = 0; 
-//		launcherPID.reset();
+//		launcher.resetPID();
 	}
 	
 	/**
@@ -195,11 +195,11 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 		
 		if (oi.getVisionShoot_GyroTurnEnable()) {
 			if (!visionGyroTurn.isRunning()) {
-				if (launcher.getTurnAngle() != Double.NaN) {
+				if (Double.isNaN(launcher.getTurnAngle())) {
 					visionGyroTurn.setSetpointRelative(launcher.getTurnAngle());
 					visionGyroTurn.start();
 				} else {
-					DriverStation.reportWarning("Camera cannot detect object! GyroDrive not starting!", false);
+					DriverStation.reportWarning("Camera cannot detect object! Thou shall not runneth or beginneth a GyroDrive!", false);
 				}
 			}
 		} else {
