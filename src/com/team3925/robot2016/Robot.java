@@ -6,15 +6,15 @@ import static com.team3925.robot2016.Constants.DO_LOG_MOVEMENT_CONSTANTS;
 import static com.team3925.robot2016.Constants.DO_LOG_PDP_VALUES;
 
 import com.kauailabs.navx.frc.AHRS;
-import com.team3925.robot2016.commands.auto.GyroDrive;
 import com.team3925.robot2016.commands.auto.GyroTurn;
 import com.team3925.robot2016.subsystems.DriveTrain;
 import com.team3925.robot2016.subsystems.IntakeAssist;
 import com.team3925.robot2016.subsystems.Launcher;
 import com.team3925.robot2016.util.DriveTrainSignal;
-import com.team3925.robot2016.util.PixyCmu5;
 import com.team3925.robot2016.util.SmartdashBoardLoggable;
 import com.team3925.robot2016.util.TimeoutAction;
+import com.team3925.robot2016.util.hidhelpers.FlightStickHelper;
+import com.team3925.robot2016.util.hidhelpers.ThrustmasterHelper;
 import com.team3925.robot2016.util.hidhelpers.XboxHelper;
 
 import edu.wpi.first.wpilibj.DriverStation;
@@ -46,7 +46,6 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 	public static PowerDistributionPanel pdp;
 	public static OI oi;
 	public static CheesyDriveHelper cdh;
-	public static PixyCmu5 pixy;
 	private static TimeoutAction brakeBeforeMatchEnd = new TimeoutAction();
 	
 	//Commands
@@ -54,7 +53,6 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 //	private ManualDrive manualDrive;
 //	private ManualIntakeAssist manualIntakeAssist;
 	private GyroTurn visionGyroTurn = null;
-	private GyroDrive testing_GyroDrive;
 	
 	//Variables
 	public static double deltaTime = 0;
@@ -72,11 +70,6 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 			navx = new AHRS(SPI.Port.kMXP);
 		} catch (RuntimeException e) {
 			DriverStation.reportError("There was an error instantiating the NavxMXP!\n" + e.getMessage(), true);
-		}
-		try {
-    	    pixy = new PixyCmu5(168, .25);
-		} catch (Exception e) {
-			DriverStation.reportError("There was an error instantiating the Pixy/Frames!" + e.getMessage(), true);
 		}
 	}
 
@@ -99,12 +92,13 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 		// constructed yet. Thus, their requires() statements may grab null
 		// pointers. Bad news. Don't move it.
 		oi = new OI();
-		XboxHelper.init();
+		XboxHelper.config(oi.shooterXbox);
+		FlightStickHelper.config(oi.driverFlightstick);
+		ThrustmasterHelper.config(oi.driverWheel);
 		cdh = new CheesyDriveHelper(driveTrain);
 		
 		//Creating Commands
 		visionGyroTurn = new GyroTurn(0);
-		testing_GyroDrive = new GyroDrive();
 		
 		reset();
 	}

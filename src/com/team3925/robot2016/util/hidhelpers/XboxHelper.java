@@ -1,7 +1,6 @@
 package com.team3925.robot2016.util.hidhelpers;
 
 import com.team3925.robot2016.Constants;
-import com.team3925.robot2016.Robot;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Joystick.RumbleType;
@@ -14,7 +13,6 @@ import edu.wpi.first.wpilibj.Joystick.RumbleType;
 public class XboxHelper {
 	private XboxHelper() {}
 	
-	private static Joystick driver;
 	private static Joystick shooter;
 	
 	public static final int
@@ -36,51 +34,40 @@ public class XboxHelper {
 	AXIS_TRIGGER_LEFT = 2,
 	AXIS_TRIGGER_RIGHT = 3;
 	
-	private static boolean hasInit = false;
+	private static boolean needsInit = true;
 	
-	public static void init() {
-		driver = Robot.oi.xboxDriver;
-		shooter = Robot.oi.xboxShooter;
+	public static void config(Joystick xbox) {
+		shooter = xbox;
+		needsInit = false;
 	}
 	
 	public static double getShooterAxis(int axis) {
-		if (!hasInit) {	init();	}
-		return Math.abs(shooter.getRawAxis(axis)) > Math.abs(Constants.AXIS_TOLERANCE) ? shooter.getRawAxis(axis) : 0;
+		if (needsInit) {
+			return 0d;
+		} else {
+			return Math.abs(shooter.getRawAxis(axis)) > Math.abs(Constants.AXIS_TOLERANCE) ? shooter.getRawAxis(axis) : 0;
+		}
 	}
 	
 	public static boolean getShooterButton(int button) {
-		if (!hasInit) {	init();	}
-		return shooter.getRawButton(button);
+		if (needsInit) {
+			return false;
+		} else {
+			return shooter.getRawButton(button);
+		}
 	}
 	
 	public static double getShooterPOV() {
-		if (!hasInit) {	init();	}
-		return shooter.getPOV();
-	}
-	
-	public static double getDriverAxis(int axis) {
-		if (!hasInit) {	init();	}
-		return Math.abs(driver.getRawAxis(axis)) > Math.abs(Constants.AXIS_TOLERANCE) ? driver.getRawAxis(axis) : 0;
-	}
-	
-	public static boolean getDriverButton(int button) {
-		if (!hasInit) {	init();	}
-		return driver.getRawButton(button);
-	}
-	
-	public static double getDriverPOV() {
-		if (!hasInit) {	init();	}
-		return driver.getPOV();
+		if (needsInit) {
+			return 0d;
+		} else {
+			return shooter.getPOV();
+		}
 	}
 	
 	public static void setShooterRumble(float magnitude) {
 		shooter.setRumble(RumbleType.kLeftRumble, magnitude);
 		shooter.setRumble(RumbleType.kRightRumble, magnitude);
-	}
-	
-	public static void setDriverRumble(float magnitude) {
-		driver.setRumble(RumbleType.kLeftRumble, magnitude);
-		driver.setRumble(RumbleType.kRightRumble, magnitude);
 	}
 	
 }

@@ -69,8 +69,8 @@ public class GyroDrive extends Command implements SmartdashBoardLoggable {
 		}
 		pidLoop.calculate(currentAngle + rotations*360);
 		
-		// normally negative
-		driveTrain.arcadeDrive(-forwardPower, pidLoop.get(), false);
+		// normally negative for drive power | pid loop input was positive on comp robot
+		driveTrain.arcadeDrive(-forwardPower, -pidLoop.get(), false);
 		
 		// logic for slowing down or stopping here
 		

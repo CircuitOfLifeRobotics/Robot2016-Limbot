@@ -29,6 +29,7 @@ public final class ThrustmasterHelper {
 	
 	public static void config(Joystick wheel) {
 		ThrustmasterHelper.wheel = wheel;
+		needsInit = false;
 	}
 
 	public static double getAxis(int axis) {

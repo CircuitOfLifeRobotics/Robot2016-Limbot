@@ -5,19 +5,15 @@ import static com.team3925.robot2016.Constants.LAUNCHER_AIM_KI;
 import static com.team3925.robot2016.Constants.LAUNCHER_AIM_KP;
 
 import com.team3925.robot2016.Constants;
-import com.team3925.robot2016.Robot;
 import com.team3925.robot2016.RobotMap;
 import com.team3925.robot2016.util.Loopable;
 import com.team3925.robot2016.util.MiscUtil;
-import com.team3925.robot2016.util.PixyCmu5;
-import com.team3925.robot2016.util.PixyCmu5.PixyFrame;
 import com.team3925.robot2016.util.SmartdashBoardLoggable;
 import com.team3925.robot2016.util.SynchronousPID;
 
 import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -35,8 +31,6 @@ public final class Launcher extends Subsystem implements SmartdashBoardLoggable,
     private final CANTalon motorAim = RobotMap.launcherMotorAim;
     private final DoubleSolenoid puncherSolenoid = RobotMap.launcherPuncherSolenoid;
     private SynchronousPID aimPidLoop = new SynchronousPID();
-    private final PixyCmu5 pixy = Robot.pixy;
-    private PixyFrame latestFrame = null;
     private double turnAngle = Double.NaN;
     
     private boolean aimEnabled = false,
@@ -125,26 +119,6 @@ public final class Launcher extends Subsystem implements SmartdashBoardLoggable,
 			motorLeft.set(-intakeSpeed);
 			motorRight.set(intakeSpeed);
 			
-			
-			// CAMERA
-			
-			if (pixy != null) {
-				try {
-					latestFrame = pixy.getCurrentframes().get(0);
-				} catch (Exception e) {
-					DriverStation.reportWarning("Could not retrieve latest camera frame!", false);
-				}
-				
-				if (pixy.isObjectDetected()) {
-					turnAngle = PixyCmu5.degreesXFromCenter(latestFrame);
-				} else {
-					turnAngle = Double.NaN;
-				}
-				
-			} else {
-				turnAngle = Double.NaN;
-			}
-			
 		}
 
 	/**
@@ -230,17 +204,6 @@ public final class Launcher extends Subsystem implements SmartdashBoardLoggable,
 		putNumberSD("MotorAim_getOutputCurrent", motorAim.getOutputCurrent());
 		putNumberSD("MotorAim_getPosition", motorAim.getPosition());
 		putNumberSD("MotorAim_getSetpoint", motorAim.getSetpoint());
-		
-		// CAMERA
-		
-		if (pixy != null) {
-			putBooleanSD("Vision_Detected_Target", pixy.isObjectDetected());
-			
-			if (latestFrame != null) {
-				putBooleanSD("Vision_CanShoot", pixy.isInXCenter(latestFrame));
-				putNumberSD("AngleToTarget", turnAngle);
-			}
-		}
 		
 	}
 }

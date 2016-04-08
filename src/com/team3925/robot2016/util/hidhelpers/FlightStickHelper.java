@@ -36,6 +36,7 @@ public final class FlightStickHelper {
 	
 	public static void config(Joystick stick) {
 		FlightStickHelper.stick = stick;
+		needsInit = false;
 	}
 
 	public static double getAxis(int axis) {
