@@ -1,6 +1,5 @@
 package com.team3925.robot2016.subsystems;
 
-import com.team3925.robot2016.Robot;
 import com.team3925.robot2016.RobotMap;
 import com.team3925.robot2016.commands.ManualIntakeAssist;
 import com.team3925.robot2016.util.Loopable;
@@ -8,7 +7,6 @@ import com.team3925.robot2016.util.SmartdashBoardLoggable;
 
 import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.command.Subsystem;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class IntakeAssist extends Subsystem implements SmartdashBoardLoggable, Loopable {
 	

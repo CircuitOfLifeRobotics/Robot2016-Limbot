@@ -26,9 +26,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  */
 public final class Launcher extends Subsystem implements SmartdashBoardLoggable, Loopable {
 	
-    private final CANTalon motorLeft = RobotMap.launcherMotorLeft;
-    private final CANTalon motorRight = RobotMap.launcherMotorRight;
-    private final CANTalon motorAim = RobotMap.launcherMotorAim;
+    private final CANTalon motorLeft = RobotMap.launcherMotorFar;
+    private final CANTalon motorRight = RobotMap.launcherMotorNear;
+    private final CANTalon motorAim = RobotMap.launcherMotorArm;
     private final DoubleSolenoid puncherSolenoid = RobotMap.launcherPuncherSolenoid;
     private SynchronousPID aimPidLoop = new SynchronousPID();
     private double turnAngle = Double.NaN;

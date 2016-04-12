@@ -10,6 +10,7 @@ import com.team3925.robot2016.commands.auto.GyroTurn;
 import com.team3925.robot2016.subsystems.DriveTrain;
 import com.team3925.robot2016.subsystems.IntakeAssist;
 import com.team3925.robot2016.subsystems.Launcher;
+import com.team3925.robot2016.subsystems.LauncherNew;
 import com.team3925.robot2016.util.DriveTrainSignal;
 import com.team3925.robot2016.util.SmartdashBoardLoggable;
 import com.team3925.robot2016.util.TimeoutAction;
@@ -39,6 +40,7 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 	//Subsystems
 	public static DriveTrain driveTrain;
 	public static Launcher launcher;
+	public static LauncherNew launcherNew;
 	public static IntakeAssist intakeAssist;
 	
 	//Other
@@ -83,6 +85,7 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 		//Creating Subsystems and Related Processes
 		driveTrain = new DriveTrain();
 		launcher = new Launcher();
+		launcherNew = new LauncherNew();
 		intakeAssist = new IntakeAssist();
 //		prefs = Preferences.getInstance();
 		pdp = RobotMap.pdp;
@@ -220,6 +223,7 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 	private void updateSubsystems() {
 		launcher.update();
 		intakeAssist.update();
+		launcherNew.update();
 	}
 	
 	@Override

@@ -1,18 +1,12 @@
 package com.team3925.robot2016;
 
-import static com.team3925.robot2016.Constants.DRIVETRAIN_ENCODER_FACTOR;
-
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.CANTalon.FeedbackDevice;
 import edu.wpi.first.wpilibj.CANTalon.TalonControlMode;
-import edu.wpi.first.wpilibj.CounterBase.EncodingType;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
-import edu.wpi.first.wpilibj.Encoder;
-import edu.wpi.first.wpilibj.PIDController;
-import edu.wpi.first.wpilibj.PIDSourceType;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
-import edu.wpi.first.wpilibj.Ultrasonic;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 
 /**
@@ -29,9 +23,9 @@ public class RobotMap {
     public static CANTalon driveTrainMotorRightB;
     public static DoubleSolenoid driveTrainShifterSolenoid;
     
-    public static CANTalon launcherMotorAim;
-    public static CANTalon launcherMotorLeft;
-    public static CANTalon launcherMotorRight;
+    public static CANTalon launcherMotorArm;
+    public static CANTalon launcherMotorFar;
+    public static CANTalon launcherMotorNear;
     public static DoubleSolenoid launcherPuncherSolenoid;
     public static AnalogInput launcherUltrasonic;
     
@@ -49,6 +43,7 @@ public class RobotMap {
 //    public static Solenoid redLedStrip;
     
     public static PowerDistributionPanel pdp;
+	public static DigitalInput launcherLimitSwitch;
     
     public static void init() {
     	
@@ -116,34 +111,34 @@ public class RobotMap {
         //pointed at light	1.5A
         launcherUltrasonic = new AnalogInput(0);
         
-        launcherMotorAim = new CANTalon(13);
-        LiveWindow.addActuator("Launcher", "AimMotor", launcherMotorAim);
-        launcherMotorAim.setFeedbackDevice(FeedbackDevice.PulseWidth);
-        launcherMotorAim.changeControlMode(TalonControlMode.PercentVbus);
-        launcherMotorAim.setFeedbackDevice(FeedbackDevice.CtreMagEncoder_Relative);
-        launcherMotorAim.reverseSensor(true);
+        launcherMotorArm = new CANTalon(13);
+        LiveWindow.addActuator("Launcher", "AimMotor", launcherMotorArm);
+        launcherMotorArm.changeControlMode(TalonControlMode.PercentVbus);
+        launcherMotorArm.setFeedbackDevice(FeedbackDevice.CtreMagEncoder_Relative);
+        launcherMotorArm.reverseSensor(true);
 //        launcherMotorAim.reverseSensor(true); doesn't work, sensor value is still negative
-        launcherMotorAim.setEncPosition(0);
+//        launcherMotorArm.ConfigRevLimitSwitchNormallyOpen(false); TODO uncomment when electrial is ready
         
-        launcherMotorLeft = new CANTalon(12);
-        LiveWindow.addActuator("Launcher", "MotorLeft", launcherMotorLeft);
-        launcherMotorLeft.setFeedbackDevice(FeedbackDevice.QuadEncoder);
-        launcherMotorLeft.changeControlMode(TalonControlMode.PercentVbus);
-        launcherMotorLeft.setInverted(false);
-        launcherMotorLeft.reverseOutput(false);
-        launcherMotorLeft.reverseSensor(true);
+        launcherMotorFar = new CANTalon(12);
+        LiveWindow.addActuator("Launcher", "MotorFar", launcherMotorFar);
+        launcherMotorFar.setFeedbackDevice(FeedbackDevice.QuadEncoder);
+        launcherMotorFar.changeControlMode(TalonControlMode.PercentVbus);
+        launcherMotorFar.setInverted(false);
+        launcherMotorFar.reverseOutput(false);
+        launcherMotorFar.reverseSensor(true);
 //        launcherMotorLeft.configEncoderCodesPerRev(4096);
         
-        launcherMotorRight = new CANTalon(14);
-        LiveWindow.addActuator("Launcher", "MotorRight", launcherMotorRight);
-        launcherMotorRight.setFeedbackDevice(FeedbackDevice.QuadEncoder);
-        launcherMotorRight.changeControlMode(TalonControlMode.PercentVbus);
-        launcherMotorRight.setInverted(false); // practice = true | comp = false
-        launcherMotorRight.reverseOutput(true);
-        launcherMotorRight.reverseSensor(true);
+        launcherMotorNear = new CANTalon(14);
+        LiveWindow.addActuator("Launcher", "MotorNear", launcherMotorNear);
+        launcherMotorNear.setFeedbackDevice(FeedbackDevice.QuadEncoder);
+        launcherMotorNear.changeControlMode(TalonControlMode.PercentVbus);
+        launcherMotorNear.setInverted(false); // practice = true | comp = false
+        launcherMotorNear.reverseOutput(true);
+        launcherMotorNear.reverseSensor(true);
 //        launcherMotorRight.configEncoderCodesPerRev(4096);
 
-        
+        launcherLimitSwitch = new DigitalInput(0); // TODO get port
+        LiveWindow.addSensor("Launcher", "LimitSwitch", launcherLimitSwitch);
         
         
         //  INTAKE ASSIST
