@@ -65,7 +65,7 @@ public class Constants {
     public static final double LAUNCHER_NEW_MAX_ARM_ANGLE = 90d; // in degrees
     public static final double LAUNCHER_NEW_ENCODER_SCALE_FACTOR = 1d;
     public static final double LAUNCHER_NEW_ARM_TOLERANCE = 3d;
-    public static final double LAUNCHER_NEW_GLOBAL_POWER = .7d;
+    public static final double LAUNCHER_NEW_GLOBAL_POWER = 1d;
     
     
     public static final double LAUNCHER_THROWBALL_FAR_ANGLE = 62; //degrees

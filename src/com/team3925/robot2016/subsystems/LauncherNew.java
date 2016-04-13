@@ -1,55 +1,149 @@
 package com.team3925.robot2016.subsystems;
 
-import static com.team3925.robot2016.Constants.LAUNCHER_AIM_KD;
-import static com.team3925.robot2016.Constants.LAUNCHER_AIM_KI;
-import static com.team3925.robot2016.Constants.LAUNCHER_AIM_KP;
-import static com.team3925.robot2016.Constants.*;
+import static com.team3925.robot2016.Constants.LAUNCHER_NEW_ARM_TOLERANCE;
+import static com.team3925.robot2016.Constants.LAUNCHER_NEW_ENCODER_SCALE_FACTOR;
+import static com.team3925.robot2016.Constants.LAUNCHER_NEW_GLOBAL_POWER;
+import static com.team3925.robot2016.Constants.LAUNCHER_NEW_MAX_ARM_ANGLE;
 
 import java.util.TimerTask;
 
-import com.team3925.robot2016.Constants;
-import com.team3925.robot2016.RobotMap;
-import com.team3925.robot2016.commands.ZeroLauncher;
 import com.team3925.robot2016.util.Loopable;
 import com.team3925.robot2016.util.MiscUtil;
 import com.team3925.robot2016.util.SmartdashBoardLoggable;
-import com.team3925.robot2016.util.SynchronousPID;
+import com.team3925.robot2016.util.TimeoutAction;
 
 import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.PIDController;
+import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-public class LauncherNew extends Subsystem implements SmartdashBoardLoggable, Loopable {
+public final class LauncherNew extends Subsystem implements SmartdashBoardLoggable, Loopable {
 	
-	private final CANTalon motorArm = RobotMap.launcherMotorArm;
-	private final CANTalon motorFar = RobotMap.launcherMotorFar;
-	private final CANTalon motorNear = RobotMap.launcherMotorNear;
+	private final CANTalon motorArm;
+	private final CANTalon motorFar;
+	private final CANTalon motorNear;
 	
 //	private final SynchronousPID pid = new SynchronousPID(LAUNCHER_AIM_KP, LAUNCHER_AIM_KI, LAUNCHER_AIM_KD);
 	
-	private final DigitalInput limitSwitch = RobotMap.launcherLimitSwitch;
+	private final DigitalInput limitSwitch;
 	
-//	private final EncoderWatcher encoderWater = new EncoderWatcher();
+	private final EncoderWatcher encoderWatcher;
 	
-	private double armSetpoint = 0;
-	private double motorFarSetpoint = 0;
-	private double motorNearSetpoint = 0;
+	private double armSetpoint;
+	private double motorFarSetpoint;
+	private double motorNearSetpoint;
 	
-	private boolean hasZeroed;
+	private boolean hasZeroed = false;
 	
-	private static ZeroLauncher zeroCommand = new ZeroLauncher();
+	private final ZeroLauncher zeroCommand;
 	
+	// DEBUG STUFF
+	
+	private DebugState debugState = DebugState.TESTING_SENSORS;
+	private final TimeoutAction timeoutAction1 = new TimeoutAction();
+	private final TimeoutAction timeoutAction2 = new TimeoutAction();
+	
+	
+	private enum DebugState {
+		TESTING_SENSORS, TESTING_DIRECTIONS, TESTING_ZERO_COMMAND, TEST_ANGLE_SETPOINT, TESTING_ENCODER_WATCHER, FULL
+	}
+	
+	
+	/**
+	 * Testing a new way of getting actuators and sensors into a class
+	 */
+	public LauncherNew(CANTalon motorArm, CANTalon motorFlywheelFar, CANTalon motorFlywheelNear, DigitalInput limitSwitch) {
+		this.motorArm = motorArm;
+		this.motorFar = motorFlywheelFar;
+		this.motorNear = motorFlywheelNear;
+		this.limitSwitch = limitSwitch;
+		
+		setHasZeroed(false);
+		
+		resetSetpoints();
+		
+		zeroCommand = new ZeroLauncher();
+		encoderWatcher = new EncoderWatcher();
+	}
+	
+	public void init() {
+		resetSetpoints();
+		
+		switch (debugState) {
+		case FULL:
+			
+		case TESTING_ENCODER_WATCHER:
+			
+		case TEST_ANGLE_SETPOINT:
+			startZeroCommand();
+			setArmSetpoint(45d);
+			timeoutAction1.config(100d);
+			timeoutAction2.config(200d);
+			break;
+			
+		case TESTING_ZERO_COMMAND:
+			startZeroCommand();
+			timeoutAction1.config(10d);
+			timeoutAction2.config(20d);
+			break;
+			
+		case TESTING_DIRECTIONS:
+			timeoutAction1.config(1.5d);
+			timeoutAction2.config(3d);
+			
+			break;
+
+		default:
+			break;
+		}
+	}
+	
+	private class ZeroLauncher extends Command {
+		
+		@Override
+		protected void initialize() {
+		}
+
+		@Override
+		protected void execute() {
+			setMotorArmSpeedRaw(-.25);
+		}
+
+		@Override
+		protected boolean isFinished() {
+			return getLimitSwitch();
+		}
+
+		@Override
+		protected void end() {
+			setMotorArmSpeedRaw(0);
+			setLauncherZeroed();
+		}
+
+		@Override
+		protected void interrupted() {
+			setMotorArmSpeedRaw(0);
+		}
+		
+	}
 	
 	/**
 	 * TODO implement class
 	 */
 	private static class EncoderWatcher extends TimerTask {
-
+		private boolean isMoving = true;
+		
+		public EncoderWatcher() {
+		}
+		
 		@Override
 		public void run() {
+		}
+		
+		public boolean get() {
+			return isMoving;
 		}
 		
 	}
@@ -57,25 +151,97 @@ public class LauncherNew extends Subsystem implements SmartdashBoardLoggable, Lo
 	
 	@Override
 	public void update() {
+		switch (debugState) {
 		
-		motorNear.set(motorNearSetpoint);
-		motorFar.set(motorFarSetpoint);
-		
-		
-		// If arm motor has not zeroed, start zero command
-		if (!hasZeroed) {
-			startZeroCommand();
-			return;
+		case FULL:
+			
+			// If arm motor has not zeroed, start zero command
+			if (!hasZeroed()) {
+				startZeroCommand();
+				return;
+			}
+			
+			setMotorNearSpeed(motorNearSetpoint);
+			setMotorFarSpeed(motorFarSetpoint);
+			
+			
+			// break statement intentionally omitted
+			
+		case TESTING_ENCODER_WATCHER:
+			// NOT IMPLEMENTED
+			
+			
+		case TEST_ANGLE_SETPOINT:
+			
+			// testing getting input from SmartDashboard
+			setArmSetpoint(SmartDashboard.getNumber(getFormattedName() + "MotorArmSetpointSETTER", 0));
+			
+			// should PID be implemented?
+			if (Math.abs(armSetpoint - getArmPosition()) > LAUNCHER_NEW_ARM_TOLERANCE) {
+				setMotorArmSpeed(Math.signum(armSetpoint) * /* only runs at half of speed for safety */ 0.5);
+			}
+			
+			break;
+			
+		case TESTING_ZERO_COMMAND:
+			// launcher zero command has already been started in init()
+			
+			if (hasZeroed()) {
+				if (!timeoutAction2.isFinished()) {
+					if (!timeoutAction1.isFinished()) {
+						setMotorArmSpeed(.2d);
+						putStringSD("CurrentDirection", "Positive");
+					} else {
+						setMotorArmSpeed(-.2d);
+						putStringSD("CurrentDirection", "Negative");
+					}
+				} else {
+					setMotorArmSpeed(0d);
+					putStringSD("CurrentDirection", "None");
+				}
+			}
+			
+			break;
+			
+		case TESTING_DIRECTIONS:
+			if (!timeoutAction2.isFinished()) {
+				if (!timeoutAction1.isFinished()) {
+					setMotorArmSpeedRaw(0.5);
+					setMotorFarSpeed(0.5);
+					setMotorNearSpeed(0.5);
+					putStringSD("CurrentDirection", "Positive");
+				} else {
+					setMotorArmSpeedRaw(-0.5);
+					setMotorFarSpeed(-0.5);
+					setMotorNearSpeed(-0.5);
+					putStringSD("CurrentDirection", "Negative");
+				}
+			} else {
+				setMotorArmSpeedRaw(0);
+				setMotorFarSpeed(0);
+				setMotorNearSpeed(0);
+				putStringSD("CurrentDirection", "None");
+			}
+			break;
+			
+		case TESTING_SENSORS:
+			break;
+			
+		default:
+			DriverStation.reportError("Launcher debug state machine defaulted!", false);
+			break;
 		}
 		
-		if (Math.abs(getArmPosition() - armSetpoint) < LAUNCHER_NEW_ARM_TOLERANCE) {
-			setMotorArmSpeed(Math.signum(armSetpoint));
-		}
-		
+		logData();
+			
 	}
+	
 	
 	@Override
 	public void logData() {
+		putStringSD("Debug_State", debugState.toString());
+		putNumberSD("Debug_Timeout_TimeRemaining", timeoutAction1.getTimeRemaining());
+		
 		putNumberSD("MotorArmSpeed", motorArm.getSpeed());
 		putNumberSD("MotorArmSetpoint", armSetpoint);
 		putNumberSD("MotorArmEncoderPos", getArmPosition());
@@ -85,29 +251,53 @@ public class LauncherNew extends Subsystem implements SmartdashBoardLoggable, Lo
 		putNumberSD("MotorNearSetpoint", motorNearSetpoint);
 		putNumberSD("MotorFarSetpoint", motorFarSetpoint);
 		
-		armSetpoint = SmartDashboard.getNumber(getFormattedName() + "MotorArmSetpointSETTER", 0);
+		putBooleanSD("LimitSwitch", getLimitSwitch());
+		putBooleanSD("HasZeroed", hasZeroed());
+		putBooleanSD("EncoderWatcher", getArmEncoderMoving());
 	}
 	
-	public void setMotorArmSpeedRaw(double speed) {
-		motorArm.set(MiscUtil.limit(speed) * LAUNCHER_NEW_GLOBAL_POWER);
-	}
 	
-	public void setMotorArmSpeed(double speed) {
-		boolean cantRunMotorDown = getArmPosition() <= 0 && speed < 0;
-		boolean cantRunMotorUp = getArmPosition() >= LAUNCHER_NEW_MAX_ARM_ANGLE && speed > 0;
-		
-		if (cantRunMotorDown || cantRunMotorUp) {
-			setMotorArmSpeedRaw(0);
+	// PUBLIC SETPOINT METHODS
+	
+	/**
+	 * @param setpoint desired angle in degrees
+	 */
+	public void setArmSetpoint(double setpoint) {
+		if (!Double.isFinite(setpoint)) {
+			DriverStation.reportError("Could not set setpoint! Was not a finite number!", false);
+			armSetpoint = 0;
 		} else {
-			setMotorArmSpeedRaw(armSetpoint);
+			armSetpoint = Math.min(LAUNCHER_NEW_MAX_ARM_ANGLE, Math.max(0, setpoint));
 		}
 	}
 	
+	public void setFlywheelNearSetpoint(double setpoint) {
+		if (!Double.isFinite(setpoint)) {
+			DriverStation.reportError("Could not set setpoint! Was not a finite number!", false);
+			motorNearSetpoint = 0;
+		} else {
+			motorNearSetpoint = MiscUtil.limit(setpoint);
+		}
+	}
+	
+	public void setFlywheelFarSetpoint(double setpoint) {
+		if (!Double.isFinite(setpoint)) {
+			DriverStation.reportError("Could not set setpoint! Was not a finite number!", false);
+			motorFarSetpoint = 0;
+		} else {
+			motorFarSetpoint = MiscUtil.limit(setpoint);
+		}
+	}
+	
+
+
+	// OTHER PUBLIC METHODS
+	
 	/**
-	 * @return true if command was started or false if command was already running
+	 * @return true if command was started or false if command was already running/has already run
 	 */
 	public boolean startZeroCommand() {
-		if (!zeroCommand.isRunning()) {
+		if (zeroCommand.isRunning() == hasZeroed == false) {
 			zeroCommand.start();
 			return true;
 		} else {
@@ -117,26 +307,68 @@ public class LauncherNew extends Subsystem implements SmartdashBoardLoggable, Lo
 	
 	public void setLauncherZeroed() {
 		motorArm.setEncPosition(0);
+		setHasZeroed(true);
 	}
 	
-	/**
-	 * @param setpoint desired angle in degrees
-	 */
-	public void setArmSetpoint(double setpoint) {
-		if (!Double.isFinite(setpoint)) {
-			DriverStation.reportError("Could not receive setpoint! Was not a finite number!", false);
-			armSetpoint = 0;
+	
+	
+	// PRIVATE SETTERS
+	
+	private void setMotorArmSpeedRaw(double speed) {
+		motorArm.set(MiscUtil.limit(speed) * LAUNCHER_NEW_GLOBAL_POWER);
+	}
+	
+	private void setMotorArmSpeed(double speed) {
+		if (hasZeroed) {
+			boolean cantRunMotorDown = (getArmPosition() <= 0 && speed < 0) || getLimitSwitch();
+			boolean cantRunMotorUp = getArmPosition() >= LAUNCHER_NEW_MAX_ARM_ANGLE && speed > 0;
+			
+			if (cantRunMotorDown || cantRunMotorUp) {
+				setMotorArmSpeedRaw(0);
+			} else {
+				setMotorArmSpeedRaw(armSetpoint);
+			}
+			
 		} else {
-			armSetpoint = Math.min(LAUNCHER_NEW_MAX_ARM_ANGLE, Math.max(0, setpoint));
+			DriverStation.reportWarning("LauncherNew has not zeroed! Arm motor speed not set!", false);
 		}
 	}
 	
-	public void setMotorNearSetpoint(double setpoint) {
-		motorNearSetpoint = setpoint;
+	private void setMotorNearSpeed(double speed) {
+		if (Double.isFinite(speed)) {
+			motorNear.set(MiscUtil.limit(speed));
+		} else {
+			DriverStation.reportError("Could not set flywheel near speed to " + speed, false);
+		}
 	}
 	
-	public void setMotorFarSetpoint(double setpoint) {
-		motorFarSetpoint = setpoint;
+	private void setMotorFarSpeed(double speed) {
+		if (Double.isFinite(speed)) {
+			motorFar.set(MiscUtil.limit(speed));
+		} else {
+			DriverStation.reportWarning("Could not set flywheel far speed to " + speed, false);
+		}
+	}
+	
+	private void setHasZeroed(boolean hasZeroed) {
+		this.hasZeroed = hasZeroed;
+	}
+	
+	private void resetSetpoints() {
+		armSetpoint = 0;
+		motorFarSetpoint = 0;
+		motorNearSetpoint = 0;
+	}
+	
+	
+	
+	// GETTERS
+	
+	/**
+	 * @return boolean: if the arm has performed the zero routine
+	 */
+	public boolean hasZeroed() {
+		return hasZeroed;
 	}
 	
 	public double getArmPosition() {
@@ -153,13 +385,13 @@ public class LauncherNew extends Subsystem implements SmartdashBoardLoggable, Lo
 	
 	@Override
 	public String getFormattedName() {
-		return null;
+		return "LauncherNew_";
 	}
+	
+	
 	
 	@Override
 	protected void initDefaultCommand() {
 	}
-
-
 
 }

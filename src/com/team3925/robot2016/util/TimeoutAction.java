@@ -21,11 +21,15 @@ public class TimeoutAction {
     }
 
     /**
-     * @param timeOut a double in seconds
+     * @param timeout a double in seconds
      */
-    public void config(double timeOut) {
-    	m_timeout = timeOut;
+    public void config(double timeout) {
+    	m_timeout = timeout;
         m_time_start = Timer.getFPGATimestamp();
+    }
+    
+    public double getTimeRemaining() {
+    	return (m_time_start + m_timeout) - Timer.getFPGATimestamp();
     }
 
 }
