@@ -5,8 +5,10 @@ import static com.team3925.robot2016.Constants.LAUNCHER_NEW_ENCODER_SCALE_FACTOR
 import static com.team3925.robot2016.Constants.LAUNCHER_NEW_GLOBAL_POWER;
 import static com.team3925.robot2016.Constants.LAUNCHER_NEW_MAX_ARM_ANGLE;
 
+import java.util.Timer;
 import java.util.TimerTask;
 
+import com.team3925.robot2016.Constants;
 import com.team3925.robot2016.util.Loopable;
 import com.team3925.robot2016.util.MiscUtil;
 import com.team3925.robot2016.util.SmartdashBoardLoggable;
@@ -19,17 +21,24 @@ import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
+/**
+ * Subsystem that runs the new launcher
+ * 
+ * @author Bryan "atomic_diamond" S
+ */
 public final class LauncherNew extends Subsystem implements SmartdashBoardLoggable, Loopable {
 	
 	private final CANTalon motorArm;
 	private final CANTalon motorFar;
 	private final CANTalon motorNear;
 	
+	// TODO implement after testing basics
 //	private final SynchronousPID pid = new SynchronousPID(LAUNCHER_AIM_KP, LAUNCHER_AIM_KI, LAUNCHER_AIM_KD);
 	
 	private final DigitalInput limitSwitch;
 	
 	private final EncoderWatcher encoderWatcher;
+	private final Timer encoderWatcherTimer;
 	
 	private double armSetpoint;
 	private double motorFarSetpoint;
@@ -39,6 +48,7 @@ public final class LauncherNew extends Subsystem implements SmartdashBoardLoggab
 	
 	private final ZeroLauncher zeroCommand;
 	
+	
 	// DEBUG STUFF
 	
 	private DebugState debugState = DebugState.TESTING_SENSORS;
@@ -47,6 +57,7 @@ public final class LauncherNew extends Subsystem implements SmartdashBoardLoggab
 	
 	
 	private enum DebugState {
+		// FIRST			SECOND				THIRD				FOURTH					FIFTH				FINAL
 		TESTING_SENSORS, TESTING_DIRECTIONS, TESTING_ZERO_COMMAND, TEST_ANGLE_SETPOINT, TESTING_ENCODER_WATCHER, FULL
 	}
 	
@@ -66,6 +77,7 @@ public final class LauncherNew extends Subsystem implements SmartdashBoardLoggab
 		
 		zeroCommand = new ZeroLauncher();
 		encoderWatcher = new EncoderWatcher();
+		encoderWatcherTimer = new Timer(getFormattedName() + "EncoderWatcher", true);
 	}
 	
 	public void init() {
@@ -73,14 +85,22 @@ public final class LauncherNew extends Subsystem implements SmartdashBoardLoggab
 		
 		switch (debugState) {
 		case FULL:
+			startZeroCommand();
+			
+			// break omitted intentionally
 			
 		case TESTING_ENCODER_WATCHER:
+			// TODO Move to constructor after implemented and tested
+			encoderWatcherTimer.scheduleAtFixedRate(encoderWatcher, 0, Constants.LAUNCHER_NEW_ENCODER_WATCHER_PERIOD);
+			timeoutAction1.config(-1d);
+			timeoutAction2.config(-1d);
 			
+			break;
 		case TEST_ANGLE_SETPOINT:
 			startZeroCommand();
 			setArmSetpoint(45d);
-			timeoutAction1.config(100d);
-			timeoutAction2.config(200d);
+			timeoutAction1.config(-1d);
+			timeoutAction2.config(-1d);
 			break;
 			
 		case TESTING_ZERO_COMMAND:
@@ -133,7 +153,6 @@ public final class LauncherNew extends Subsystem implements SmartdashBoardLoggab
 	 * TODO implement class
 	 */
 	private static class EncoderWatcher extends TimerTask {
-		private boolean isMoving = true;
 		
 		public EncoderWatcher() {
 		}
@@ -142,8 +161,8 @@ public final class LauncherNew extends Subsystem implements SmartdashBoardLoggab
 		public void run() {
 		}
 		
-		public boolean get() {
-			return isMoving;
+		public boolean getIsMoving() {
+			return true;
 		}
 		
 	}
@@ -289,6 +308,13 @@ public final class LauncherNew extends Subsystem implements SmartdashBoardLoggab
 		}
 	}
 	
+	public void resetSetpoints() {
+		armSetpoint = 0;
+		motorFarSetpoint = 0;
+		motorNearSetpoint = 0;
+	}
+	
+	
 
 
 	// OTHER PUBLIC METHODS
@@ -309,6 +335,8 @@ public final class LauncherNew extends Subsystem implements SmartdashBoardLoggab
 		motorArm.setEncPosition(0);
 		setHasZeroed(true);
 	}
+	
+	
 	
 	
 	
@@ -354,12 +382,6 @@ public final class LauncherNew extends Subsystem implements SmartdashBoardLoggab
 		this.hasZeroed = hasZeroed;
 	}
 	
-	private void resetSetpoints() {
-		armSetpoint = 0;
-		motorFarSetpoint = 0;
-		motorNearSetpoint = 0;
-	}
-	
 	
 	
 	// GETTERS
@@ -380,7 +402,7 @@ public final class LauncherNew extends Subsystem implements SmartdashBoardLoggab
 	}
 	
 	public boolean getArmEncoderMoving() {
-		return true; //TODO implement
+		return encoderWatcher.getIsMoving();
 	}
 	
 	@Override
