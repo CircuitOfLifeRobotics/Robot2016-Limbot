@@ -14,6 +14,7 @@ import com.team3925.robot2016.util.SynchronousPID;
 import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
+import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -32,6 +33,8 @@ public final class Launcher extends Subsystem implements SmartdashBoardLoggable,
     private final DoubleSolenoid puncherSolenoid = RobotMap.launcherPuncherSolenoid;
     private SynchronousPID aimPidLoop = new SynchronousPID();
     private double turnAngle = Double.NaN;
+    
+    private final Encoder launcherEncoder = RobotMap.launcherEncoder;
     
     private boolean aimEnabled = false,
     		aimOnTarget = false;
@@ -159,6 +162,13 @@ public final class Launcher extends Subsystem implements SmartdashBoardLoggable,
 		return aimEnabled;
 	}
 	
+	public double getEncoderDistance() {
+		return launcherEncoder.getDistance();
+	}
+	
+	public double getEncoderRate(){
+		return launcherEncoder.getRate();
+	}
 	/**
 	 * Returns true if the aim position is at the specified setpoint angle
 	 * and the aim is stable (not moving)

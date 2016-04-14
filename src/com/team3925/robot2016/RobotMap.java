@@ -1,18 +1,12 @@
 package com.team3925.robot2016;
 
-import static com.team3925.robot2016.Constants.DRIVETRAIN_ENCODER_FACTOR;
-
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.CANTalon.FeedbackDevice;
 import edu.wpi.first.wpilibj.CANTalon.TalonControlMode;
-import edu.wpi.first.wpilibj.CounterBase.EncodingType;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Encoder;
-import edu.wpi.first.wpilibj.PIDController;
-import edu.wpi.first.wpilibj.PIDSourceType;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
-import edu.wpi.first.wpilibj.Ultrasonic;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 
 /**
@@ -34,6 +28,7 @@ public class RobotMap {
     public static CANTalon launcherMotorRight;
     public static DoubleSolenoid launcherPuncherSolenoid;
     public static AnalogInput launcherUltrasonic;
+    public static Encoder launcherEncoder;
     
     public static CANTalon intakeAssistArmLeft;
     public static CANTalon intakeAssistArmRight;
@@ -143,7 +138,8 @@ public class RobotMap {
         launcherMotorRight.reverseSensor(true);
 //        launcherMotorRight.configEncoderCodesPerRev(4096);
 
-        
+        launcherEncoder = new Encoder(0, 1);
+        LiveWindow.addSensor("LauncherEncoder", 1, launcherEncoder);
         
         
         //  INTAKE ASSIST
