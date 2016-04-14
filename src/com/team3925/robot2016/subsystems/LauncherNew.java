@@ -1,14 +1,15 @@
 package com.team3925.robot2016.subsystems;
 
-import static com.team3925.robot2016.Constants.LAUNCHER_NEW_ARM_TOLERANCE;
 import static com.team3925.robot2016.Constants.LAUNCHER_NEW_ENCODER_SCALE_FACTOR;
 import static com.team3925.robot2016.Constants.LAUNCHER_NEW_GLOBAL_POWER;
 import static com.team3925.robot2016.Constants.LAUNCHER_NEW_MAX_ARM_ANGLE;
 
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.ArrayBlockingQueue;
 
 import com.team3925.robot2016.Constants;
+import com.team3925.robot2016.Robot;
 import com.team3925.robot2016.util.Loopable;
 import com.team3925.robot2016.util.MiscUtil;
 import com.team3925.robot2016.util.SmartdashBoardLoggable;
@@ -19,7 +20,6 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Subsystem;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * Subsystem that runs the new launcher
@@ -51,15 +51,8 @@ public final class LauncherNew extends Subsystem implements SmartdashBoardLoggab
 	
 	// DEBUG STUFF
 	
-	private DebugState debugState = DebugState.TESTING_SENSORS;
 	private final TimeoutAction timeoutAction1 = new TimeoutAction();
 	private final TimeoutAction timeoutAction2 = new TimeoutAction();
-	
-	
-	private enum DebugState {
-		// FIRST			SECOND				THIRD				FOURTH					FIFTH				FINAL
-		TESTING_SENSORS, TESTING_DIRECTIONS, TESTING_ZERO_COMMAND, TEST_ANGLE_SETPOINT, TESTING_ENCODER_WATCHER, FULL
-	}
 	
 	
 	/**
@@ -82,42 +75,30 @@ public final class LauncherNew extends Subsystem implements SmartdashBoardLoggab
 	
 	public void init() {
 		resetSetpoints();
-		
-		switch (debugState) {
-		case FULL:
-			startZeroCommand();
 			
-			// break omitted intentionally
-			
-		case TESTING_ENCODER_WATCHER:
+//			TESTING ENCODER WATCHER
 			// TODO Move to constructor after implemented and tested
-			encoderWatcherTimer.scheduleAtFixedRate(encoderWatcher, 0, Constants.LAUNCHER_NEW_ENCODER_WATCHER_PERIOD);
-			timeoutAction1.config(-1d);
-			timeoutAction2.config(-1d);
+//			encoderWatcherTimer.scheduleAtFixedRate(encoderWatcher, 0, Constants.LAUNCHER_NEW_ENCODER_WATCHER_PERIOD);
+//			timeoutAction1.config(-1d);
+//			timeoutAction2.config(-1d);
 			
-			break;
-		case TEST_ANGLE_SETPOINT:
-			startZeroCommand();
-			setArmSetpoint(45d);
-			timeoutAction1.config(-1d);
-			timeoutAction2.config(-1d);
-			break;
+		
+//			TEST ANGLE SETPOINT
+//			startZeroCommand();
+//			setArmSetpoint(45d);
+//			timeoutAction1.config(-1d);
+//			timeoutAction2.config(-1d);
 			
-		case TESTING_ZERO_COMMAND:
-			startZeroCommand();
-			timeoutAction1.config(10d);
-			timeoutAction2.config(20d);
-			break;
-			
-		case TESTING_DIRECTIONS:
-			timeoutAction1.config(1.5d);
-			timeoutAction2.config(3d);
-			
-			break;
+		
+//			TESTING ZERO COMMAND
+//			startZeroCommand();
+//			timeoutAction1.config(10d);
+//			timeoutAction2.config(20d);
 
-		default:
-			break;
-		}
+		
+//			TESTING DIRECTIONS
+//			timeoutAction1.config(1.5d);
+//			timeoutAction2.config(3d);
 	}
 	
 	private class ZeroLauncher extends Command {
@@ -153,27 +134,44 @@ public final class LauncherNew extends Subsystem implements SmartdashBoardLoggab
 	 * TODO implement class
 	 */
 	private static class EncoderWatcher extends TimerTask {
+		private ArrayBlockingQueue<Double> queue;
+		private boolean isMoving;
 		
 		public EncoderWatcher() {
+			queue = new ArrayBlockingQueue<>(Constants.LAUNCHER_NEW_ENCODER_WATCHER_DATA_CACHE_SIZE);
+		}
+		
+		public boolean getIsMoving() {
+			return isMoving;
 		}
 		
 		@Override
 		public void run() {
+			isMoving = true;
+			
+			try {
+				queue.put(Robot.launcherNew.getArmPosition());
+			} catch (InterruptedException e) {
+				DriverStation.reportError(e.getMessage(), true);
+			}
+			
+			if (queue.size() >= Constants.LAUNCHER_NEW_ENCODER_WATCHER_DATA_CACHE_SIZE) {
+				queue.remove();
+			}
 		}
 		
-		public boolean getIsMoving() {
-			return true;
+		private boolean compareValues(double val1, double val2) {
+			return Math.abs(val1 - val2) < Constants.LAUNCHER_NEW_ENCODER_WATCHER_TOLERANCE;
 		}
+		
 		
 	}
 	
 	
 	@Override
 	public void update() {
-		switch (debugState) {
-		
-		case FULL:
-			
+//		FULL
+		/*
 			// If arm motor has not zeroed, start zero command
 			if (!hasZeroed()) {
 				startZeroCommand();
@@ -182,27 +180,27 @@ public final class LauncherNew extends Subsystem implements SmartdashBoardLoggab
 			
 			setMotorNearSpeed(motorNearSetpoint);
 			setMotorFarSpeed(motorFarSetpoint);
+			*/
 			
-			
-			// break statement intentionally omitted
-			
-		case TESTING_ENCODER_WATCHER:
+		
+//		TESTING ENCODER WATCHER
 			// NOT IMPLEMENTED
 			
 			
-		case TEST_ANGLE_SETPOINT:
-			
+//		TEST_ANGLE_SETPOINT
+			/*
 			// testing getting input from SmartDashboard
 			setArmSetpoint(SmartDashboard.getNumber(getFormattedName() + "MotorArmSetpointSETTER", 0));
 			
 			// should PID be implemented?
 			if (Math.abs(armSetpoint - getArmPosition()) > LAUNCHER_NEW_ARM_TOLERANCE) {
-				setMotorArmSpeed(Math.signum(armSetpoint) * /* only runs at half of speed for safety */ 0.5);
+				setMotorArmSpeed(Math.signum(armSetpoint) * 0.5);
 			}
+			*/
 			
-			break;
 			
-		case TESTING_ZERO_COMMAND:
+//		TESTING_ZERO_COMMAND
+		/*
 			// launcher zero command has already been started in init()
 			
 			if (hasZeroed()) {
@@ -219,18 +217,19 @@ public final class LauncherNew extends Subsystem implements SmartdashBoardLoggab
 					putStringSD("CurrentDirection", "None");
 				}
 			}
+			*/
 			
-			break;
-			
-		case TESTING_DIRECTIONS:
+		
+//		TESTING_DIRECTIONS
+		/*
 			if (!timeoutAction2.isFinished()) {
 				if (!timeoutAction1.isFinished()) {
-					setMotorArmSpeedRaw(0.5);
+					setMotorArmSpeedRaw(0.3);
 					setMotorFarSpeed(0.5);
 					setMotorNearSpeed(0.5);
 					putStringSD("CurrentDirection", "Positive");
 				} else {
-					setMotorArmSpeedRaw(-0.5);
+					setMotorArmSpeedRaw(-0.3);
 					setMotorFarSpeed(-0.5);
 					setMotorNearSpeed(-0.5);
 					putStringSD("CurrentDirection", "Negative");
@@ -241,15 +240,7 @@ public final class LauncherNew extends Subsystem implements SmartdashBoardLoggab
 				setMotorNearSpeed(0);
 				putStringSD("CurrentDirection", "None");
 			}
-			break;
-			
-		case TESTING_SENSORS:
-			break;
-			
-		default:
-			DriverStation.reportError("Launcher debug state machine defaulted!", false);
-			break;
-		}
+			*/
 		
 		logData();
 			
@@ -258,8 +249,8 @@ public final class LauncherNew extends Subsystem implements SmartdashBoardLoggab
 	
 	@Override
 	public void logData() {
-		putStringSD("Debug_State", debugState.toString());
-		putNumberSD("Debug_Timeout_TimeRemaining", timeoutAction1.getTimeRemaining());
+		putNumberSD("Debug_Timeout1_TimeRemaining", timeoutAction1.getTimeRemaining());
+		putNumberSD("Debug_Timeout2_TimeRemaining", timeoutAction2.getTimeRemaining());
 		
 		putNumberSD("MotorArmSpeed", motorArm.getSpeed());
 		putNumberSD("MotorArmSetpoint", armSetpoint);
