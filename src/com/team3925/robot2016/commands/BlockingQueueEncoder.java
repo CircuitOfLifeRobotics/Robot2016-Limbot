@@ -7,14 +7,11 @@ public class BlockingQueueEncoder {
 
 	public static void checkEncoders() throws Exception{
 		
-		BlockingQueue<Double> queue = new ArrayBlockingQueue<>(7);
+		BlockingQueue<Double> queue = new ArrayBlockingQueue<>(5);
 		
 		EncoderGet   input  = new EncoderGet(queue)  ;
-		EncoderCheck output = new EncoderCheck(queue);
-		
 		new Thread(input).start(); 
-		new Thread(output).start();
 		
-	}
+	}// end of checkEncoders
 	
 }// end of class
