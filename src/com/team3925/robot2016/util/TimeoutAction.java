@@ -14,6 +14,7 @@ public class TimeoutAction {
     private double m_time_start;
 
     public TimeoutAction() {
+    	config(-1d);
     }
 
     public boolean isFinished() {

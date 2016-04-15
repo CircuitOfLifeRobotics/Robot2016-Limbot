@@ -79,15 +79,11 @@ public final class LauncherNew extends Subsystem implements SmartdashBoardLoggab
 //			TESTING ENCODER WATCHER
 			// TODO Move to constructor after implemented and tested
 //			encoderWatcherTimer.scheduleAtFixedRate(encoderWatcher, 0, Constants.LAUNCHER_NEW_ENCODER_WATCHER_PERIOD);
-//			timeoutAction1.config(-1d);
-//			timeoutAction2.config(-1d);
 			
 		
 //			TEST ANGLE SETPOINT
 //			startZeroCommand();
 //			setArmSetpoint(45d);
-//			timeoutAction1.config(-1d);
-//			timeoutAction2.config(-1d);
 			
 		
 //			TESTING ZERO COMMAND
@@ -194,7 +190,7 @@ public final class LauncherNew extends Subsystem implements SmartdashBoardLoggab
 			
 			// should PID be implemented?
 			if (Math.abs(armSetpoint - getArmPosition()) > LAUNCHER_NEW_ARM_TOLERANCE) {
-				setMotorArmSpeed(Math.signum(armSetpoint) * 0.5);
+				setMotorArmSpeed(Math.signum(armSetpoint) * 0.2);
 			}
 			*/
 			
