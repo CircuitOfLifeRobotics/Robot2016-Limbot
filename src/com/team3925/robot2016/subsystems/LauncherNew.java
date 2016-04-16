@@ -17,7 +17,9 @@ import com.team3925.robot2016.util.TimeoutAction;
 
 import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Subsystem;
 
@@ -36,6 +38,7 @@ public final class LauncherNew extends Subsystem implements SmartdashBoardLoggab
 //	private final SynchronousPID pid = new SynchronousPID(LAUNCHER_AIM_KP, LAUNCHER_AIM_KI, LAUNCHER_AIM_KD);
 	
 	private final DigitalInput limitSwitch;
+	private final DoubleSolenoid puncherSolenoid;
 	
 	private final EncoderWatcher encoderWatcher;
 	private final Timer encoderWatcherTimer;
@@ -58,11 +61,12 @@ public final class LauncherNew extends Subsystem implements SmartdashBoardLoggab
 	/**
 	 * Testing a new way of getting actuators and sensors into a class
 	 */
-	public LauncherNew(CANTalon motorArm, CANTalon motorFlywheelFar, CANTalon motorFlywheelNear, DigitalInput limitSwitch) {
+	public LauncherNew(CANTalon motorArm, CANTalon motorFlywheelFar, CANTalon motorFlywheelNear, DigitalInput limitSwitch, DoubleSolenoid puncherSolenoid) {
 		this.motorArm = motorArm;
 		this.motorFar = motorFlywheelFar;
 		this.motorNear = motorFlywheelNear;
 		this.limitSwitch = limitSwitch;
+		this.puncherSolenoid = puncherSolenoid;
 		
 		setHasZeroed(false);
 		
@@ -309,6 +313,10 @@ public final class LauncherNew extends Subsystem implements SmartdashBoardLoggab
 
 
 	// OTHER PUBLIC METHODS
+	
+	public void setPuncherSolenoid(boolean engaged) {
+		puncherSolenoid.set(engaged ? Value.kForward:Value.kReverse);
+	}
 	
 	/**
 	 * @return true if command was started or false if command was already running/has already run

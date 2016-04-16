@@ -6,6 +6,7 @@ import static com.team3925.robot2016.Constants.DO_LOG_MOVEMENT_CONSTANTS;
 import static com.team3925.robot2016.Constants.DO_LOG_PDP_VALUES;
 
 import com.kauailabs.navx.frc.AHRS;
+import com.team3925.robot2016.commands.LaunchBall;
 import com.team3925.robot2016.commands.auto.GyroTurn;
 import com.team3925.robot2016.subsystems.DriveTrain;
 import com.team3925.robot2016.subsystems.IntakeAssist;
@@ -55,6 +56,7 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 //	private ManualDrive manualDrive;
 //	private ManualIntakeAssist manualIntakeAssist;
 	private GyroTurn visionGyroTurn = null;
+	private LaunchBall launchBall = null;
 	
 	//Variables
 	public static double deltaTime = 0;
@@ -85,7 +87,7 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 		//Creating Subsystems and Related Processes
 		driveTrain = new DriveTrain();
 		launcher = new Launcher();
-		launcherNew = new LauncherNew(RobotMap.launcherMotorArm, RobotMap.launcherMotorFar, RobotMap.launcherMotorNear, RobotMap.launcherLimitSwitch);
+		launcherNew = new LauncherNew(RobotMap.launcherMotorArm, RobotMap.launcherMotorFar, RobotMap.launcherMotorNear, RobotMap.launcherLimitSwitch, RobotMap.launcherPuncherSolenoid);
 		intakeAssist = new IntakeAssist();
 //		prefs = Preferences.getInstance();
 		pdp = RobotMap.pdp;
@@ -102,6 +104,7 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 		
 		//Creating Commands
 		visionGyroTurn = new GyroTurn(0);
+		launchBall = new LaunchBall();
 		
 		reset();
 	}
@@ -187,23 +190,33 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 		
 		updateSubsystems();
 		
+//		if (oi.shooterXbox.getRawButton(XboxHelper.X)) {
+//			launcherNew.startZeroCommand();
+//		}
+		if (oi.shooterXbox.getRawButton(XboxHelper.A) && !launchBall.isRunning()) {
+			launchBall.start();
+		}
+		if (oi.getCommandCancel()) {
+			launchBall.cancel();
+		}
+				
 		
 		// Driver Vision Control
 		
-		if (oi.getVisionShoot_GyroTurnEnable()) {
-			if (!visionGyroTurn.isRunning()) {
-				if (Double.isNaN(launcher.getTurnAngle())) {
-					visionGyroTurn.setSetpointRelative(launcher.getTurnAngle());
-					visionGyroTurn.start();
-				} else {
-					DriverStation.reportWarning("Camera cannot detect object! Thou shall not runneth or beginneth a GyroDrive!", false);
-				}
-			}
-		} else {
-			if (visionGyroTurn.isRunning()) {
-				visionGyroTurn.cancel();
-			}
-		}
+//		if (oi.getVisionShoot_GyroTurnEnable()) {
+//			if (!visionGyroTurn.isRunning()) {
+//				if (Double.isNaN(launcher.getTurnAngle())) {
+//					visionGyroTurn.setSetpointRelative(launcher.getTurnAngle());
+//					visionGyroTurn.start();
+//				} else {
+//					DriverStation.reportWarning("Camera cannot detect object! Thou shall not runneth or beginneth a GyroDrive!", false);
+//				}
+//			}
+//		} else {
+//			if (visionGyroTurn.isRunning()) {
+//				visionGyroTurn.cancel();
+//			}
+//		}
 
 
 		if (brakeBeforeMatchEnd.isFinished()) {
@@ -221,7 +234,7 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 	}
 	
 	private void updateSubsystems() {
-		launcher.update();
+		launcherNew.update();
 		intakeAssist.update();
 		launcherNew.update();
 	}

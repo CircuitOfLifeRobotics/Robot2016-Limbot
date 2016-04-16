@@ -115,7 +115,7 @@ public class RobotMap {
         LiveWindow.addActuator("Launcher", "AimMotor", launcherMotorArm);
         launcherMotorArm.changeControlMode(TalonControlMode.PercentVbus);
         launcherMotorArm.setFeedbackDevice(FeedbackDevice.CtreMagEncoder_Relative);
-        launcherMotorArm.reverseSensor(true);
+        launcherMotorArm.reverseSensor(false);
 //        launcherMotorAim.reverseSensor(true); doesn't work, sensor value is still negative
 //        launcherMotorArm.ConfigRevLimitSwitchNormallyOpen(false); TODO uncomment when electrial is ready
         
