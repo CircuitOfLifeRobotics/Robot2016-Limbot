@@ -16,6 +16,7 @@ import com.team3925.robot2016.util.SmartdashBoardLoggable;
 import com.team3925.robot2016.util.TimeoutAction;
 
 import edu.wpi.first.wpilibj.CANTalon;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -32,6 +33,9 @@ public final class LauncherNew extends Subsystem implements SmartdashBoardLoggab
 	private final CANTalon motorArm;
 	private final CANTalon motorFar;
 	private final CANTalon motorNear;
+	
+	private final DigitalInput fwdLimitSwitch;
+	private final DigitalInput revLimitSwitch;
 	
 	// TODO implement after testing basics
 //	private final SynchronousPID pid = new SynchronousPID(LAUNCHER_AIM_KP, LAUNCHER_AIM_KI, LAUNCHER_AIM_KD);
@@ -58,11 +62,13 @@ public final class LauncherNew extends Subsystem implements SmartdashBoardLoggab
 	/**
 	 * Testing a new way of getting actuators and sensors into a class
 	 */
-	public LauncherNew(CANTalon motorArm, CANTalon motorFlywheelFar, CANTalon motorFlywheelNear, DoubleSolenoid puncherSolenoid) {
+	public LauncherNew(CANTalon motorArm, CANTalon motorFlywheelFar, CANTalon motorFlywheelNear, DoubleSolenoid puncherSolenoid, DigitalInput fwdSwitch, DigitalInput revSwitch) {
 		this.motorArm = motorArm;
 		this.motorFar = motorFlywheelFar;
 		this.motorNear = motorFlywheelNear;
 		this.puncherSolenoid = puncherSolenoid;
+		this.fwdLimitSwitch = fwdSwitch;
+		this.revLimitSwitch = revSwitch;
 		
 		setHasZeroed(false);
 		
@@ -88,7 +94,7 @@ public final class LauncherNew extends Subsystem implements SmartdashBoardLoggab
 //			TESTING ZERO COMMAND
 			zeroCommand = new ZeroLauncher();
 			boolean zeroWorked = startZeroCommand();
-			putBooleanSD("startZeroCommand return ", zeroWorked);
+			System.out.println("startZeroCommand return " + zeroWorked);
 			timeoutAction1.config(10d);
 			timeoutAction2.config(20d);
 			
@@ -114,24 +120,26 @@ public final class LauncherNew extends Subsystem implements SmartdashBoardLoggab
 		@Override
 		protected void execute() {
 			//TODO DEBUG WHY THIS DOESN'T WORK
-			Robot.launcherNew.setMotorArmSpeedRaw(-.25);
+			Robot.launcherNew.setMotorArmSpeedRaw(-.6);
 			System.out.println(getName() + " Called Execute");
 		}
 
 		@Override
 		protected boolean isFinished() {
-			return false;
+			return Robot.launcherNew.getFwdLimitSwitch();
 		}
 
 		@Override
 		protected void end() {
 			Robot.launcherNew.setMotorArmSpeedRaw(0);
 			Robot.launcherNew.setLauncherZeroed();
+			System.out.println("ZeroLauncher has been cancelled");
 		}
 
 		@Override
 		protected void interrupted() {
 			Robot.launcherNew.setMotorArmSpeedRaw(0);
+			System.out.println("ZeroLauncher has been cancelled");
 		}
 		
 	}
@@ -258,6 +266,7 @@ public final class LauncherNew extends Subsystem implements SmartdashBoardLoggab
 		putNumberSD("Debug_Timeout2_TimeRemaining", timeoutAction2.getTimeRemaining());
 		
 		putNumberSD("MotorArmSpeed", motorArm.getSpeed());
+		putNumberSD("MotorArmInternalSetpoint", motorArm.get());
 		putNumberSD("MotorArmSetpoint", armSetpoint);
 		putNumberSD("MotorArmEncoderPos", getArmPosition());
 
@@ -270,8 +279,8 @@ public final class LauncherNew extends Subsystem implements SmartdashBoardLoggab
 		putBooleanSD("EncoderWatcher", getArmEncoderMoving());
 		putBooleanSD("ZeroCommandRunning", zeroCommand.isRunning());
 		
-		putBooleanSD("FwdLimitSwitch", motorArm.isFwdLimitSwitchClosed());
-		putBooleanSD("RevLimitSwitch", motorArm.isRevLimitSwitchClosed());
+		putBooleanSD("FwdLimitSwitch", getFwdLimitSwitch());
+		putBooleanSD("RevLimitSwitch", getRevLimitSwitch());
 		
 	}
 	
@@ -327,7 +336,7 @@ public final class LauncherNew extends Subsystem implements SmartdashBoardLoggab
 	 * @return true if command was started or false if command was already running/has already run
 	 */
 	public boolean startZeroCommand() {
-		if (/*zeroCommand.isRunning() && hasZeroed*/ true) {
+		if (!zeroCommand.isRunning() && !hasZeroed /*true*/) {
 			zeroCommand.start();
 			return true;
 		} else {
@@ -348,12 +357,15 @@ public final class LauncherNew extends Subsystem implements SmartdashBoardLoggab
 	
 	private void setMotorArmSpeedRaw(double speed) {
 		motorArm.set(MiscUtil.limit(speed) * LAUNCHER_NEW_GLOBAL_POWER);
+		armSetpoint = speed;
 	}
 	
 	private void setMotorArmSpeed(double speed) {
 		if (hasZeroed) {
 			boolean cantRunMotorDown = (getArmPosition() <= 0 && speed < 0);
 			boolean cantRunMotorUp = getArmPosition() >= LAUNCHER_NEW_MAX_ARM_ANGLE && speed > 0;
+			
+			armSetpoint = speed;
 			
 			if (cantRunMotorDown || cantRunMotorUp) {
 				setMotorArmSpeedRaw(0);
@@ -405,12 +417,18 @@ public final class LauncherNew extends Subsystem implements SmartdashBoardLoggab
 		return encoderWatcher.getIsMoving();
 	}
 	
+	public boolean getFwdLimitSwitch() {
+		return fwdLimitSwitch.get();
+	}
+	
+	public boolean getRevLimitSwitch() {
+		return revLimitSwitch.get();
+	}
+	
 	@Override
 	public String getFormattedName() {
 		return "LauncherNew_";
 	}
-	
-	
 	
 	@Override
 	protected void initDefaultCommand() {

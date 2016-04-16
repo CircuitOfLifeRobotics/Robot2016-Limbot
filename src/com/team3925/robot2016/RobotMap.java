@@ -26,6 +26,8 @@ public class RobotMap {
     public static CANTalon launcherMotorArm;
     public static CANTalon launcherMotorFar;
     public static CANTalon launcherMotorNear;
+    public static DigitalInput launcherFwdLimitSwitch;
+    public static DigitalInput launcherRevLimitSwitch;
     public static DoubleSolenoid launcherPuncherSolenoid;
     public static AnalogInput launcherUltrasonic;
     
@@ -111,6 +113,9 @@ public class RobotMap {
         //pointed at light	1.5A
         launcherUltrasonic = new AnalogInput(0);
         
+        launcherFwdLimitSwitch = new DigitalInput(0);
+        launcherRevLimitSwitch = new DigitalInput(1);
+        
         launcherMotorArm = new CANTalon(13);
         LiveWindow.addActuator("Launcher", "AimMotor", launcherMotorArm);
         launcherMotorArm.changeControlMode(TalonControlMode.PercentVbus);
@@ -118,8 +123,9 @@ public class RobotMap {
         launcherMotorArm.reverseSensor(false);
 //        launcherMotorArm.configEncoderCodesPerRev(Constants.LAUNCHER_NEW_ENCODER_SCALE_FACTOR);
 //        launcherMotorAim.reverseSensor(true); doesn't work, sensor value is still negative
-        launcherMotorArm.ConfigRevLimitSwitchNormallyOpen(false);
-        launcherMotorArm.ConfigFwdLimitSwitchNormallyOpen(false);
+        launcherMotorArm.enableForwardSoftLimit(false);
+        launcherMotorArm.enableReverseSoftLimit(false);
+        launcherMotorArm.enableLimitSwitch(false, false);
         
         launcherMotorFar = new CANTalon(12);
         LiveWindow.addActuator("Launcher", "MotorFar", launcherMotorFar);
