@@ -1,6 +1,5 @@
 package com.team3925.robot2016.subsystems;
 
-import static com.team3925.robot2016.Constants.LAUNCHER_NEW_ENCODER_SCALE_FACTOR;
 import static com.team3925.robot2016.Constants.LAUNCHER_NEW_GLOBAL_POWER;
 import static com.team3925.robot2016.Constants.LAUNCHER_NEW_MAX_ARM_ANGLE;
 
@@ -14,6 +13,7 @@ import com.team3925.robot2016.util.Loopable;
 import com.team3925.robot2016.util.MiscUtil;
 import com.team3925.robot2016.util.SmartdashBoardLoggable;
 import com.team3925.robot2016.util.TimeoutAction;
+import com.team3925.robot2016.util.hidhelpers.XboxHelper;
 
 import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -22,6 +22,7 @@ import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Subsystem;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * Subsystem that runs the new launcher
@@ -30,6 +31,8 @@ import edu.wpi.first.wpilibj.command.Subsystem;
  */
 public final class LauncherNew extends Subsystem implements SmartdashBoardLoggable, Loopable {
 	
+	private static final double LAUNCHER_NEW_ARM_TOLERANCE = 3;
+	private static final double LAUNCHER_NEW_ENCODER_SCALE_FACTOR = (-9d/3200d);
 	private final CANTalon motorArm;
 	private final CANTalon motorFar;
 	private final CANTalon motorNear;
@@ -49,7 +52,7 @@ public final class LauncherNew extends Subsystem implements SmartdashBoardLoggab
 	private double motorFarSetpoint;
 	private double motorNearSetpoint;
 	
-	private boolean hasZeroed = false;
+	private boolean hasZeroed;
 	
 	private ZeroLauncher zeroCommand;
 	
@@ -80,6 +83,8 @@ public final class LauncherNew extends Subsystem implements SmartdashBoardLoggab
 	
 	public void init() {
 		resetSetpoints();
+		zeroCommand = new ZeroLauncher();
+		hasZeroed = false;
 			
 //			TESTING ENCODER WATCHER
 			// TODO Move to constructor after implemented and tested
@@ -87,18 +92,17 @@ public final class LauncherNew extends Subsystem implements SmartdashBoardLoggab
 			
 		
 //			TEST ANGLE SETPOINT
-//			startZeroCommand();
+			SmartDashboard.putNumber(getFormattedName() + "MotorArmSetpointSETTER", 0);
+			startZeroCommand();
 //			setArmSetpoint(45d);
 			
 		
 //			TESTING ZERO COMMAND
-			zeroCommand = new ZeroLauncher();
-			boolean zeroWorked = startZeroCommand();
-			System.out.println("startZeroCommand return " + zeroWorked);
-			timeoutAction1.config(10d);
-			timeoutAction2.config(20d);
-			
-			zeroCommand.start();
+//			boolean zeroWorked = startZeroCommand();
+//			System.out.println("startZeroCommand return " + zeroWorked);
+//			timeoutAction1.config(10d);
+//			timeoutAction2.config(20d);
+//			zeroCommand.start();
 			
 		
 //			TESTING DIRECTIONS
@@ -120,7 +124,7 @@ public final class LauncherNew extends Subsystem implements SmartdashBoardLoggab
 		@Override
 		protected void execute() {
 			//TODO DEBUG WHY THIS DOESN'T WORK
-			Robot.launcherNew.setMotorArmSpeedRaw(-.6);
+			Robot.launcherNew.setMotorArmSpeedRaw(-.5);
 			System.out.println(getName() + " Called Execute");
 		}
 
@@ -199,21 +203,28 @@ public final class LauncherNew extends Subsystem implements SmartdashBoardLoggab
 //		TESTING ENCODER WATCHER
 			// NOT IMPLEMENTED
 			
-			
+		
+		setMotorNearSpeed(motorNearSetpoint);
+		setMotorFarSpeed(motorFarSetpoint);
+		
 //		TEST_ANGLE_SETPOINT
-			/*
+//			/*
 			// testing getting input from SmartDashboard
-			setArmSetpoint(SmartDashboard.getNumber(getFormattedName() + "MotorArmSetpointSETTER", 0));
+			//-16000 is shoot angle approximately
+			if (hasZeroed) setArmSetpoint(SmartDashboard.getNumber(getFormattedName() + "MotorArmSetpointSETTER", 0));
 			
 			// should PID be implemented?
-			if (Math.abs(armSetpoint - getArmPosition()) > LAUNCHER_NEW_ARM_TOLERANCE) {
-				setMotorArmSpeed(Math.signum(armSetpoint) * 0.2);
+			double error = armSetpoint - getArmPosition();
+			System.out.println("Diff = "+Math.abs(error));
+			if (Math.abs(error) > LAUNCHER_NEW_ARM_TOLERANCE && hasZeroed) {
+				setMotorArmSpeed(Math.signum(error) * 0.3);
+				System.out.println("MotorArmSpiid "+Math.signum(error) * 0.3 * Math.min(Math.abs(error/10),1));
 			}
-			*/
+//			*/
 			
 			
 //		TESTING_ZERO_COMMAND
-//		/*
+		/*
 			// launcher zero command has already been started in init()
 			
 			if (hasZeroed()) {
@@ -230,7 +241,7 @@ public final class LauncherNew extends Subsystem implements SmartdashBoardLoggab
 					putStringSD("CurrentDirection", "None");
 				}
 			}
-//			*/
+			*/
 			
 		
 //		TESTING_DIRECTIONS (done)
@@ -277,7 +288,8 @@ public final class LauncherNew extends Subsystem implements SmartdashBoardLoggab
 		
 		putBooleanSD("HasZeroed", hasZeroed());
 		putBooleanSD("EncoderWatcher", getArmEncoderMoving());
-		putBooleanSD("ZeroCommandRunning", zeroCommand.isRunning());
+		try {putBooleanSD("ZeroCommandRunning", zeroCommand.isRunning());}
+		catch (Exception e) {DriverStation.reportError("Cannot call a method on a null command!", false);}
 		
 		putBooleanSD("FwdLimitSwitch", getFwdLimitSwitch());
 		putBooleanSD("RevLimitSwitch", getRevLimitSwitch());
@@ -357,15 +369,12 @@ public final class LauncherNew extends Subsystem implements SmartdashBoardLoggab
 	
 	private void setMotorArmSpeedRaw(double speed) {
 		motorArm.set(MiscUtil.limit(speed) * LAUNCHER_NEW_GLOBAL_POWER);
-		armSetpoint = speed;
 	}
 	
 	private void setMotorArmSpeed(double speed) {
 		if (hasZeroed) {
 			boolean cantRunMotorDown = (getArmPosition() <= 0 && speed < 0);
 			boolean cantRunMotorUp = getArmPosition() >= LAUNCHER_NEW_MAX_ARM_ANGLE && speed > 0;
-			
-			armSetpoint = speed;
 			
 			if (cantRunMotorDown || cantRunMotorUp) {
 				setMotorArmSpeedRaw(0);
@@ -410,7 +419,7 @@ public final class LauncherNew extends Subsystem implements SmartdashBoardLoggab
 	}
 	
 	public double getArmPosition() {
-		return /*LAUNCHER_NEW_ENCODER_SCALE_FACTOR **/ motorArm.getEncPosition();
+		return LAUNCHER_NEW_ENCODER_SCALE_FACTOR * motorArm.getEncPosition();
 	}
 	
 	public boolean getArmEncoderMoving() {

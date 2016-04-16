@@ -68,6 +68,10 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 	private static double maxRotationVel = 0;
 	private static double maxRotationAccel = 0;
 	
+	//TODO: remove
+	private String tempManualState;
+	private boolean buttonWasDown;
+	
 	public Robot() {
 		try {
 			//Alternatively:  I2C.Port.kMXP, SerialPort.Port.kMXP or SerialPort.Port.kUSB
@@ -124,6 +128,10 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 		maxRotationVel = 0;
 		maxRotationAccel = 0; 
 //		launcher.resetPID();
+		
+		//TODO: remove
+		tempManualState = "intake";
+		buttonWasDown = false;
 	}
 	
 	/**
@@ -232,6 +240,27 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 	 */
 	public void testPeriodic() {
 		LiveWindow.run();
+		
+		//TESTING MANUAL LAUNCHER TODO: remove
+//		boolean buttonDown = Robot.oi.shooterXbox.getRawButton(XboxHelper.A);
+//		if (buttonDown) {
+//			if (!buttonWasDown) tempManualState = tempManualState.equals("intake") ? "wheels": tempManualState.equals("wheels") ? "shooting" : "intake";
+//			buttonWasDown = true;
+//		} else
+//			buttonWasDown = false;
+//		if (tempManualState.equals("intake")) {
+//			launcherNew.setFlywheelFarSetpoint(0);
+//			launcherNew.setFlywheelNearSetpoint(0);
+//			launcherNew.setPuncherSolenoid(false);
+//		}else if (tempManualState.equals("wheels")) {
+//			launcherNew.setFlywheelFarSetpoint(-1);
+//			launcherNew.setFlywheelNearSetpoint(-1);
+//		}else if (tempManualState.equals("shooting")) {
+//			launcherNew.setPuncherSolenoid(true);
+//		}
+//		System.out.println("state = "+tempManualState);
+//		
+//		launcherNew.update();
 	}
 	
 	private void updateSubsystems() {

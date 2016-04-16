@@ -120,7 +120,6 @@ public class RobotMap {
         LiveWindow.addActuator("Launcher", "AimMotor", launcherMotorArm);
         launcherMotorArm.changeControlMode(TalonControlMode.PercentVbus);
         launcherMotorArm.setFeedbackDevice(FeedbackDevice.CtreMagEncoder_Relative);
-        launcherMotorArm.reverseSensor(false);
 //        launcherMotorArm.configEncoderCodesPerRev(Constants.LAUNCHER_NEW_ENCODER_SCALE_FACTOR);
 //        launcherMotorAim.reverseSensor(true); doesn't work, sensor value is still negative
         launcherMotorArm.enableForwardSoftLimit(false);
