@@ -43,7 +43,7 @@ public class RobotMap {
 //    public static Solenoid redLedStrip;
     
     public static PowerDistributionPanel pdp;
-	public static DigitalInput launcherLimitSwitch;
+    
     
     public static void init() {
     	
@@ -116,29 +116,21 @@ public class RobotMap {
         launcherMotorArm.changeControlMode(TalonControlMode.PercentVbus);
         launcherMotorArm.setFeedbackDevice(FeedbackDevice.CtreMagEncoder_Relative);
         launcherMotorArm.reverseSensor(false);
+//        launcherMotorArm.configEncoderCodesPerRev(Constants.LAUNCHER_NEW_ENCODER_SCALE_FACTOR);
 //        launcherMotorAim.reverseSensor(true); doesn't work, sensor value is still negative
-//        launcherMotorArm.ConfigRevLimitSwitchNormallyOpen(false); TODO uncomment when electrial is ready
+        launcherMotorArm.ConfigRevLimitSwitchNormallyOpen(false);
+        launcherMotorArm.ConfigFwdLimitSwitchNormallyOpen(false);
         
         launcherMotorFar = new CANTalon(12);
         LiveWindow.addActuator("Launcher", "MotorFar", launcherMotorFar);
         launcherMotorFar.setFeedbackDevice(FeedbackDevice.QuadEncoder);
         launcherMotorFar.changeControlMode(TalonControlMode.PercentVbus);
-        launcherMotorFar.setInverted(false);
-        launcherMotorFar.reverseOutput(false);
-        launcherMotorFar.reverseSensor(true);
-//        launcherMotorLeft.configEncoderCodesPerRev(4096);
         
         launcherMotorNear = new CANTalon(14);
         LiveWindow.addActuator("Launcher", "MotorNear", launcherMotorNear);
         launcherMotorNear.setFeedbackDevice(FeedbackDevice.QuadEncoder);
         launcherMotorNear.changeControlMode(TalonControlMode.PercentVbus);
-        launcherMotorNear.setInverted(false); // practice = true | comp = false
-        launcherMotorNear.reverseOutput(true);
-        launcherMotorNear.reverseSensor(true);
-//        launcherMotorRight.configEncoderCodesPerRev(4096);
-
-        launcherLimitSwitch = new DigitalInput(0); // TODO get port
-        LiveWindow.addSensor("Launcher", "LimitSwitch", launcherLimitSwitch);
+        
         
         
         //  INTAKE ASSIST

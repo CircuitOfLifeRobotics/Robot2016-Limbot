@@ -87,7 +87,7 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 		//Creating Subsystems and Related Processes
 		driveTrain = new DriveTrain();
 		launcher = new Launcher();
-		launcherNew = new LauncherNew(RobotMap.launcherMotorArm, RobotMap.launcherMotorFar, RobotMap.launcherMotorNear, RobotMap.launcherLimitSwitch, RobotMap.launcherPuncherSolenoid);
+		launcherNew = new LauncherNew(RobotMap.launcherMotorArm, RobotMap.launcherMotorFar, RobotMap.launcherMotorNear, RobotMap.launcherPuncherSolenoid);
 		intakeAssist = new IntakeAssist();
 //		prefs = Preferences.getInstance();
 		pdp = RobotMap.pdp;
@@ -180,6 +180,7 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 //		manualIntakeAssist.start();
 		
 		launcher.init();
+		launcherNew.init();
 	}
 
 	/**
@@ -234,7 +235,7 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 	}
 	
 	private void updateSubsystems() {
-		launcherNew.update();
+		driveTrain.update();
 		intakeAssist.update();
 		launcherNew.update();
 	}
