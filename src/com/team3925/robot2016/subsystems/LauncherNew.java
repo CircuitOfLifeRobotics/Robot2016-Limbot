@@ -56,7 +56,7 @@ public final class LauncherNew extends Subsystem implements SmartdashBoardLoggab
 	
 	private final TimeoutAction timeoutAction1 = new TimeoutAction();
 	private final TimeoutAction timeoutAction2 = new TimeoutAction();
-	
+	private final Timer multithreadedDemoTimer;
 	
 	/**
 	 * Testing a new way of getting actuators and sensors into a class
@@ -75,6 +75,8 @@ public final class LauncherNew extends Subsystem implements SmartdashBoardLoggab
 		zeroCommand = new ZeroLauncher();
 		encoderWatcher = new EncoderWatcher();
 		encoderWatcherTimer = new Timer(getFormattedName() + "EncoderWatcher", true);
+		
+		multithreadedDemoTimer = new Timer("MultiThreadedDemoTimer", true);
 	}
 	
 	public void init() {
@@ -83,15 +85,11 @@ public final class LauncherNew extends Subsystem implements SmartdashBoardLoggab
 //			TESTING ENCODER WATCHER
 			// TODO Move to constructor after implemented and tested
 //			encoderWatcherTimer.scheduleAtFixedRate(encoderWatcher, 0, Constants.LAUNCHER_NEW_ENCODER_WATCHER_PERIOD);
-//			timeoutAction1.config(-1d);
-//			timeoutAction2.config(-1d);
 			
 		
 //			TEST ANGLE SETPOINT
 //			startZeroCommand();
 //			setArmSetpoint(45d);
-//			timeoutAction1.config(-1d);
-//			timeoutAction2.config(-1d);
 			
 		
 //			TESTING ZERO COMMAND
@@ -103,6 +101,11 @@ public final class LauncherNew extends Subsystem implements SmartdashBoardLoggab
 //			TESTING DIRECTIONS
 //			timeoutAction1.config(1.5d);
 //			timeoutAction2.config(3d);
+		
+		multithreadedDemoTimer.scheduleAtFixedRate(new MultiThreadedDemo("20ms"), 0, 20);
+		multithreadedDemoTimer.scheduleAtFixedRate(new MultiThreadedDemo("50ms"), 0, 50);
+		multithreadedDemoTimer.scheduleAtFixedRate(new MultiThreadedDemo("100ms"), 0, 100);
+		multithreadedDemoTimer.scheduleAtFixedRate(new MultiThreadedDemo("200ms"), 0, 200);
 	}
 	
 	private class ZeroLauncher extends Command {
@@ -137,7 +140,7 @@ public final class LauncherNew extends Subsystem implements SmartdashBoardLoggab
 	/**
 	 * TODO implement class
 	 */
-	private static class EncoderWatcher extends TimerTask {
+	private class EncoderWatcher extends TimerTask {
 		private ArrayBlockingQueue<Double> queue;
 		private boolean isMoving;
 		
@@ -171,6 +174,21 @@ public final class LauncherNew extends Subsystem implements SmartdashBoardLoggab
 		
 	}
 	
+	private class MultiThreadedDemo extends TimerTask {
+		private final String name;
+		
+		public MultiThreadedDemo(String name) {
+			this.name = name;
+		}
+		
+		@Override
+		public void run() {
+			System.out.println("[" + name + "] called run()");
+		}
+		
+	}
+	
+	
 	
 	@Override
 	public void update() {
@@ -198,7 +216,7 @@ public final class LauncherNew extends Subsystem implements SmartdashBoardLoggab
 			
 			// should PID be implemented?
 			if (Math.abs(armSetpoint - getArmPosition()) > LAUNCHER_NEW_ARM_TOLERANCE) {
-				setMotorArmSpeed(Math.signum(armSetpoint) * 0.5);
+				setMotorArmSpeed(Math.signum(armSetpoint) * 0.2);
 			}
 			*/
 			
