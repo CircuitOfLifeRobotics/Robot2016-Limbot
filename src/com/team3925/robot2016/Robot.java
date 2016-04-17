@@ -38,7 +38,7 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 	
 	//Subsystems
 	public static DriveTrain driveTrain;
-	public static Launcher launcherNew;
+	public static Launcher launcher;
 	
 	//Other
 	public static AHRS navx = null;
@@ -86,7 +86,7 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 		
 		//Creating Subsystems and Related Processes
 		driveTrain = new DriveTrain();
-		launcherNew = new Launcher(RobotMap.launcherMotorArm, RobotMap.launcherMotorFar, RobotMap.launcherMotorNear, RobotMap.launcherPuncherSolenoid, RobotMap.launcherFwdLimitSwitch, RobotMap.launcherRevLimitSwitch);
+		launcher = new Launcher(RobotMap.launcherMotorArm, RobotMap.launcherMotorFar, RobotMap.launcherMotorNear, RobotMap.launcherPuncherSolenoid, RobotMap.launcherFwdLimitSwitch, RobotMap.launcherRevLimitSwitch);
 		pdp = RobotMap.pdp;
 		
 		// OI must be constructed after subsystems. If the OI creates Commands
@@ -152,7 +152,7 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 		reset();
 		
 		autoRoutine.start();
-		launcherNew.init();
+		launcher.init();
 	}
 	
 	/**
@@ -179,7 +179,7 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 //		manualDrive.start();
 //		manualIntakeAssist.start();
 		
-		launcherNew.init();
+		launcher.init();
 	}
 
 	/**
@@ -256,7 +256,7 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 	
 	private void updateSubsystems() {
 		driveTrain.update();
-		launcherNew.update();
+		launcher.update();
 	}
 	
 	@Override

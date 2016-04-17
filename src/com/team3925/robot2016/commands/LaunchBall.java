@@ -18,7 +18,7 @@ public class LaunchBall extends Command implements SmartdashBoardLoggable {
 	State state;
 	
 	public LaunchBall() {
-		launcher = Robot.launcherNew;
+		launcher = Robot.launcher;
 		state = State.WAIT_LET_GO_BALL;
 		timeout = new TimeoutAction();
 	}

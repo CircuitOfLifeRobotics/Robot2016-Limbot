@@ -7,7 +7,7 @@ import edu.wpi.first.wpilibj.command.Command;
 
 public class CollectBall extends Command {
 	
-	private final Launcher launcher = Robot.launcherNew;
+	private final Launcher launcher = Robot.launcher;
 	
 	public CollectBall() {
 		super("CollectBall");
