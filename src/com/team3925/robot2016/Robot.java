@@ -9,9 +9,7 @@ import com.kauailabs.navx.frc.AHRS;
 import com.team3925.robot2016.commands.LaunchBall;
 import com.team3925.robot2016.commands.auto.GyroTurn;
 import com.team3925.robot2016.subsystems.DriveTrain;
-import com.team3925.robot2016.subsystems.IntakeAssist;
 import com.team3925.robot2016.subsystems.Launcher;
-import com.team3925.robot2016.subsystems.LauncherNew;
 import com.team3925.robot2016.util.DriveTrainSignal;
 import com.team3925.robot2016.util.SmartdashBoardLoggable;
 import com.team3925.robot2016.util.TimeoutAction;
@@ -40,9 +38,7 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 	
 	//Subsystems
 	public static DriveTrain driveTrain;
-	public static Launcher launcher;
-	public static LauncherNew launcherNew;
-	public static IntakeAssist intakeAssist;
+	public static Launcher launcherNew;
 	
 	//Other
 	public static AHRS navx = null;
@@ -90,10 +86,7 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 		
 		//Creating Subsystems and Related Processes
 		driveTrain = new DriveTrain();
-		launcher = new Launcher();
-		launcherNew = new LauncherNew(RobotMap.launcherMotorArm, RobotMap.launcherMotorFar, RobotMap.launcherMotorNear, RobotMap.launcherPuncherSolenoid, RobotMap.launcherFwdLimitSwitch, RobotMap.launcherRevLimitSwitch);
-		intakeAssist = new IntakeAssist();
-//		prefs = Preferences.getInstance();
+		launcherNew = new Launcher(RobotMap.launcherMotorArm, RobotMap.launcherMotorFar, RobotMap.launcherMotorNear, RobotMap.launcherPuncherSolenoid, RobotMap.launcherFwdLimitSwitch, RobotMap.launcherRevLimitSwitch);
 		pdp = RobotMap.pdp;
 		
 		// OI must be constructed after subsystems. If the OI creates Commands
@@ -158,9 +151,8 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 		driveTrain.setHighGear(false);
 		reset();
 		
-		launcher.init();
-		
 		autoRoutine.start();
+		launcherNew.init();
 	}
 	
 	/**
@@ -187,7 +179,6 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 //		manualDrive.start();
 //		manualIntakeAssist.start();
 		
-		launcher.init();
 		launcherNew.init();
 	}
 
@@ -265,7 +256,6 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 	
 	private void updateSubsystems() {
 		driveTrain.update();
-		intakeAssist.update();
 		launcherNew.update();
 	}
 	

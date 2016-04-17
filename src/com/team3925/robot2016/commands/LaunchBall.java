@@ -1,7 +1,7 @@
 package com.team3925.robot2016.commands;
 
 import com.team3925.robot2016.Robot;
-import com.team3925.robot2016.subsystems.LauncherNew;
+import com.team3925.robot2016.subsystems.Launcher;
 import com.team3925.robot2016.util.SmartdashBoardLoggable;
 import com.team3925.robot2016.util.TimeoutAction;
 
@@ -13,7 +13,7 @@ public class LaunchBall extends Command implements SmartdashBoardLoggable {
 		WAIT_LET_GO_BALL, WAIT_AIM_AT_SETPOINT, WAIT_BALL_LEAVE, WAIT_AIM_AT_FINISH;
 	}
 	
-	LauncherNew launcher;
+	Launcher launcher;
 	TimeoutAction timeout;
 	State state;
 	

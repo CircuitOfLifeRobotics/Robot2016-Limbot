@@ -2,10 +2,7 @@ package com.team3925.robot2016;
 
 import static com.team3925.robot2016.util.hidhelpers.XboxHelper.START;
 
-import com.team3925.robot2016.commands.CollectBall;
-import com.team3925.robot2016.commands.ThrowBall;
 import com.team3925.robot2016.commands.auto.AutoRoutineCenter;
-import com.team3925.robot2016.commands.auto.GyroTurn;
 import com.team3925.robot2016.commands.auto.defensecross.CrossDefault;
 import com.team3925.robot2016.util.hidhelpers.FlightStickHelper;
 import com.team3925.robot2016.util.hidhelpers.ThrustmasterHelper;
@@ -80,7 +77,7 @@ public final class OI {
 		shooterXbox = new Joystick(2);
 
 //		collectBall = new CollectBall();
-		throwBallFar = new ThrowBall(Constants.LAUNCHER_THROWBALL_FAR_ANGLE, 1, 5);
+//		throwBallFar = new ThrowBall(Constants.LAUNCHER_THROWBALL_FAR_ANGLE, 1, 5);
 //		throwBallNear = new ThrowBall(Constants.LAUNCHER_THROWBALL_NEAR_ANGLE, 1, 5);
 //		throwBallLow = new ThrowBall(0, 1, 1);
 
@@ -125,8 +122,8 @@ public final class OI {
 		autoChooser = new SendableChooser();
 
 //		autoChooser.addDefault("DO NOTHING", new AutoRoutineDoNothing());
-		autoChooser.addDefault("Cross-ArmsUP", new AutoRoutineCenter(new CrossDefault(), 0, false));
-		autoChooser.addObject("Cross-ArmsDOWN", new AutoRoutineCenter(new CrossDefault(), 0, true));
+		autoChooser.addDefault("Cross-ArmsUP", new AutoRoutineCenter(new CrossDefault(), 0));
+		autoChooser.addObject("Cross-ArmsDOWN", new AutoRoutineCenter(new CrossDefault(), 0));
 //		autoChooser.addObject("Courtyard Freebie Shot", new AutoRoutineCourtyard(Constants.AUTONOMOUS_SHOOT_ANGLE));
 //
 //				autoChooser.addObject("Portcullis", new CrossDefault());
@@ -164,7 +161,7 @@ public final class OI {
 //		SmartDashboard.putString("AutoSelected", selected.toString());
 //		return (CommandGroup) selected;
 		
-		return new AutoRoutineCenter(new CrossDefault(), 0, false);
+		return new AutoRoutineCenter(new CrossDefault(), 0);
 		
 //		if (selected instanceof AutoRoutineDoNothing) {
 //			return (CommandGroup) selected;

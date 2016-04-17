@@ -1,210 +1,435 @@
 package com.team3925.robot2016.subsystems;
 
-import static com.team3925.robot2016.Constants.LAUNCHER_AIM_KD;
-import static com.team3925.robot2016.Constants.LAUNCHER_AIM_KI;
-import static com.team3925.robot2016.Constants.LAUNCHER_AIM_KP;
+import static com.team3925.robot2016.Constants.LAUNCHER_ARM_TOLERANCE;
+import static com.team3925.robot2016.Constants.LAUNCHER_ENCODER_SCALE_FACTOR;
+import static com.team3925.robot2016.Constants.LAUNCHER_GLOBAL_POWER;
+import static com.team3925.robot2016.Constants.LAUNCHER_MAX_ARM_ANGLE;
+
+import java.util.Timer;
+import java.util.TimerTask;
 
 import com.team3925.robot2016.Constants;
-import com.team3925.robot2016.RobotMap;
+import com.team3925.robot2016.Robot;
 import com.team3925.robot2016.util.Loopable;
 import com.team3925.robot2016.util.MiscUtil;
 import com.team3925.robot2016.util.SmartdashBoardLoggable;
-import com.team3925.robot2016.util.SynchronousPID;
+import com.team3925.robot2016.util.TimeoutAction;
 
 import edu.wpi.first.wpilibj.CANTalon;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
- * The subsystem that represents the launcher. It is responsible for the
- * keeping the arm at the desired angle and keeping the intake motors at
- * the desired speed.
+ * Subsystem that runs the new launcher
  * 
- * @author Adam C
+ * @author Bryan "atomic_diamond" S
  */
 public final class Launcher extends Subsystem implements SmartdashBoardLoggable, Loopable {
 	
-    private final CANTalon motorLeft = RobotMap.launcherMotorFar;
-    private final CANTalon motorRight = RobotMap.launcherMotorNear;
-    private final CANTalon motorAim = RobotMap.launcherMotorArm;
-    private final DoubleSolenoid puncherSolenoid = RobotMap.launcherPuncherSolenoid;
-    private SynchronousPID aimPidLoop = new SynchronousPID();
-    private double turnAngle = Double.NaN;
-    
-    private boolean aimEnabled = false,
-    		aimOnTarget = false;
-	private double aimSetpoint,
-			aimSetpointDiff,
-			aimLastSetpoint,
-			aimPosition,
-			aimDifference,
-			aimOutput;
-	private double intakeSpeed;
-    
-	public void init() {
-		aimPidLoop.setPID(LAUNCHER_AIM_KP, LAUNCHER_AIM_KI, LAUNCHER_AIM_KD);
-		resetPID();
+	private final CANTalon motorArm;
+	private final CANTalon motorFar;
+	private final CANTalon motorNear;
+	
+	private final DigitalInput fwdLimitSwitch;
+	private final DigitalInput revLimitSwitch;
+	
+	// TODO implement after testing basics
+//	private final SynchronousPID pid = new SynchronousPID(LAUNCHER_AIM_KP, LAUNCHER_AIM_KI, LAUNCHER_AIM_KD);
+	
+	private final DoubleSolenoid puncherSolenoid;
+	
+	private final EncoderWatcher encoderWatcher;
+	private final Timer encoderWatcherTimer;
+	
+	private double armSetpoint;
+	private double motorFarSetpoint;
+	private double motorNearSetpoint;
+	
+	private boolean hasZeroed;
+	
+	private ZeroLauncher zeroCommand;
+	
+	
+	// DEBUG STUFF
+	
+	private final TimeoutAction timeoutAction1 = new TimeoutAction();
+	private final TimeoutAction timeoutAction2 = new TimeoutAction();
+	
+	/**
+	 * Testing a new way of getting actuators and sensors into a class
+	 */
+	public Launcher(CANTalon motorArm, CANTalon motorFlywheelFar, CANTalon motorFlywheelNear, DoubleSolenoid puncherSolenoid, DigitalInput fwdSwitch, DigitalInput revSwitch) {
+		this.motorArm = motorArm;
+		this.motorFar = motorFlywheelFar;
+		this.motorNear = motorFlywheelNear;
+		this.puncherSolenoid = puncherSolenoid;
+		this.fwdLimitSwitch = fwdSwitch;
+		this.revLimitSwitch = revSwitch;
 		
-		// TODO: If the limits are this high, can this be replaced with a normal PID controller?
-//		aimPidLoop.setPIDLimits(10000, 10000, 10000, 10000, -10000, -10000, -10000, -10000);
+		setHasZeroed(false);
 		
-		setAimSetpoint(0);
+		resetSetpoints();
 		
-		intakeSpeed = 0;
-		aimSetpoint = 0;
-		aimLastSetpoint = 0;
-		
-		setPuncher(false);
+		encoderWatcher = new EncoderWatcher();
+		encoderWatcherTimer = new Timer(getFormattedName() + "EncoderWatcher", true);
 	}
-    
-	public void initDefaultCommand() {
-		// a default command should not be run
-		// only shoot when requested
+	
+	public void init() {
+		resetSetpoints();
+		zeroCommand = new ZeroLauncher();
+		hasZeroed = false;
+			
+			
+		// TODO Move to constructor after implemented and tested
+		encoderWatcherTimer.scheduleAtFixedRate(encoderWatcher, 0, Constants.LAUNCHER_ENCODER_WATCHER_PERIOD);
+		
+//			TEST ANGLE SETPOINT
+		SmartDashboard.putNumber(getFormattedName() + "MotorArmSetpointSETTER", 0);
+		startZeroCommand();
+			
+		
+//			TESTING ZERO COMMAND
+//			boolean zeroWorked = startZeroCommand();
+//			System.out.println("startZeroCommand return " + zeroWorked);
+			timeoutAction1.config(10d);
+			timeoutAction2.config(20d);
+			
+		
+//			TESTING DIRECTIONS
+//			timeoutAction1.config(1.5d);
+//			timeoutAction2.config(3d);
+	}
+	
+	private class ZeroLauncher extends Command {
+		private boolean waitStarted;
+		private final TimeoutAction timeout = new TimeoutAction();
+		
+		public ZeroLauncher() {
+			super("Zero Command", 3);
+			requires(Robot.launcherNew);
+			waitStarted = false;
+		}
+		
+		@Override
+		protected void initialize() {
+		}
+
+		@Override
+		protected void execute() {
+			Robot.launcherNew.setMotorArmSpeedRaw(-.5);
+			System.out.println(getName() + " Called Execute");
+			
+			if (!waitStarted && Robot.launcherNew.getFwdLimitSwitch()) {
+				timeout.config(Constants.LAUNCHER_ZERO_COMMAND_WAIT);
+				waitStarted = true;
+			}
+		}
+
+		@Override
+		protected boolean isFinished() {
+			return timeout.isFinished();
+		}
+
+		@Override
+		protected void end() {
+			Robot.launcherNew.setMotorArmSpeedRaw(0);
+			Robot.launcherNew.setLauncherZeroed();
+			System.out.println("ZeroLauncher has been cancelled");
+		}
+
+		@Override
+		protected void interrupted() {
+			Robot.launcherNew.setMotorArmSpeedRaw(0);
+			System.out.println("ZeroLauncher has been cancelled");
+		}
+		
+	}
+	
+	/**
+	 * TODO implement class
+	 */
+	private class EncoderWatcher extends TimerTask {
+		private boolean isMoving;
+		
+		public EncoderWatcher() {
+		}
+		
+		public boolean getIsMoving() {
+			return isMoving;
+		}
+		
+		@Override
+		public void run() {
+			isMoving = true;
+		}
+		
 	}
 	
 	@Override
 	public void update() {
-	
-		// AIM MOTOR
-		
-			// TODO: refactor so this isn't needed
-			if (aimEnabled) {
-				aimPosition = getAimMotorPosition();
-	
-				aimDifference = aimSetpoint - aimPosition;
-				aimSetpointDiff = aimSetpoint - aimLastSetpoint;
-	
-				double aimLimitedSetpoint = aimSetpoint;
-				// TODO: this effectively does nothing
-	//			if (Math.abs(aimSetpointDiff) > Constants.LAUNCHER_AIM_INCREMENT) {
-	//				aimLimitedSetpoint = aimLastSetpoint + Constants.LAUNCHER_AIM_INCREMENT * (aimSetpointDiff>0 ? 1:-1);
-	//			}
-				
-				aimOnTarget = Math.abs(aimDifference) < Constants.LAUNCHER_AIM_TOLERANCE
-						// TODO: 2 IS MAGIC
-						&& Math.abs(motorAim.getSpeed()) < 2;
-				
-				boolean isAtBottom = Math.abs(aimPosition - 0 /* bottom */) < Constants.LAUNCHER_AIM_TOLERANCE;
-				boolean isNearTarget = Math.abs(aimDifference) < Constants.LAUNCHER_AIM_TOLERANCE;
-				
-				boolean doRunAim = !isAtBottom || !isNearTarget;
-				putBooleanSD("DoRunAim", doRunAim);
-				
-				aimPidLoop.setSetpoint(aimLimitedSetpoint);
-				aimOutput = aimPidLoop.calculate(aimPosition);
-	
-				// this scales the pid output due to the effects of gravity at different angles
-				aimOutput *= 1 - (aimPosition/150)*(aimPosition/150);
-	
-				aimOutput = Math.min(Math.max(aimOutput, -0.2), 0.8);
-	//			aimOutput = Math.min(Math.max(aimOutput, -0.2), 1);
-				
-				aimLastSetpoint = aimLimitedSetpoint;
-				
-				// TODO: fix this somehow to remove
-				if (doRunAim) {
-					motorAim.set(aimOutput);
-				} else {
-					motorAim.set(0d);
-				}
-			} else {
-				motorAim.set(0d);
+//		FULL
+		/*
+			// If arm motor has not zeroed, start zero command
+			if (!hasZeroed()) {
+				startZeroCommand();
+				return;
 			}
 			
+			setMotorNearSpeed(motorNearSetpoint);
+			setMotorFarSpeed(motorFarSetpoint);
+			*/
 			
-			// FLYWHEELS
+		
+//		TESTING ENCODER WATCHER
+			// NOT IMPLEMENTED
 			
-			motorLeft.set(-intakeSpeed);
-			motorRight.set(intakeSpeed);
+		
+		setMotorNearSpeed(motorNearSetpoint);
+		setMotorFarSpeed(motorFarSetpoint);
+		
+//		TEST_ANGLE_SETPOINT
 			
+			// testing getting input from SmartDashboard
+			//-16000 is shoot angle approximately
+//			if (hasZeroed) setArmSetpoint(SmartDashboard.getNumber(getFormattedName() + "MotorArmSetpointSETTER", 0));
+//			
+//			double error = armSetpoint - getArmPosition();
+//			System.out.println("Diff = "+Math.abs(error));
+//			if (Math.abs(error) > LAUNCHER_NEW_ARM_TOLERANCE && hasZeroed) {
+//				setMotorArmSpeed(Math.signum(error) * 0.3 * Math.min(Math.abs(error/20),1));
+//				System.out.println("MotorArmSpiid "+Math.signum(error) * 0.3 /** Math.min(Math.abs(error/10),1)*/);
+//			}
+			
+			
+			
+//		TESTING_ZERO_COMMAND
+//		/*
+
+//		if (hasZeroed()) {
+//			if (!timeoutAction2.isFinished()) {
+//				if (!timeoutAction1.isFinished()) {
+//					setMotorArmSpeed(.2d);
+//					putStringSD("CurrentDirection", "Positive");
+//				} else {
+//					setMotorArmSpeed(-.2d);
+//					putStringSD("CurrentDirection", "Negative");
+//				}
+//			} else {
+//				setMotorArmSpeed(0d);
+//				putStringSD("CurrentDirection", "None");
+//			}
+//		}
+//			*/
+			
+		
+//		TESTING_DIRECTIONS (done)
+		/*
+			if (!timeoutAction2.isFinished()) {
+				if (!timeoutAction1.isFinished()) {
+					setMotorArmSpeedRaw(0.3);
+					setMotorFarSpeed(0.5);
+					setMotorNearSpeed(0.5);
+					putStringSD("CurrentDirection", "Positive");
+				} else {
+					setMotorArmSpeedRaw(-0.3);
+					setMotorFarSpeed(-0.5);
+					setMotorNearSpeed(-0.5);
+					putStringSD("CurrentDirection", "Negative");
+				}
+			} else {
+				setMotorArmSpeedRaw(0);
+				setMotorFarSpeed(0);
+				setMotorNearSpeed(0);
+				putStringSD("CurrentDirection", "None");
+			}
+			*/
+		
+		logData();
+			
+	}
+	
+	
+	@Override
+	public void logData() {
+		putNumberSD("Debug_Timeout1_TimeRemaining", timeoutAction1.getTimeRemaining());
+		putNumberSD("Debug_Timeout2_TimeRemaining", timeoutAction2.getTimeRemaining());
+		
+		putNumberSD("MotorArmSpeed", motorArm.getSpeed());
+		putNumberSD("MotorArmInternalSetpoint", motorArm.get());
+		putNumberSD("MotorArmSetpoint", armSetpoint);
+		putNumberSD("MotorArmEncoderPos", getArmPosition());
+
+		putNumberSD("MotorNearSpeed", motorNear.getSpeed());
+		putNumberSD("MotorFarSpeed", motorFar.getSpeed());
+		putNumberSD("MotorNearSetpoint", motorNearSetpoint);
+		putNumberSD("MotorFarSetpoint", motorFarSetpoint);
+		
+		putBooleanSD("HasZeroed", hasZeroed());
+		putBooleanSD("EncoderWatcher", getArmEncoderMoving());
+		try {putBooleanSD("ZeroCommandRunning", zeroCommand.isRunning());}
+		catch (Exception e) {DriverStation.reportError("Cannot call a method on a null command!", false);}
+		
+		putBooleanSD("FwdLimitSwitch", getFwdLimitSwitch());
+		putBooleanSD("RevLimitSwitch", getRevLimitSwitch());
+		
+	}
+	
+	
+	// PUBLIC SETPOINT METHODS
+	
+	/**
+	 * @param setpoint desired angle in degrees
+	 */
+	public void setArmSetpoint(double setpoint) {
+		if (!Double.isFinite(setpoint)) {
+			DriverStation.reportError("Could not set setpoint! Was not a finite number!", false);
+			armSetpoint = 0;
+		} else {
+			armSetpoint = Math.min(LAUNCHER_MAX_ARM_ANGLE, Math.max(0, setpoint));
 		}
+	}
+	
+	/**
+	 * @param setpoint positive = spinning in
+	 */
+	public void setFlywheelNearSetpoint(double setpoint) {
+		if (!Double.isFinite(setpoint)) {
+			DriverStation.reportError("Could not set setpoint! Was not a finite number!", false);
+			motorNearSetpoint = 0;
+		} else {
+			motorNearSetpoint = MiscUtil.limit(setpoint);
+		}
+	}
+	
+	/**
+	 * @param setpoint positive = spinning in
+	 */
+	public void setFlywheelFarSetpoint(double setpoint) {
+		if (!Double.isFinite(setpoint)) {
+			DriverStation.reportError("Could not set setpoint! Was not a finite number!", false);
+			motorFarSetpoint = 0;
+		} else {
+			motorFarSetpoint = MiscUtil.limit(setpoint);
+		}
+	}
+	
+	public void resetSetpoints() {
+		armSetpoint = 0;
+		motorFarSetpoint = 0;
+		motorNearSetpoint = 0;
+	}
+	
+	
 
-	/**
-	 * Sets the setpoint of the aim motor
-	 * 
-	 * @param setpoint in degrees
-	 */
-	public void setAimSetpoint(double setpoint) {
-//		setpoint = Math.max(0, Math.min(Constants.LAUNCHER_MAX_HEIGHT, setpoint));
-		aimSetpoint = setpoint;
-		putNumberSD("AimSetpoint", setpoint);
-	}
-	
-	public void enableAim(boolean isEnable) {
-		aimEnabled = isEnable;
-	}
-	
-	/**
-	 * Launcher maintains intake speeds
-	 * 
-	 * @param speed PercentVBus; positive = out, negative = in
-	 */
-	public void setIntakeSpeed(double speed) {
-		intakeSpeed = speed;
-	}
-	
-	
-	public void resetPID() {
-		aimPidLoop.reset();
-	}
-	
-	public void setPuncher(boolean isHigh) {
-		//reverse isHigh for practice bot
-		puncherSolenoid.set(isHigh ? Value.kReverse:Value.kForward);
-	}
-	
-	public boolean getAimEnabled() {
-		return aimEnabled;
-	}
-	
-	/**
-	 * Returns true if the aim position is at the specified setpoint angle
-	 * and the aim is stable (not moving)
-	 * 
-	 * @return aimOnTarget
-	 */
-	public boolean isAimOnSetpoint() {
-		return aimOnTarget;
-	}
-	
-	public double getTurnAngle() {
-		return turnAngle;
-	}
 
-	public double getAimMotorPosition() {
-		return MiscUtil.aimEncoderTicksToDegrees(-motorAim.getEncPosition());
+	// OTHER PUBLIC METHODS
+	
+	public void setPuncherSolenoid(boolean engaged) {
+		puncherSolenoid.set(engaged ? Value.kForward:Value.kReverse);
+	}
+	
+	/**
+	 * @return true if command was started or false if command was already running/has already run
+	 */
+	public boolean startZeroCommand() {
+		if (!zeroCommand.isRunning() && !hasZeroed /*true*/) {
+			zeroCommand.start();
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
+	public void setLauncherZeroed() {
+		motorArm.setEncPosition(0);
+		setHasZeroed(true);
+	}
+	
+	
+	
+	
+	
+	// PRIVATE SETTERS
+	
+	private void setMotorArmSpeedRaw(double speed) {
+		motorArm.set(MiscUtil.limit(speed) * LAUNCHER_GLOBAL_POWER);
+	}
+	
+	private void setMotorArmSpeed(double speed) {
+		if (hasZeroed) {
+			boolean cantRunMotorDown = (getArmPosition() <= 0 && speed < 0) || getFwdLimitSwitch();
+			boolean cantRunMotorUp = getArmPosition() >= LAUNCHER_MAX_ARM_ANGLE && speed > 0;
+			
+			if (cantRunMotorDown || cantRunMotorUp) {
+				setMotorArmSpeedRaw(0);
+			} else {
+				setMotorArmSpeedRaw(armSetpoint);
+			}
+			
+		} else {
+			DriverStation.reportWarning("LauncherNew has not zeroed! Arm motor speed not set!", false);
+		}
+	}
+	
+	private void setMotorNearSpeed(double speed) {
+		if (Double.isFinite(speed)) {
+			motorNear.set(MiscUtil.limit(speed));
+		} else {
+			DriverStation.reportError("Could not set flywheel near speed to " + speed, false);
+		}
+	}
+	
+	private void setMotorFarSpeed(double speed) {
+		if (Double.isFinite(speed)) {
+			motorFar.set(MiscUtil.limit(speed));
+		} else {
+			DriverStation.reportWarning("Could not set flywheel far speed to " + speed, false);
+		}
+	}
+	
+	private void setHasZeroed(boolean hasZeroed) {
+		this.hasZeroed = hasZeroed;
+	}
+	
+	
+	
+	// GETTERS
+	
+	/**
+	 * @return boolean: if the arm has performed the zero routine
+	 */
+	public boolean hasZeroed() {
+		return hasZeroed;
+	}
+	
+	public double getArmPosition() {
+		return LAUNCHER_ENCODER_SCALE_FACTOR * motorArm.getEncPosition();
+	}
+	
+	public boolean getArmEncoderMoving() {
+		return encoderWatcher.getIsMoving();
+	}
+	
+	public boolean getFwdLimitSwitch() {
+		return fwdLimitSwitch.get();
+	}
+	
+	public boolean getRevLimitSwitch() {
+		return revLimitSwitch.get();
 	}
 	
 	@Override
-    public String getFormattedName() {
-    	return "Launcher_";
-    }
-    
-    @Override
-	public void logData() {
-		
-		SmartDashboard.putData("Launcher_Aim_PID_L00000000oop", aimPidLoop);
-		putNumberSD("AimMotorSpeed", motorAim.getSpeed());
-		
-		putNumberSD("EncoderAimPos", getAimMotorPosition());
-		
-		putNumberSD("AimDifference", aimDifference);
-		putNumberSD("AimSetpoint", aimSetpoint);
-		putNumberSD("AimOutput", aimOutput);
-		
-		putBooleanSD("PuncherSolenoid", puncherSolenoid.get() == Value.kForward);
-		
-		putNumberSD("MotorRightSetpoint", motorRight.getSetpoint());
-		putNumberSD("MotorLeftSetpoint", motorLeft.getSetpoint());
-		
-		putNumberSD("WheelsSetpoint", intakeSpeed);
-		
-		putNumberSD("MotorAim_getOutputCurrent", motorAim.getOutputCurrent());
-		putNumberSD("MotorAim_getPosition", motorAim.getPosition());
-		putNumberSD("MotorAim_getSetpoint", motorAim.getSetpoint());
-		
+	public String getFormattedName() {
+		return "LauncherNew_";
 	}
-}
+	
+	@Override
+	protected void initDefaultCommand() {
+	}
 
+}
