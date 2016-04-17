@@ -1,5 +1,9 @@
 package com.team3925.robot2016.subsystems;
 
+import static com.team3925.robot2016.Constants.LAUNCHER_NEW_ARM_TOLERANCE;
+import static com.team3925.robot2016.Constants.LAUNCHER_NEW_ENCODER_SCALE_FACTOR;
+import static com.team3925.robot2016.Constants.LAUNCHER_NEW_ENCODER_WATCHER_DATA_CACHE_SIZE;
+import static com.team3925.robot2016.Constants.LAUNCHER_NEW_ENCODER_WATCHER_TOLERANCE;
 import static com.team3925.robot2016.Constants.LAUNCHER_NEW_GLOBAL_POWER;
 import static com.team3925.robot2016.Constants.LAUNCHER_NEW_MAX_ARM_ANGLE;
 
@@ -7,13 +11,11 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ArrayBlockingQueue;
 
-import com.team3925.robot2016.Constants;
 import com.team3925.robot2016.Robot;
 import com.team3925.robot2016.util.Loopable;
 import com.team3925.robot2016.util.MiscUtil;
 import com.team3925.robot2016.util.SmartdashBoardLoggable;
 import com.team3925.robot2016.util.TimeoutAction;
-import com.team3925.robot2016.util.hidhelpers.XboxHelper;
 
 import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -31,8 +33,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  */
 public final class LauncherNew extends Subsystem implements SmartdashBoardLoggable, Loopable {
 	
-	private static final double LAUNCHER_NEW_ARM_TOLERANCE = 3;
-	private static final double LAUNCHER_NEW_ENCODER_SCALE_FACTOR = (-9d/3200d);
 	private final CANTalon motorArm;
 	private final CANTalon motorFar;
 	private final CANTalon motorNear;
@@ -88,7 +88,7 @@ public final class LauncherNew extends Subsystem implements SmartdashBoardLoggab
 			
 //			TESTING ENCODER WATCHER
 			// TODO Move to constructor after implemented and tested
-//			encoderWatcherTimer.scheduleAtFixedRate(encoderWatcher, 0, Constants.LAUNCHER_NEW_ENCODER_WATCHER_PERIOD);
+//			encoderWatcherTimer.scheduleAtFixedRate(encoderWatcher, 0, LAUNCHER_NEW_ENCODER_WATCHER_PERIOD);
 			
 		
 //			TEST ANGLE SETPOINT
@@ -123,7 +123,6 @@ public final class LauncherNew extends Subsystem implements SmartdashBoardLoggab
 
 		@Override
 		protected void execute() {
-			//TODO DEBUG WHY THIS DOESN'T WORK
 			Robot.launcherNew.setMotorArmSpeedRaw(-.5);
 			System.out.println(getName() + " Called Execute");
 		}
@@ -156,7 +155,7 @@ public final class LauncherNew extends Subsystem implements SmartdashBoardLoggab
 		private boolean isMoving;
 		
 		public EncoderWatcher() {
-			queue = new ArrayBlockingQueue<>(Constants.LAUNCHER_NEW_ENCODER_WATCHER_DATA_CACHE_SIZE);
+			queue = new ArrayBlockingQueue<>(LAUNCHER_NEW_ENCODER_WATCHER_DATA_CACHE_SIZE);
 		}
 		
 		public boolean getIsMoving() {
@@ -173,13 +172,13 @@ public final class LauncherNew extends Subsystem implements SmartdashBoardLoggab
 				DriverStation.reportError(e.getMessage(), true);
 			}
 			
-			if (queue.size() >= Constants.LAUNCHER_NEW_ENCODER_WATCHER_DATA_CACHE_SIZE) {
+			if (queue.size() >= LAUNCHER_NEW_ENCODER_WATCHER_DATA_CACHE_SIZE) {
 				queue.remove();
 			}
 		}
 		
 		private boolean compareValues(double val1, double val2) {
-			return Math.abs(val1 - val2) < Constants.LAUNCHER_NEW_ENCODER_WATCHER_TOLERANCE;
+			return Math.abs(val1 - val2) < LAUNCHER_NEW_ENCODER_WATCHER_TOLERANCE;
 		}
 		
 		
@@ -217,8 +216,8 @@ public final class LauncherNew extends Subsystem implements SmartdashBoardLoggab
 			double error = armSetpoint - getArmPosition();
 			System.out.println("Diff = "+Math.abs(error));
 			if (Math.abs(error) > LAUNCHER_NEW_ARM_TOLERANCE && hasZeroed) {
-				setMotorArmSpeed(Math.signum(error) * 0.3);
-				System.out.println("MotorArmSpiid "+Math.signum(error) * 0.3 * Math.min(Math.abs(error/10),1));
+				setMotorArmSpeed(Math.signum(error) * 0.3 * Math.min(Math.abs(error/20),1));
+				System.out.println("MotorArmSpiid "+Math.signum(error) * 0.3 /** Math.min(Math.abs(error/10),1)*/);
 			}
 //			*/
 			
@@ -373,7 +372,7 @@ public final class LauncherNew extends Subsystem implements SmartdashBoardLoggab
 	
 	private void setMotorArmSpeed(double speed) {
 		if (hasZeroed) {
-			boolean cantRunMotorDown = (getArmPosition() <= 0 && speed < 0);
+			boolean cantRunMotorDown = (getArmPosition() <= 0 && speed < 0) || getFwdLimitSwitch();
 			boolean cantRunMotorUp = getArmPosition() >= LAUNCHER_NEW_MAX_ARM_ANGLE && speed > 0;
 			
 			if (cantRunMotorDown || cantRunMotorUp) {
