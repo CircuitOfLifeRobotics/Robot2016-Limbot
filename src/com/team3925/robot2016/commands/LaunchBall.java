@@ -21,6 +21,7 @@ public class LaunchBall extends Command implements SmartdashBoardLoggable {
 		launcher = Robot.launcher;
 		state = State.WAIT_LET_GO_BALL;
 		timeout = new TimeoutAction();
+		requires(launcher);
 	}
 
 	@Override
@@ -35,14 +36,13 @@ public class LaunchBall extends Command implements SmartdashBoardLoggable {
 		switch (state) {
 		case WAIT_LET_GO_BALL:
 			//TODO: add safety to check if launcher is stuck
-			if (timeout.isFinished()) {
+			if (timeout.isFinished() || launcher.getArmPosition()>30) {
 				launcher.setPuncherSolenoid(false);
 				launcher.setFlywheelFarSetpoint(-1);
 				launcher.setFlywheelNearSetpoint(-1);
 				state = State.WAIT_AIM_AT_SETPOINT;
 				timeout.config(3);
 			}
-			else if (launcher.getArmPosition() < 30) launcher.setPuncherSolenoid(true);
 			break;
 		case WAIT_AIM_AT_SETPOINT:
 			if (Math.abs(launcher.getArmPosition()-60)<5 || timeout.isFinished()) {

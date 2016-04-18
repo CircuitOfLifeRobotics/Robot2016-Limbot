@@ -3,6 +3,7 @@ package com.team3925.robot2016;
 import static com.team3925.robot2016.util.hidhelpers.XboxHelper.START;
 
 import com.team3925.robot2016.commands.CollectBall;
+import com.team3925.robot2016.commands.LaunchBall;
 import com.team3925.robot2016.commands.auto.AutoRoutineCenter;
 import com.team3925.robot2016.commands.auto.defensecross.CrossDefault;
 import com.team3925.robot2016.util.hidhelpers.FlightStickHelper;
@@ -61,7 +62,7 @@ public final class OI {
 	public Button cancelCommands;
 
 	public Command collectBall;
-//	public Command throwBallFar;
+	public Command throwBallFar;
 //	public Command throwBallNear;
 //	public Command throwBallLow;
 //	public GyroTurn gyroTurn;
@@ -78,18 +79,18 @@ public final class OI {
 		shooterXbox = new Joystick(2);
 
 		collectBall = new CollectBall();
-//		throwBallFar = new ThrowBall(Constants.LAUNCHER_THROWBALL_FAR_ANGLE, 1, 5);
+		throwBallFar = new LaunchBall();
 //		throwBallNear = new ThrowBall(Constants.LAUNCHER_THROWBALL_NEAR_ANGLE, 1, 5);
 //		throwBallLow = new ThrowBall(0, 1, 1);
 
 		startCollectBall = new JoystickButton(shooterXbox, XboxHelper.A);
 		startCollectBall.whenPressed(collectBall);
-//		startCollectBall.cancelWhenPressed(throwBallFar);
+		startCollectBall.cancelWhenPressed(throwBallFar);
 //		startCollectBall.cancelWhenPressed(throwBallNear);
 //		startCollectBall.cancelWhenPressed(throwBallLow);
 
 		startThrowBallFar = new JoystickButton(shooterXbox, XboxHelper.Y);
-//		startThrowBallFar.whenPressed(throwBallFar);
+		startThrowBallFar.whenPressed(throwBallFar);
 		startThrowBallFar.cancelWhenPressed(collectBall);
 //		startThrowBallFar.cancelWhenPressed(throwBallNear);
 //		startThrowBallFar.cancelWhenPressed(throwBallLow);
@@ -97,18 +98,18 @@ public final class OI {
 		startThrowBallNear = new JoystickButton(shooterXbox, XboxHelper.X);
 //		startThrowBallNear.whenPressed(throwBallNear);
 		startThrowBallNear.cancelWhenPressed(collectBall);
-//		startThrowBallNear.cancelWhenPressed(throwBallFar);
+		startThrowBallNear.cancelWhenPressed(throwBallFar);
 //		startThrowBallNear.cancelWhenPressed(throwBallLow);
 		
 		startThrowBallLow = new JoystickButton(shooterXbox, XboxHelper.B);
 //		startThrowBallLow.whenPressed(throwBallLow);
 		startThrowBallLow.cancelWhenPressed(collectBall);
-//		startThrowBallLow.cancelWhenPressed(throwBallFar);
+		startThrowBallLow.cancelWhenPressed(throwBallFar);
 //		startThrowBallLow.cancelWhenPressed(throwBallNear);
 		
 		cancelCommands = new JoystickButton(shooterXbox, XboxHelper.START);
 		cancelCommands.cancelWhenPressed(collectBall);
-//		cancelCommands.cancelWhenPressed(throwBallFar);
+		cancelCommands.cancelWhenPressed(throwBallFar);
 //		cancelCommands.cancelWhenPressed(throwBallNear);
 //		cancelCommands.cancelWhenPressed(throwBallLow);
 
@@ -192,7 +193,7 @@ public final class OI {
 	// ROBOT BEHAVIOR
 
 	public double getManualDrive_ForwardValue() {
-		return FlightStickHelper.getAxis(FlightStickHelper.AXIS_Y);
+		return -FlightStickHelper.getAxis(FlightStickHelper.AXIS_Y);
 	}
 	
 	public boolean getVisionShoot_GyroTurnEnable() {
