@@ -162,11 +162,11 @@ public final class Launcher extends Subsystem implements SmartdashBoardLoggable,
 		 * @param tolerance double in degrees of deadzone for not moving
 		 */
 		public EncoderWatcher(int stashSize, double tolerance) {
-			isMoving = false;
-			System.out.println("Max Size: " + list.getMaxEntries() + "\n");
 			TOLERANCE = tolerance;
 			MAX_CAPACITY = stashSize;
 			list = new FixedSizeLinkedList<>(MAX_CAPACITY);
+			System.out.println("Max Size: " + list.getMaxEntries() + "\n");
+			isMoving = false;
 		}
 
 		@Override
