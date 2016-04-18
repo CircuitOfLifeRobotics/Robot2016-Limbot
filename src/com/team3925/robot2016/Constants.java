@@ -72,11 +72,17 @@ public class Constants {
 	public static final double LAUNCHER_GLOBAL_POWER = 1d;
     public static final double LAUNCHER_MAX_ARM_ANGLE = 90d; // in degrees
     public static final double LAUNCHER_ENCODER_SCALE_FACTOR = -0.0032873376623377/*(-9d/3200d)*/;
-    public static final double LAUNCHER_ARM_TOLERANCE = 3d;
     public static final double LAUNCHER_ZERO_COMMAND_WAIT = 1; // entries
     public static final double LAUNCHER_ENCODER_WATCHER_TOLERANCE = 3; //degrees TODO tune
     public static final long LAUNCHER_ENCODER_WATCHER_PERIOD = 20; //ms
     public static final int LAUNCHER_ENCODER_WATCHER_DATA_CACHE_SIZE = 4; // entries
+    
+    //TODO TUNE
+    public static final double LAUNCHER_PID_K_P = 0.5;
+    public static final double LAUNCHER_PID_K_I = 0;
+    public static final double LAUNCHER_PID_K_D = 0;
+    public static final double LAUNCHER_PID_VELOCITY_DELTA = 10;
+    public static final double LAUNCHER_ARM_TOLERANCE = 3d;
     
 	
 	

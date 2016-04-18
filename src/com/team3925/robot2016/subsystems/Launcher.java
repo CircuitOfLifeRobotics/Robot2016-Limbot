@@ -1,6 +1,5 @@
 package com.team3925.robot2016.subsystems;
 
-import static com.team3925.robot2016.Constants.LAUNCHER_ARM_TOLERANCE;
 import static com.team3925.robot2016.Constants.LAUNCHER_ENCODER_SCALE_FACTOR;
 import static com.team3925.robot2016.Constants.LAUNCHER_GLOBAL_POWER;
 import static com.team3925.robot2016.Constants.LAUNCHER_MAX_ARM_ANGLE;
@@ -10,6 +9,7 @@ import java.util.TimerTask;
 
 import com.team3925.robot2016.Constants;
 import com.team3925.robot2016.Robot;
+import com.team3925.robot2016.util.FixedSizeLinkedList;
 import com.team3925.robot2016.util.Loopable;
 import com.team3925.robot2016.util.MiscUtil;
 import com.team3925.robot2016.util.SmartdashBoardLoggable;
@@ -26,8 +26,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * Subsystem that runs the new launcher
- * 
- * @author Bryan "atomic_diamond" S
  */
 public final class Launcher extends Subsystem implements SmartdashBoardLoggable, Loopable {
 	
@@ -39,7 +37,7 @@ public final class Launcher extends Subsystem implements SmartdashBoardLoggable,
 	private final DigitalInput revLimitSwitch;
 	
 	// TODO implement after testing basics
-//	private final SynchronousPID pid = new SynchronousPID(LAUNCHER_AIM_KP, LAUNCHER_AIM_KI, LAUNCHER_AIM_KD);
+//	private final SynchronousPID pid = new SynchronousPID(Constants.LAUNCHER_PID_K_P, Constants.LAUNCHER_PID_K_I, Constants.LAUNCHER_PID_K_D);
 	
 	private final DoubleSolenoid puncherSolenoid;
 	
@@ -75,21 +73,21 @@ public final class Launcher extends Subsystem implements SmartdashBoardLoggable,
 		
 		resetSetpoints();
 		
-		encoderWatcher = new EncoderWatcher();
+		encoderWatcher = new EncoderWatcher(Constants.LAUNCHER_ENCODER_WATCHER_DATA_CACHE_SIZE, Constants.LAUNCHER_ENCODER_WATCHER_TOLERANCE);
 		encoderWatcherTimer = new Timer(getFormattedName() + "EncoderWatcher", true);
 		encoderWatcherTimer.scheduleAtFixedRate(encoderWatcher, 0, Constants.LAUNCHER_ENCODER_WATCHER_PERIOD);
 	}
 	
 	public void init() {
 		resetSetpoints();
+		
 		zeroCommand = new ZeroLauncher();
-		hasZeroed = false;
-		armSetpoint = 0;
+		setHasZeroed(false);
+		startZeroCommand();
 
 
 		// TEST ANGLE SETPOINT
 		SmartDashboard.putNumber(getFormattedName() + "MotorArmSetpointSETTER", 0);
-		startZeroCommand();
 
 		timeoutAction1.config(10d);
 		timeoutAction2.config(20d);
@@ -146,23 +144,68 @@ public final class Launcher extends Subsystem implements SmartdashBoardLoggable,
 	}
 	
 	/**
-	 * TODO implement class
+	 * Checks if encoder input is changing over a given number of stashes
+	 * 
+	 * @author Bryan
 	 */
 	private class EncoderWatcher extends TimerTask {
-		private volatile boolean isMoving;
-		
-		public EncoderWatcher() {
+		// CONSTANTS
+		private final double TOLERANCE; // Degrees
+		private final int MAX_CAPACITY; // num of entries to compare values for
+
+		private FixedSizeLinkedList<Double> list;
+		private boolean isMoving;
+
+
+		/**
+		 * @param stashSize int of number of samples to compare
+		 * @param tolerance double in degrees of deadzone for not moving
+		 */
+		public EncoderWatcher(int stashSize, double tolerance) {
+			isMoving = false;
+			System.out.println("Max Size: " + list.getMaxEntries() + "\n");
+			TOLERANCE = tolerance;
+			MAX_CAPACITY = stashSize;
+			list = new FixedSizeLinkedList<>(MAX_CAPACITY);
 		}
-		
-		public boolean getIsMoving() {
-			return isMoving;
-		}
-		
+
 		@Override
 		public void run() {
-			isMoving = true;
+			list.addFirst(getArmPosition());
+
+			// Do not run if there are less than the required number of entries
+			if (list.size() >= MAX_CAPACITY) {
+				// slightly modified logic from MiscUtil.gateAND()
+				boolean tmp_notMoving = insideTolerance(list.get(0), list.get(1));
+
+				for (int i = 1; i < list.getMaxEntries()-1; i++) {
+					tmp_notMoving = tmp_notMoving && insideTolerance(list.get(i), list.get(i+1));
+				}
+				isMoving = !tmp_notMoving;
+			}
 		}
-		
+
+		/**
+		 * @return true if encoder is moving
+		 */
+		public boolean isMoving() {
+			return isMoving;
+		}
+
+		/**
+		 * @param val1 first value
+		 * @param val2 second value
+		 * @return false if within tolerance, true if not
+		 */
+		private boolean insideTolerance(double val1, double val2) {
+			if (Math.abs(val1 - val2) < TOLERANCE) {
+				return true;
+			} else {
+				return false;
+			}
+		}
+
+
 	}
 	
 	@Override
@@ -184,72 +227,28 @@ public final class Launcher extends Subsystem implements SmartdashBoardLoggable,
 			// NOT IMPLEMENTED
 			
 		
-//		setMotorNearSpeed(motorNearSetpoint);
-//		setMotorFarSpeed(motorFarSetpoint);
+		setMotorNearSpeed(motorNearSetpoint);
+		setMotorFarSpeed(motorFarSetpoint);
 		
 //		TEST_ANGLE_SETPOINT
 			
 			// testing getting input from SmartDashboard
-			//-16000 is shoot angle approximately
 		if (hasZeroed()) {
 			setArmSetpoint(SmartDashboard.getNumber(getFormattedName() + "MotorArmSetpointSETTER", 0));
 			
-			double error = getInternalSetpoint() - getArmPosition();
+			double error = getArmSetpoint() - getArmPosition();
 			System.out.println("Diff = " + Math.abs(error));
 			
-			if (Math.abs(error) > Constants.LAUNCHER_ARM_TOLERANCE /* ADD VELOCITY CONDITION*/) {
-				final double K_P = 0.5; // P part of PID
-				setMotorArmSpeed(Math.signum(error) * K_P /* * Math.min(Math.abs(error/20),1)*/);
+			if (Math.abs(error) > Constants.LAUNCHER_ARM_TOLERANCE && Math.abs(getArmVelocity()) > Constants.LAUNCHER_PID_VELOCITY_DELTA) {
+				final double MULTIPLIER = 0.5;
 				
-				System.out.println("MotorArmSpiid " + Math.signum(error) * K_P /** Math.min(Math.abs(error/10),1)*/);
+				setMotorArmSpeed(Math.signum(error) * MULTIPLIER /* * Math.min(Math.abs(error/20),1)*/);
+				
+				System.out.println("MotorArmSpiid " + Math.signum(error) * MULTIPLIER /** Math.min(Math.abs(error/10),1)*/);
 			}
+			System.out.println();
 		}
-
-			
-			
-//		TESTING_ZERO_COMMAND
-//		/*
-
-//		if (hasZeroed()) {
-//			if (!timeoutAction2.isFinished()) {
-//				if (!timeoutAction1.isFinished()) {
-//					setMotorArmSpeed(.5d);
-//					putStringSD("CurrentDirection", "Positive");
-//				} else {
-//					setMotorArmSpeed(-.5d);
-//					putStringSD("CurrentDirection", "Negative");
-//				}
-//			} else {
-//				setMotorArmSpeed(0d);
-//				putStringSD("CurrentDirection", "None");
-//			}
-//		} else {
-//			putStringSD("CurrentDirection", "None");
-//		}
-//			*/
-			
 		
-//		TESTING_DIRECTIONS (done)
-		/*
-			if (!timeoutAction2.isFinished()) {
-				if (!timeoutAction1.isFinished()) {
-					setMotorArmSpeedRaw(0.3);
-					setMotorFarSpeed(0.5);
-					setMotorNearSpeed(0.5);
-					putStringSD("CurrentDirection", "Positive");
-				} else {
-					setMotorArmSpeedRaw(-0.3);
-					setMotorFarSpeed(-0.5);
-					setMotorNearSpeed(-0.5);
-					putStringSD("CurrentDirection", "Negative");
-				}
-			} else {
-				setMotorArmSpeedRaw(0);
-				setMotorFarSpeed(0);
-				setMotorNearSpeed(0);
-				putStringSD("CurrentDirection", "None");
-			}
-			*/
 		
 		logData();
 			
@@ -258,13 +257,11 @@ public final class Launcher extends Subsystem implements SmartdashBoardLoggable,
 	
 	@Override
 	public void logData() {
-		putNumberSD("Debug_Timeout1_TimeRemaining", timeoutAction1.getTimeRemaining());
-		putNumberSD("Debug_Timeout2_TimeRemaining", timeoutAction2.getTimeRemaining());
-		
 		putNumberSD("MotorArmSpeed", motorArm.getSpeed());
 		putNumberSD("MotorArmInternalSetpoint", motorArm.get());
-		putNumberSD("MotorArmSetpoint", armSetpoint);
+		putNumberSD("MotorArmSetpoint", getArmSetpoint());
 		putNumberSD("MotorArmEncoderPos", getArmPosition());
+		putNumberSD("MotorArmEncoderVel", getArmVelocity());
 
 		putNumberSD("MotorNearSpeed", motorNear.getSpeed());
 		putNumberSD("MotorFarSpeed", motorFar.getSpeed());
@@ -273,9 +270,12 @@ public final class Launcher extends Subsystem implements SmartdashBoardLoggable,
 		
 		putBooleanSD("HasZeroed", hasZeroed());
 		putBooleanSD("EncoderWatcher", getArmEncoderMoving());
-		try {putBooleanSD("ZeroCommandRunning", zeroCommand.isRunning());}
-		catch (Exception e) {DriverStation.reportError("Cannot call a method on a null command!", false);}
-		
+		try {
+			putBooleanSD("ZeroCommandRunning", zeroCommand.isRunning());
+		} catch (Exception e) {
+			DriverStation.reportError("Cannot call a method on a null command!", false);
+		}
+
 		putBooleanSD("FwdLimitSwitch", getFwdLimitSwitch());
 		putBooleanSD("RevLimitSwitch", getRevLimitSwitch());
 		
@@ -339,7 +339,7 @@ public final class Launcher extends Subsystem implements SmartdashBoardLoggable,
 	 * @return true if command was started or false if command was already running/has already run
 	 */
 	public boolean startZeroCommand() {
-		if (!zeroCommand.isRunning() && !hasZeroed /*true*/) {
+		if (!zeroCommand.isRunning() && !hasZeroed() /*true*/) {
 			zeroCommand.start();
 			return true;
 		} else {
@@ -413,7 +413,7 @@ public final class Launcher extends Subsystem implements SmartdashBoardLoggable,
 		return hasZeroed;
 	}
 	
-	private double getInternalSetpoint() {
+	private double getArmSetpoint() {
 		return armSetpoint;
 	}
 	
@@ -421,8 +421,12 @@ public final class Launcher extends Subsystem implements SmartdashBoardLoggable,
 		return LAUNCHER_ENCODER_SCALE_FACTOR * motorArm.getEncPosition();
 	}
 	
+	public double getArmVelocity() {
+		return LAUNCHER_ENCODER_SCALE_FACTOR * motorArm.getEncVelocity();
+	}
+	
 	public boolean getArmEncoderMoving() {
-		return encoderWatcher.getIsMoving();
+		return encoderWatcher.isMoving();
 	}
 	
 	public boolean getFwdLimitSwitch() {
@@ -437,6 +441,8 @@ public final class Launcher extends Subsystem implements SmartdashBoardLoggable,
 	public String getFormattedName() {
 		return "LauncherNew_";
 	}
+	
+	
 	
 	@Override
 	protected void initDefaultCommand() {
