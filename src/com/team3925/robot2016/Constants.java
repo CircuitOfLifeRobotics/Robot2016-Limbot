@@ -25,8 +25,8 @@ public class Constants {
 	public static final int DRIVETRAIN_SOLENOID_FORWARD = 4;
 	public static final int DRIVETRAIN_SOLENOID_REVERSE = 5;
 	
-	public static final int LAUNCHER_MOTOR_NEAR = 14;
-	public static final int LAUNCHER_MOTOR_FAR = 12;
+	public static final int LAUNCHER_MOTOR_NEAR = 12;
+	public static final int LAUNCHER_MOTOR_FAR = 14;
 	public static final int LAUNCHER_MOTOR_ARM = 13;
 	public static final int LAUNCHER_SOLENOID_PUNCHER_FORWARD = 2;
 	public static final int LAUNCHER_SOLENOID_PUNCHER_REVERSE = 3;

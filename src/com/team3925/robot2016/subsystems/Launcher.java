@@ -168,7 +168,7 @@ public final class Launcher extends Subsystem implements SmartdashBoardLoggable,
 	@Override
 	public void update() {
 //		FULL
-		/*
+//		/*
 			// If arm motor has not zeroed, start zero command
 			if (!hasZeroed()) {
 				startZeroCommand();
@@ -177,7 +177,7 @@ public final class Launcher extends Subsystem implements SmartdashBoardLoggable,
 			
 			setMotorNearSpeed(motorNearSetpoint);
 			setMotorFarSpeed(motorFarSetpoint);
-			*/
+//			*/
 			
 		
 //		TESTING ENCODER WATCHER
@@ -270,6 +270,8 @@ public final class Launcher extends Subsystem implements SmartdashBoardLoggable,
 		putNumberSD("MotorFarSpeed", motorFar.getSpeed());
 		putNumberSD("MotorNearSetpoint", motorNearSetpoint);
 		putNumberSD("MotorFarSetpoint", motorFarSetpoint);
+		
+		putStringSD("PuncherValue", puncherSolenoid.get().toString());
 		
 		putBooleanSD("HasZeroed", hasZeroed());
 		putBooleanSD("EncoderWatcher", getArmEncoderMoving());

@@ -193,12 +193,12 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 //		if (oi.shooterXbox.getRawButton(XboxHelper.X)) {
 //			launcherNew.startZeroCommand();
 //		}
-		if (oi.shooterXbox.getRawButton(XboxHelper.A) && !launchBall.isRunning()) {
-			launchBall.start();
-		}
-		if (oi.getCommandCancel()) {
-			launchBall.cancel();
-		}
+//		if (oi.shooterXbox.getRawButton(XboxHelper.A) && !launchBall.isRunning()) {
+//			launchBall.start();
+//		}
+//		if (oi.getCommandCancel()) {
+//			launchBall.cancel();
+//		}
 				
 		
 		// Driver Vision Control
