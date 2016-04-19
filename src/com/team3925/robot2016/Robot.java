@@ -17,6 +17,7 @@ import com.team3925.robot2016.util.hidhelpers.FlightStickHelper;
 import com.team3925.robot2016.util.hidhelpers.ThrustmasterHelper;
 import com.team3925.robot2016.util.hidhelpers.XboxHelper;
 
+import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
@@ -46,6 +47,9 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 	public static OI oi;
 	public static CheesyDriveHelper cdh;
 	private static TimeoutAction brakeBeforeMatchEnd = new TimeoutAction();
+	Launcher launcher = new Launcher(RobotMap.launcherMotorArm, RobotMap.launcherMotorFar, RobotMap.launcherMotorNear, RobotMap.launcherPuncherSolenoid, RobotMap.launcherFwdLimitSwitch, RobotMap.launcherRevLimitSwitch);
+	
+	
 	
 	//Commands
 	private CommandGroup autoRoutine;
@@ -146,13 +150,13 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 	}
 	
 	public void autonomousInit() {
-		autoRoutine = oi.setAutonomous();
+		//autoRoutine = oi.setAutonomous();
 		
-		driveTrain.setHighGear(false);
-		reset();
+		//driveTrain.setHighGear(false);
+		//reset();
 		
-		autoRoutine.start();
-		launcherNew.init();
+		//autoRoutine.start();
+		//launcherNew.init();
 	}
 	
 	/**
@@ -160,9 +164,13 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 	 */
 	public void autonomousPeriodic() {
 		Scheduler.getInstance().run();
+		//launcher.LaunchSequence();
+		//updateSubsystems();
+		//logData();
 		
-		updateSubsystems();
-		logData();
+		double value = driveTrain.recordUltraSonic();
+		SmartDashboard.putNumber("Ultrasonic Voltage", value);
+		
 	}
 
 	public void teleopInit() {
@@ -232,26 +240,26 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 	public void testPeriodic() {
 		LiveWindow.run();
 		
-		//TESTING MANUAL LAUNCHER TODO: remove
-//		boolean buttonDown = Robot.oi.shooterXbox.getRawButton(XboxHelper.A);
-//		if (buttonDown) {
-//			if (!buttonWasDown) tempManualState = tempManualState.equals("intake") ? "wheels": tempManualState.equals("wheels") ? "shooting" : "intake";
-//			buttonWasDown = true;
-//		} else
-//			buttonWasDown = false;
-//		if (tempManualState.equals("intake")) {
-//			launcherNew.setFlywheelFarSetpoint(0);
-//			launcherNew.setFlywheelNearSetpoint(0);
-//			launcherNew.setPuncherSolenoid(false);
-//		}else if (tempManualState.equals("wheels")) {
-//			launcherNew.setFlywheelFarSetpoint(-1);
-//			launcherNew.setFlywheelNearSetpoint(-1);
-//		}else if (tempManualState.equals("shooting")) {
-//			launcherNew.setPuncherSolenoid(true);
-//		}
-//		System.out.println("state = "+tempManualState);
-//		
-//		launcherNew.update();
+
+		boolean buttonDown = Robot.oi.shooterXbox.getRawButton(XboxHelper.A);
+		if (buttonDown) {
+			if (!buttonWasDown) tempManualState = tempManualState.equals("intake") ? "wheels": tempManualState.equals("wheels") ? "shooting" : "intake";
+			buttonWasDown = true;
+		} else
+			buttonWasDown = false;
+		if (tempManualState.equals("intake")) {
+			launcherNew.setFlywheelFarSetpoint(0);
+			launcherNew.setFlywheelNearSetpoint(0);
+			launcherNew.setPuncherSolenoid(false);
+		}else if (tempManualState.equals("wheels")) {
+			launcherNew.setFlywheelFarSetpoint(-1);
+			launcherNew.setFlywheelNearSetpoint(-1);
+		}else if (tempManualState.equals("shooting")) {
+			launcherNew.setPuncherSolenoid(true);
+		}
+		System.out.println("state = "+tempManualState);
+		
+		launcherNew.update();
 	}
 	
 	private void updateSubsystems() {
@@ -397,3 +405,4 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 	}
 	
 }
+//

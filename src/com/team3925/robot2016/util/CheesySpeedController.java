@@ -1,6 +1,7 @@
 package com.team3925.robot2016.util;
 
 import com.team3925.robot2016.RobotMap;
+import com.team3925.robot2016.subsystems.DriveTrain;
 
 import edu.wpi.first.wpilibj.SpeedController;
 
@@ -13,6 +14,7 @@ public class CheesySpeedController implements SpeedController {
     protected SpeedController[] m_controllers;
     protected int[] m_pdp_slots;
     protected boolean m_invert = false;
+    DriveTrain drivetrain = new DriveTrain();
 
     public CheesySpeedController(SpeedController controller, int pdp_slot) {
         m_controllers = new SpeedController[]{controller};
@@ -87,10 +89,9 @@ public class CheesySpeedController implements SpeedController {
         }
     }
 
-	@Override
 	public void stopMotor() {
         for (SpeedController controller : m_controllers) {
-            controller.stopMotor();
+            drivetrain.arcadeDrive(0, 0,true);
         }
 	}
 }

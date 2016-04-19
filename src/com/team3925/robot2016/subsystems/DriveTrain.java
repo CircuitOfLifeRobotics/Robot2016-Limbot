@@ -11,8 +11,10 @@ import com.team3925.robot2016.util.Loopable;
 import com.team3925.robot2016.util.MiscUtil;
 import com.team3925.robot2016.util.SmartdashBoardLoggable;
 
+import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
+import edu.wpi.first.wpilibj.RobotDrive;
 import edu.wpi.first.wpilibj.command.Subsystem;
 
 
@@ -23,7 +25,7 @@ public class DriveTrain extends Subsystem implements SmartdashBoardLoggable, Loo
 		public boolean isFinished();
 	}
 
-	
+
 	private final DriveSide sideLeft, sideRight;
     private final DoubleSolenoid shifterSolenoid = RobotMap.driveTrainShifterSolenoid;
     
@@ -144,5 +146,8 @@ public class DriveTrain extends Subsystem implements SmartdashBoardLoggable, Loo
     public void initDefaultCommand() {
     	setDefaultCommand(new ManualDrive());
     }
-
+    public double recordUltraSonic(){
+    	double voltage = RobotMap.launcherUltrasonic.getAverageVoltage() * 4;
+    	return voltage;
+    }
 }

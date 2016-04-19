@@ -77,6 +77,9 @@ public class Constants {
     public static final double LAUNCHER_ENCODER_WATCHER_TOLERANCE = 3; //degrees TODO tune
     public static final long LAUNCHER_ENCODER_WATCHER_PERIOD = 20; //ms
     public static final int LAUNCHER_ENCODER_WATCHER_DATA_CACHE_SIZE = 4; // entries
+//    public static final double LAUNCHER_ROLLBACK_SPEED = -1;   Not working, motor burned
+    public static final double LAUNCHER_WHEEL_SPIN_UP_TIME = 3;	//how long it takes for the motors to spin up to full power
+    public static final double LAUNCHER_FIRE_TIME = 2; //how long it takes for the ball to leave the launcher after the solenoid is engaged
     
 	
 	

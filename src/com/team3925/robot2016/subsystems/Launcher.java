@@ -5,11 +5,13 @@ import static com.team3925.robot2016.Constants.LAUNCHER_ENCODER_SCALE_FACTOR;
 import static com.team3925.robot2016.Constants.LAUNCHER_GLOBAL_POWER;
 import static com.team3925.robot2016.Constants.LAUNCHER_MAX_ARM_ANGLE;
 
+import java.awt.Robot;
 import java.util.Timer;
 import java.util.TimerTask;
 
 import com.team3925.robot2016.Constants;
-import com.team3925.robot2016.Robot;
+//import com.team3925.robot2016.Robot;
+import com.team3925.robot2016.RobotMap;
 import com.team3925.robot2016.util.Loopable;
 import com.team3925.robot2016.util.MiscUtil;
 import com.team3925.robot2016.util.SmartdashBoardLoggable;
@@ -31,6 +33,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  */
 public final class Launcher extends Subsystem implements SmartdashBoardLoggable, Loopable {
 	
+	
 	private final CANTalon motorArm;
 	private final CANTalon motorFar;
 	private final CANTalon motorNear;
@@ -39,6 +42,8 @@ public final class Launcher extends Subsystem implements SmartdashBoardLoggable,
 	private final DigitalInput revLimitSwitch;
 	
 	// TODO implement after testing basics
+	//encoderWatcherTimer.scheduleAtFixedRate(encoderWatcher, 0, Constants.LAUNCHER_ENCODER_WATCHER_PERIOD);
+
 //	private final SynchronousPID pid = new SynchronousPID(LAUNCHER_AIM_KP, LAUNCHER_AIM_KI, LAUNCHER_AIM_KD);
 	
 	private final DoubleSolenoid puncherSolenoid;
@@ -46,19 +51,25 @@ public final class Launcher extends Subsystem implements SmartdashBoardLoggable,
 	private final EncoderWatcher encoderWatcher;
 	private final Timer encoderWatcherTimer;
 	
+	
+	
 	private double armSetpoint;
 	private double motorFarSetpoint;
 	private double motorNearSetpoint;
 	
 	private boolean hasZeroed;
 	
-	private ZeroLauncher zeroCommand;
+//	private ZeroLauncher zeroCommand;
 	
 	
 	// DEBUG STUFF
 	
 	private final TimeoutAction timeoutAction1 = new TimeoutAction();
 	private final TimeoutAction timeoutAction2 = new TimeoutAction();
+	private final TimeoutAction launcherSpinupTime = new TimeoutAction();
+	private final TimeoutAction launchSequenceTimeout = new TimeoutAction();
+	
+	RobotMap robotmap = new RobotMap();
 	
 	/**
 	 * Testing a new way of getting actuators and sensors into a class
@@ -81,12 +92,12 @@ public final class Launcher extends Subsystem implements SmartdashBoardLoggable,
 	
 	public void init() {
 		resetSetpoints();
-		zeroCommand = new ZeroLauncher();
+//		zeroCommand = new ZeroLauncher();
 		hasZeroed = false;
+		
 			
 			
 		// TODO Move to constructor after implemented and tested
-		encoderWatcherTimer.scheduleAtFixedRate(encoderWatcher, 0, Constants.LAUNCHER_ENCODER_WATCHER_PERIOD);
 		
 //			TEST ANGLE SETPOINT
 		SmartDashboard.putNumber(getFormattedName() + "MotorArmSetpointSETTER", 0);
@@ -98,6 +109,7 @@ public final class Launcher extends Subsystem implements SmartdashBoardLoggable,
 //			System.out.println("startZeroCommand return " + zeroWorked);
 			timeoutAction1.config(10d);
 			timeoutAction2.config(20d);
+			launcherSpinupTime.config(Constants.LAUNCHER_WHEEL_SPIN_UP_TIME);
 			
 		
 //			TESTING DIRECTIONS
@@ -105,13 +117,13 @@ public final class Launcher extends Subsystem implements SmartdashBoardLoggable,
 //			timeoutAction2.config(3d);
 	}
 	
-	private class ZeroLauncher extends Command {
+	/*private class ZeroLauncher extends Command {
 		private boolean waitStarted;
 		private final TimeoutAction timeout = new TimeoutAction();
 		
-		public ZeroLauncher() {
+		/*public ZeroLauncher() {
 			super("Zero Command", 3);
-			requires(Robot.launcherNew);
+			requires(robotmap.launcherNew);
 			waitStarted = false;
 		}
 		
@@ -120,7 +132,7 @@ public final class Launcher extends Subsystem implements SmartdashBoardLoggable,
 		}
 
 		@Override
-		protected void execute() {
+		/*protected void execute() {
 			Robot.launcherNew.setMotorArmSpeedRaw(-.5);
 			System.out.println(getName() + " Called Execute");
 			
@@ -148,7 +160,7 @@ public final class Launcher extends Subsystem implements SmartdashBoardLoggable,
 			System.out.println("ZeroLauncher has been cancelled");
 		}
 		
-	}
+	}*/
 	
 	/**
 	 * TODO implement class
@@ -271,8 +283,8 @@ public final class Launcher extends Subsystem implements SmartdashBoardLoggable,
 		
 		putBooleanSD("HasZeroed", hasZeroed());
 		putBooleanSD("EncoderWatcher", getArmEncoderMoving());
-		try {putBooleanSD("ZeroCommandRunning", zeroCommand.isRunning());}
-		catch (Exception e) {DriverStation.reportError("Cannot call a method on a null command!", false);}
+		//try {putBooleanSD("ZeroCommandRunning", zeroCommand.isRunning());}
+		//catch (Exception e) {DriverStation.reportError("Cannot call a method on a null command!", false);}
 		
 		putBooleanSD("FwdLimitSwitch", getFwdLimitSwitch());
 		putBooleanSD("RevLimitSwitch", getRevLimitSwitch());
@@ -330,19 +342,21 @@ public final class Launcher extends Subsystem implements SmartdashBoardLoggable,
 	// OTHER PUBLIC METHODS
 	
 	public void setPuncherSolenoid(boolean engaged) {
-		puncherSolenoid.set(engaged ? Value.kForward:Value.kReverse);
+		RobotMap.launcherPuncherSolenoid.set(engaged ? Value.kForward:Value.kReverse);
 	}
 	
 	/**
 	 * @return true if command was started or false if command was already running/has already run
 	 */
 	public boolean startZeroCommand() {
-		if (!zeroCommand.isRunning() && !hasZeroed /*true*/) {
+		/*if (!zeroCommand.isRunning() && !hasZeroed /*true) {
 			zeroCommand.start();
 			return true;
 		} else {
 			return false;
 		}
+		*/
+		return false;
 	}
 	
 	public void setLauncherZeroed() {
@@ -372,25 +386,22 @@ public final class Launcher extends Subsystem implements SmartdashBoardLoggable,
 			}
 			
 		} else {
-			DriverStation.reportWarning("LauncherNew has not zeroed! Arm motor speed not set!", false);
+			//DriverStation.reportWarning("LauncherNew has not zeroed! Arm motor speed not set!", false);
 		}
 	}
 	
 	private void setMotorNearSpeed(double speed) {
-		if (Double.isFinite(speed)) {
-			motorNear.set(MiscUtil.limit(speed));
-		} else {
-			DriverStation.reportError("Could not set flywheel near speed to " + speed, false);
-		}
+//		if (Double.isFinite(speed)) {
+//			motorNear.set(MiscUtil.limit(speed));
+//		} else {
+//			DriverStation.reportError("Could not set flywheel near speed to " + speed, false);
+//		}
+		RobotMap.launcherMotorNear.set(speed);
 	}
 	
 	private void setMotorFarSpeed(double speed) {
-		if (Double.isFinite(speed)) {
-			motorFar.set(MiscUtil.limit(speed));
-		} else {
-			DriverStation.reportWarning("Could not set flywheel far speed to " + speed, false);
+		RobotMap.launcherMotorFar.set(speed);
 		}
-	}
 	
 	private void setHasZeroed(boolean hasZeroed) {
 		this.hasZeroed = hasZeroed;
@@ -431,5 +442,65 @@ public final class Launcher extends Subsystem implements SmartdashBoardLoggable,
 	@Override
 	protected void initDefaultCommand() {
 	}
-
+	/*
+	 * Launcher Home Logic
+	 * 
+	 * 
+	 * 1: Save encoder value for reference
+	 * 2: Set Speeds slowly down (-0.3 or so)
+	 * 3: Wait till fwd_switch is triggered or timeout
+	 * 4: Shut off Aim Motor
+	 */
+	
+	
+	/* Normal Lauching sequence 
+	 * 	
+	 * 1: Set the piston to reverse
+	 * 2: ****Set motors backwards slowly to knock the ball back into the trough (about 0.5 seconds)****NOT working(OVERHEATING MOTOR)
+	 * 3: Spin up the motors
+	 * 4: Simulataneously raise the arm for vertical aim sequence (Check for EncoderWatcher)
+	 * 5: Wait for arm to finish occisalting (1 second or so)
+	 * 6: Retract the piston and launch the ball.
+	 * 
+	 * 7: Reverse the piston and stop the launcher motors
+	 * 8: Set the Arm angle to the travel position
+	 * 
+	 * 
+	 */
+	
+	
+	/* Aim Sequence
+	 * Starts with target in frame
+	 * 
+	 * 1: Pixy code supplies offset angle
+	 * 2: Drivetrain will adjust to offset angle. 
+	 * 3: Get Pixy offset angle
+	 * 4: If offset is outside deadzone, turn robot again
+	 * 5: Get Ultrasound to supply range to target
+	 * 6: If distance is too far, send message to driverstation and cancel the command
+	 * 7: Else use distance to compute launching angle (3+4, 5+6 happen simultaneously per Mike)
+	 * 8: Start Launching Sequence
+	 * 
+	 */
+	double RunOnce = 0;
+	public void LaunchSequence(){
+		if (RunOnce == 0){	//make sure the config only runs once
+			launcherSpinupTime.config(Constants.LAUNCHER_WHEEL_SPIN_UP_TIME);	//configure the spinup timer
+			launchSequenceTimeout.config(Constants.LAUNCHER_WHEEL_SPIN_UP_TIME + Constants.LAUNCHER_FIRE_TIME);	//configure the timeout timer
+			RunOnce ++;		//add one to RunOnce so this if statement never runs again
+		}
+		RobotMap.launcherPuncherSolenoid.set(Value.kReverse); //set solenoid backwards
+		setMotorNearSpeed(-Constants.LAUNCHER_GLOBAL_POWER); //spin up the wheels
+		setMotorFarSpeed(-Constants.LAUNCHER_GLOBAL_POWER);			
+		if (launcherSpinupTime.isFinished()){				//wait for the spinup time timer to expire (lets the wheels get up to speed)
+			RobotMap.launcherPuncherSolenoid.set(Value.kForward); //set the solenoid forward
+			if (launchSequenceTimeout.isFinished()){	//wait for the timeout to expire (to make sure ball has left the wheels)
+				setMotorFarSpeed(0);	//kill the motors
+				setMotorNearSpeed(0);
+			}
+		}
+	}
+	
+	
+	
 }
