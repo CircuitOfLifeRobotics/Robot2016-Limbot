@@ -2,8 +2,11 @@ package com.team3925.robot2016;
 
 import static com.team3925.robot2016.util.hidhelpers.XboxHelper.START;
 
+import com.team3925.robot2016.commands.CollectBall;
+import com.team3925.robot2016.commands.LaunchBall;
 import com.team3925.robot2016.commands.auto.AutoRoutineCenter;
 import com.team3925.robot2016.commands.auto.defensecross.CrossDefault;
+import com.team3925.robot2016.subsystems.Launcher;
 import com.team3925.robot2016.util.hidhelpers.FlightStickHelper;
 import com.team3925.robot2016.util.hidhelpers.ThrustmasterHelper;
 import com.team3925.robot2016.util.hidhelpers.XboxHelper;
@@ -55,13 +58,15 @@ public final class OI {
 
 	public Button startCollectBall;
 	public Button startThrowBallFar;
-	public Button startThrowBallNear;
-	public Button startThrowBallLow;
+//	public Button startThrowBallNear;
+//	public Button startThrowBallLow;
+	public Button startThrowBallManual;
 	public Button cancelCommands;
 
-//	public Command collectBall;
+	public Command collectBall;
 	public Command throwBallFar;
 //	public Command throwBallNear;
+	public Command throwBallManual;
 //	public Command throwBallLow;
 //	public GyroTurn gyroTurn;
 
@@ -71,44 +76,57 @@ public final class OI {
 	public SendableChooser positionChooser;
 
 	public OI() {
-
+		
+		Launcher launcher = new Robot().launcher;
+		
 		driverFlightstick = new Joystick(0);
 		driverWheel = new Joystick(1);
 		shooterXbox = new Joystick(2);
 
-//		collectBall = new CollectBall();
-//		throwBallFar = new ThrowBall(Constants.LAUNCHER_THROWBALL_FAR_ANGLE, 1, 5);
-//		throwBallNear = new ThrowBall(Constants.LAUNCHER_THROWBALL_NEAR_ANGLE, 1, 5);
+		collectBall = new CollectBall();
+		throwBallFar = new LaunchBall(launcher.getDistance());
+//		throwBallNear = new LaunchBall(launcher.getDistance());
+		throwBallManual = new LaunchBall(45);
 //		throwBallLow = new ThrowBall(0, 1, 1);
 
 		startCollectBall = new JoystickButton(shooterXbox, XboxHelper.A);
-//		startCollectBall.whenPressed(collectBall);
+		startCollectBall.whenPressed(collectBall);
 //		startCollectBall.cancelWhenPressed(throwBallNear);
 		startCollectBall.cancelWhenPressed(throwBallFar);
+		startCollectBall.cancelWhenPressed(throwBallManual);
 //		startCollectBall.cancelWhenPressed(throwBallLow);
 
 		startThrowBallFar = new JoystickButton(shooterXbox, XboxHelper.Y);
 		startThrowBallFar.whenPressed(throwBallFar);
-//		startThrowBallFar.cancelWhenPressed(collectBall);
+		startThrowBallFar.cancelWhenPressed(collectBall);
 //		startThrowBallFar.cancelWhenPressed(throwBallNear);
+		startThrowBallFar.cancelWhenPressed(throwBallManual);
 //		startThrowBallFar.cancelWhenPressed(throwBallLow);
 
-		startThrowBallNear = new JoystickButton(shooterXbox, XboxHelper.X);
+//		startThrowBallNear = new JoystickButton(shooterXbox, XboxHelper.X);
 //		startThrowBallNear.whenPressed(throwBallNear);
-		startThrowBallNear.cancelWhenPressed(throwBallFar);
+//		startThrowBallNear.cancelWhenPressed(throwBallFar);
 //		startThrowBallNear.cancelWhenPressed(collectBall);
+//		startThrowBallNear.cancelWhenPressed(throwBallManual);
 //		startThrowBallNear.cancelWhenPressed(throwBallLow);
 		
-		startThrowBallLow = new JoystickButton(shooterXbox, XboxHelper.B);
+		startThrowBallManual = new JoystickButton(shooterXbox, XboxHelper.X);
+		startThrowBallManual.whenPressed(throwBallManual);
+		startThrowBallManual.cancelWhenPressed(collectBall);
+		startThrowBallManual.cancelWhenPressed(throwBallFar);
+//		startThrowBallAuto.cancelWhenPressed(throwBallNear);
+		
+//		startThrowBallLow = new JoystickButton(shooterXbox, XboxHelper.B);
 //		startThrowBallLow.whenPressed(throwBallLow);
-		startThrowBallLow.cancelWhenPressed(throwBallFar);
+//		startThrowBallLow.cancelWhenPressed(throwBallFar);
 //		startThrowBallLow.cancelWhenPressed(collectBall);
 //		startThrowBallLow.cancelWhenPressed(throwBallNear);
 		
 		cancelCommands = new JoystickButton(shooterXbox, XboxHelper.START);
-//		cancelCommands.cancelWhenPressed(collectBall);
+		cancelCommands.cancelWhenPressed(collectBall);
 		cancelCommands.cancelWhenPressed(throwBallFar);
 //		cancelCommands.cancelWhenPressed(throwBallNear);
+		cancelCommands.cancelWhenPressed(throwBallManual);
 //		cancelCommands.cancelWhenPressed(throwBallLow);
 
 		positionChooser = new SendableChooser();

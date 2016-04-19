@@ -10,6 +10,7 @@ import com.team3925.robot2016.commands.LaunchBall;
 import com.team3925.robot2016.commands.auto.GyroTurn;
 import com.team3925.robot2016.subsystems.DriveTrain;
 import com.team3925.robot2016.subsystems.Launcher;
+import com.team3925.robot2016.subsystems.Launcher.EncoderWatcher;
 import com.team3925.robot2016.util.DriveTrainSignal;
 import com.team3925.robot2016.util.SmartdashBoardLoggable;
 import com.team3925.robot2016.util.TimeoutAction;
@@ -39,7 +40,7 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 	//Subsystems
 	public static DriveTrain driveTrain;
 	public static Launcher launcher;
-	
+
 	//Other
 	public static AHRS navx = null;
 	public static PowerDistributionPanel pdp;
@@ -86,7 +87,7 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 		
 		//Creating Subsystems and Related Processes
 		driveTrain = new DriveTrain();
-		launcher = new Launcher(RobotMap.launcherMotorArm, RobotMap.launcherMotorFar, RobotMap.launcherMotorNear, RobotMap.launcherPuncherSolenoid, RobotMap.launcherFwdLimitSwitch, RobotMap.launcherRevLimitSwitch);
+		launcher = new Launcher(RobotMap.launcherMotorArm, RobotMap.launcherMotorFar, RobotMap.launcherMotorNear, RobotMap.launcherPuncherSolenoid, RobotMap.launcherFwdLimitSwitch, RobotMap.launcherRevLimitSwitch, RobotMap.launcherUltrasonic);
 		pdp = RobotMap.pdp;
 		
 		// OI must be constructed after subsystems. If the OI creates Commands
@@ -101,7 +102,7 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 		
 		//Creating Commands
 		visionGyroTurn = new GyroTurn(0);
-		launchBall = new LaunchBall();
+		launchBall = new LaunchBall(launcher.getDistance());
 		
 		reset();
 	}

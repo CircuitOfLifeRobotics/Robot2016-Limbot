@@ -3,6 +3,7 @@ package com.team3925.robot2016.subsystems;
 import static com.team3925.robot2016.Constants.LAUNCHER_ENCODER_SCALE_FACTOR;
 import static com.team3925.robot2016.Constants.LAUNCHER_GLOBAL_POWER;
 import static com.team3925.robot2016.Constants.LAUNCHER_MAX_ARM_ANGLE;
+import static com.team3925.robot2016.Constants.LAUNCHER_TRAJECTORY_TABLE;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -15,6 +16,7 @@ import com.team3925.robot2016.util.MiscUtil;
 import com.team3925.robot2016.util.SmartdashBoardLoggable;
 import com.team3925.robot2016.util.TimeoutAction;
 
+import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
@@ -35,6 +37,8 @@ public final class Launcher extends Subsystem implements SmartdashBoardLoggable,
 	
 	private final DigitalInput fwdLimitSwitch;
 	private final DigitalInput revLimitSwitch;
+	
+	private final AnalogInput ultraSound;
 	
 	// TODO implement after testing basics
 //	private final SynchronousPID pid = new SynchronousPID(Constants.LAUNCHER_PID_K_P, Constants.LAUNCHER_PID_K_I, Constants.LAUNCHER_PID_K_D);
@@ -61,14 +65,15 @@ public final class Launcher extends Subsystem implements SmartdashBoardLoggable,
 	/**
 	 * Testing a new way of getting actuators and sensors into a class
 	 */
-	public Launcher(CANTalon motorArm, CANTalon motorFlywheelFar, CANTalon motorFlywheelNear, DoubleSolenoid puncherSolenoid, DigitalInput fwdSwitch, DigitalInput revSwitch) {
+	public Launcher(CANTalon motorArm, CANTalon motorFlywheelFar, CANTalon motorFlywheelNear, DoubleSolenoid puncherSolenoid,
+			DigitalInput fwdSwitch, DigitalInput revSwitch, AnalogInput ultraSound) {
 		this.motorArm = motorArm;
 		this.motorFar = motorFlywheelFar;
 		this.motorNear = motorFlywheelNear;
 		this.puncherSolenoid = puncherSolenoid;
 		this.fwdLimitSwitch = fwdSwitch;
 		this.revLimitSwitch = revSwitch;
-		
+		this.ultraSound = ultraSound;
 		setHasZeroed(false);
 		
 		resetSetpoints();
@@ -148,7 +153,7 @@ public final class Launcher extends Subsystem implements SmartdashBoardLoggable,
 	 * 
 	 * @author Bryan
 	 */
-	private class EncoderWatcher extends TimerTask {
+	public class EncoderWatcher extends TimerTask {
 		// CONSTANTS
 		private final double TOLERANCE; // Degrees
 		private final int MAX_CAPACITY; // num of entries to compare values for
@@ -442,7 +447,10 @@ public final class Launcher extends Subsystem implements SmartdashBoardLoggable,
 		return "LauncherNew_";
 	}
 	
-	
+	public int getDistance(){
+		// TODO ultrasound does not accurately return values after 8 feet, so we will have to default to the pixy cam
+		return LAUNCHER_TRAJECTORY_TABLE[Math.round((float)ultraSound.getAverageVoltage())];
+	}
 	
 	@Override
 	protected void initDefaultCommand() {
