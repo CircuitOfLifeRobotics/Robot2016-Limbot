@@ -192,16 +192,14 @@ public final class Launcher extends Subsystem implements SmartdashBoardLoggable,
 			// testing getting input from SmartDashboard
 			//-16000 is shoot angle approximately
 		if (hasZeroed()) {
-			setArmSetpoint(SmartDashboard.getNumber(getFormattedName() + "MotorArmSetpointSETTER", 0));
+//			setArmSetpoint(SmartDashboard.getNumber(getFormattedName() + "MotorArmSetpointSETTER", 0));
 			
 			double error = getInternalSetpoint() - getArmPosition();
 			System.out.println("Diff = " + Math.abs(error));
 			
 			if (Math.abs(error) > Constants.LAUNCHER_ARM_TOLERANCE /* ADD VELOCITY CONDITION*/) {
 				final double K_P = 0.5; // P part of PID
-				setMotorArmSpeed(Math.signum(error) * K_P /* * Math.min(Math.abs(error/20),1)*/);
-				
-				System.out.println("MotorArmSpiid " + Math.signum(error) * K_P /** Math.min(Math.abs(error/10),1)*/);
+				setMotorArmSpeed(/*Math.signum(error) * K_P*/ Math.signum(error) * Math.min(Math.abs(error/20),1));
 			}
 		}
 
