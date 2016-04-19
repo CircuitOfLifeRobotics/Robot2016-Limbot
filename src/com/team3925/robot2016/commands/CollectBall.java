@@ -17,11 +17,11 @@ public class CollectBall extends Command {
 
 	// Called just before this Command runs the first time
 	protected void initialize() {
+		launcher.startZeroCommand();
 	}
 
 	// Called repeatedly when this Command is scheduled to run
 	protected void execute() {
-		launcher.setArmSetpoint(0);
 		launcher.setFlywheelFarSetpoint(1);
 	}
 

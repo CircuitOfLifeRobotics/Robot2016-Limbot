@@ -331,7 +331,7 @@ public final class Launcher extends Subsystem implements SmartdashBoardLoggable,
 
 	// OTHER PUBLIC METHODS
 	
-	public void setPuncherSolenoid(boolean engaged) {
+	public void setPuncherSolenoidSetpoint(boolean engaged) {
 		puncherSolenoid.set(engaged ? Value.kForward:Value.kReverse);
 	}
 	

@@ -77,6 +77,12 @@ public class Constants {
     public static final long LAUNCHER_ENCODER_WATCHER_PERIOD = 20; //ms
     public static final int LAUNCHER_ENCODER_WATCHER_DATA_CACHE_SIZE = 4; // entries
     
+    public static final double RESTING_POSITION = 3; //degrees TODO tune
+	public static final double LAUNCHER_SETPOINT_REACH_WAIT = 3;
+	public static final int LAUNCHER_RESTING_ANGLE = 30;
+
+
+    
     //TODO TUNE
     public static final double LAUNCHER_PID_K_P = 0.5;
     public static final double LAUNCHER_PID_K_I = 0;
