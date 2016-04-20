@@ -14,6 +14,7 @@ import com.team3925.robot2016.util.InputWatcher;
 import com.team3925.robot2016.util.Loopable;
 import com.team3925.robot2016.util.MiscUtil;
 import com.team3925.robot2016.util.SmartdashBoardLoggable;
+import com.team3925.robot2016.util.SynchronousPID;
 import com.team3925.robot2016.util.TimeoutAction;
 
 import edu.wpi.first.wpilibj.CANTalon;
@@ -38,7 +39,7 @@ public final class Launcher extends Subsystem implements SmartdashBoardLoggable,
 	private final DigitalInput revLimitSwitch;
 	
 	// TODO implement after testing basics
-//	private final SynchronousPID pid = new SynchronousPID(Constants.LAUNCHER_PID_K_P, Constants.LAUNCHER_PID_K_I, Constants.LAUNCHER_PID_K_D);
+	private final SynchronousPID pid = new SynchronousPID(Constants.LAUNCHER_PID_K_P, Constants.LAUNCHER_PID_K_I, Constants.LAUNCHER_PID_K_D);
 	
 	private final DoubleSolenoid puncherSolenoid;
 	
@@ -104,54 +105,6 @@ public final class Launcher extends Subsystem implements SmartdashBoardLoggable,
 		System.out.println("Launcher.init() called");
 	}
 	
-	private class ZeroLauncher extends Command {
-		private boolean waitStarted;
-		private final TimeoutAction timeout = new TimeoutAction();
-		
-		public ZeroLauncher() {
-			super("Zero Command", 8);
-			super.setInterruptible(false);
-			requires(Robot.launcher);
-		}
-		
-		@Override
-		protected void initialize() {
-			waitStarted = false;
-		}
-
-		@Override
-		protected void execute() {
-			if (!waitStarted && Robot.launcher.getFwdLimitSwitch()) {
-				timeout.config(Constants.LAUNCHER_ZERO_COMMAND_WAIT);
-				waitStarted = true;
-			}
-			if (waitStarted) {
-				Robot.launcher.setMotorArmSpeedRaw(0);
-			} else {
-				Robot.launcher.setMotorArmSpeedRaw(-.5);
-			}
-		}
-
-		@Override
-		protected boolean isFinished() {
-			return timeout.isFinished() && waitStarted;
-		}
-
-		@Override
-		protected void end() {
-			Robot.launcher.setMotorArmSpeedRaw(0);
-			Robot.launcher.setLauncherZeroed();
-			System.out.println("Zero command ended");
-		}
-
-		@Override
-		protected void interrupted() {
-			// Code should never reach here. super.setInterruptible(false) is invoked
-			Robot.launcher.setMotorArmSpeedRaw(0);
-			System.out.println("Zero command interrupted!");
-		}
-		
-	}
 	
 	@Override
 	public void update() {
@@ -167,12 +120,15 @@ public final class Launcher extends Subsystem implements SmartdashBoardLoggable,
 			
 			double error = getArmPosError();
 			
-			if (getAimOnTarget()) {
+			if (!getAimOnTarget()) {
 				final double MULTIPLIER = 0.5;
 				
 				setMotorArmSpeed(Math.signum(error) * MULTIPLIER /* * Math.min(Math.abs(error/20),1)*/);
 				
+//				System.out.println(pid.calculate(getArmPosError()));
 				System.out.println("MotorArmSpiid " + Math.signum(error) * MULTIPLIER /** Math.min(Math.abs(error/10),1)*/);
+			} else {
+				setMotorArmSpeed(0);
 			}
 			System.out.println();
 		}
@@ -286,7 +242,7 @@ public final class Launcher extends Subsystem implements SmartdashBoardLoggable,
 	
 	// PRIVATE SETTERS
 	
-	private void setMotorArmSpeedRaw(double speed) {
+	void setMotorArmSpeedRaw(double speed) {
 		motorArm.set(MiscUtil.limit(speed) * LAUNCHER_GLOBAL_POWER);
 	}
 	
@@ -346,7 +302,7 @@ public final class Launcher extends Subsystem implements SmartdashBoardLoggable,
 	}
 
 	public boolean getAimOnTarget() {
-		return Math.abs(getArmPosError()) > Constants.LAUNCHER_ARM_TOLERANCE && Math.abs(getArmVelocity()) > Constants.LAUNCHER_PID_VELOCITY_DELTA;
+		return Math.abs(getArmPosError()) < Constants.LAUNCHER_ARM_TOLERANCE && Math.abs(getArmVelocity()) < Constants.LAUNCHER_PID_VELOCITY_TOLERANCE;
 	}
 	
 	private double getArmSetpoint() {
