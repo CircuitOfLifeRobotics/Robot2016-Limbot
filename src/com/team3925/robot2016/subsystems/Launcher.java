@@ -10,6 +10,8 @@ import java.util.TimerTask;
 
 import com.team3925.robot2016.Constants;
 import com.team3925.robot2016.Robot;
+import com.team3925.robot2016.RobotMap;
+import com.team3925.robot2016.commands.CameraHelper;
 import com.team3925.robot2016.util.FixedSizeLinkedList;
 import com.team3925.robot2016.util.Loopable;
 import com.team3925.robot2016.util.MiscUtil;
@@ -43,10 +45,13 @@ public final class Launcher extends Subsystem implements SmartdashBoardLoggable,
 	// TODO implement after testing basics
 //	private final SynchronousPID pid = new SynchronousPID(Constants.LAUNCHER_PID_K_P, Constants.LAUNCHER_PID_K_I, Constants.LAUNCHER_PID_K_D);
 	
+	private final double DISTANCE_TOLERANCE = .2;
+	
 	private final DoubleSolenoid puncherSolenoid;
 	
 	private final EncoderWatcher encoderWatcher;
 	private final Timer encoderWatcherTimer;
+	private final CameraHelper cameraHelp = RobotMap.cameraHelper;
 	
 	private double armSetpoint;
 	private double motorFarSetpoint;
@@ -448,8 +453,14 @@ public final class Launcher extends Subsystem implements SmartdashBoardLoggable,
 	}
 	
 	public int getDistance(){
-		// TODO ultrasound does not accurately return values after 8 feet, so we will have to default to the pixy cam
-		return LAUNCHER_TRAJECTORY_TABLE[Math.round((float)ultraSound.getAverageVoltage())];
+		int distanceApprox = 0;
+
+		if (Math.round((float)ultraSound.getAverageVoltage()*4) >=7){
+			distanceApprox = Math.round((float)cameraHelp.calcData());
+		}else{
+			distanceApprox = Math.round((float)((cameraHelp.calcData() + ultraSound.getAverageVoltage()*4)/2));
+		}
+		return LAUNCHER_TRAJECTORY_TABLE[distanceApprox];
 	}
 	
 	@Override

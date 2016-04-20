@@ -1,12 +1,30 @@
 package com.team3925.robot2016;
 
-import static com.team3925.robot2016.Constants.*;
+import static com.team3925.robot2016.Constants.DRIVETRAIN_MOTOR_LEFT_A;
+import static com.team3925.robot2016.Constants.DRIVETRAIN_MOTOR_LEFT_B;
+import static com.team3925.robot2016.Constants.DRIVETRAIN_MOTOR_RIGHT_A;
+import static com.team3925.robot2016.Constants.DRIVETRAIN_MOTOR_RIGHT_B;
+import static com.team3925.robot2016.Constants.DRIVETRAIN_SOLENOID_FORWARD;
+import static com.team3925.robot2016.Constants.DRIVETRAIN_SOLENOID_REVERSE;
+import static com.team3925.robot2016.Constants.DRIVETRAIN_VOLTAGE_RAMP_RATE;
+import static com.team3925.robot2016.Constants.LAUNCHER_LIMIT_SWITCH_FORWARD;
+import static com.team3925.robot2016.Constants.LAUNCHER_LIMIT_SWITCH_REVERSE;
+import static com.team3925.robot2016.Constants.LAUNCHER_MOTOR_ARM;
+import static com.team3925.robot2016.Constants.LAUNCHER_MOTOR_FAR;
+import static com.team3925.robot2016.Constants.LAUNCHER_MOTOR_NEAR;
+import static com.team3925.robot2016.Constants.LAUNCHER_SOLENOID_PUNCHER_FORWARD;
+import static com.team3925.robot2016.Constants.LAUNCHER_SOLENOID_PUNCHER_REVERSE;
+
+import com.team3925.robot2016.commands.CameraHelper;
+import com.team3925.robot2016.util.PixyCmu5;
+
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.CANTalon.FeedbackDevice;
 import edu.wpi.first.wpilibj.CANTalon.TalonControlMode;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 
@@ -31,6 +49,8 @@ public class RobotMap {
     public static DigitalInput launcherRevLimitSwitch;
     public static DoubleSolenoid launcherPuncherSolenoid;
     public static AnalogInput launcherUltrasonic;
+    public static PixyCmu5 pixyCam;
+    public static CameraHelper cameraHelper;
     
     public static CANTalon intakeAssistArmLeft;
     public static CANTalon intakeAssistArmRight;
@@ -50,6 +70,15 @@ public class RobotMap {
     
     public static void init() {
     	
+    	// Camera
+    	try {
+    		pixyCam = new PixyCmu5(0xa8, 0.2);
+    	}catch(Exception e) {
+    		DriverStation.reportError("Error instantiating PixyCam!", true);
+    		pixyCam = null;
+    	}
+    	
+    	cameraHelper = new CameraHelper(pixyCam,false);
     	
     	//PDP
     	
@@ -112,7 +141,7 @@ public class RobotMap {
         //in wheels			0.9A
         //no ball			0.8A
         //pointed at light	1.5A
-        launcherUltrasonic = new AnalogInput(LAUNCHER_ULTRASONIC);
+        launcherUltrasonic = new AnalogInput(3);
         
         launcherFwdLimitSwitch = new DigitalInput(LAUNCHER_LIMIT_SWITCH_FORWARD);
         launcherRevLimitSwitch = new DigitalInput(LAUNCHER_LIMIT_SWITCH_REVERSE);
