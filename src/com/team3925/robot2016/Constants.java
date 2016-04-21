@@ -78,7 +78,13 @@ public class Constants {
     public static final double LAUNCHER_ENCODER_WATCHER_TOLERANCE = 3; //degrees TODO tune
     public static final long LAUNCHER_ENCODER_WATCHER_PERIOD = 20; //ms
     public static final int LAUNCHER_ENCODER_WATCHER_DATA_CACHE_SIZE = 4; // entries
-    public static final int[] LAUNCHER_TRAJECTORY_TABLE = {26, 26, 26, 26, 35, 29, 39, 43, 45, 47, 48, 49, 50, 41};
+    
+    // Launcher Distance Regression Function
+    public static double LAUNCHER_TRAJECTORY(double distanceTo){
+    	double angleToTarget;
+    	angleToTarget = -.55*distanceTo + 12.95*distanceTo - 27;    	
+    	return angleToTarget;
+    }
    
     //TODO TUNE
     public static final double LAUNCHER_PID_K_P = 0.5;

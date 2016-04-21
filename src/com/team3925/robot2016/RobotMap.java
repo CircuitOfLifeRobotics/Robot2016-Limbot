@@ -78,7 +78,7 @@ public class RobotMap {
     		pixyCam = null;
     	}
     	
-    	cameraHelper = new CameraHelper(pixyCam,false);
+    	cameraHelper = new CameraHelper(pixyCam, false);
     	
     	//PDP
     	

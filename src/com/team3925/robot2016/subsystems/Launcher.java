@@ -3,7 +3,7 @@ package com.team3925.robot2016.subsystems;
 import static com.team3925.robot2016.Constants.LAUNCHER_ENCODER_SCALE_FACTOR;
 import static com.team3925.robot2016.Constants.LAUNCHER_GLOBAL_POWER;
 import static com.team3925.robot2016.Constants.LAUNCHER_MAX_ARM_ANGLE;
-import static com.team3925.robot2016.Constants.LAUNCHER_TRAJECTORY_TABLE;
+import static com.team3925.robot2016.Constants.LAUNCHER_TRAJECTORY;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -45,7 +45,7 @@ public final class Launcher extends Subsystem implements SmartdashBoardLoggable,
 	// TODO implement after testing basics
 //	private final SynchronousPID pid = new SynchronousPID(Constants.LAUNCHER_PID_K_P, Constants.LAUNCHER_PID_K_I, Constants.LAUNCHER_PID_K_D);
 	
-	private final double DISTANCE_TOLERANCE = .2;
+	private final double DISTANCE_TOLERANCE = 2;
 	
 	private final DoubleSolenoid puncherSolenoid;
 	
@@ -452,15 +452,28 @@ public final class Launcher extends Subsystem implements SmartdashBoardLoggable,
 		return "LauncherNew_";
 	}
 	
-	public int getDistance(){
-		int distanceApprox = 0;
-
-		if (Math.round((float)ultraSound.getAverageVoltage()*4) >=7){
-			distanceApprox = Math.round((float)cameraHelp.calcData());
+	public double getAngle(){
+		double ultraApprox = getUltraSoundDistance();
+		double pixyApprox  = getPixyDistance();
+		double distanceApprox = 0; 
+		
+		if (Math.abs(ultraApprox - pixyApprox) > DISTANCE_TOLERANCE){
+		
 		}else{
-			distanceApprox = Math.round((float)((cameraHelp.calcData() + ultraSound.getAverageVoltage()*4)/2));
+			distanceApprox = (pixyApprox + ultraApprox)/2;
 		}
-		return LAUNCHER_TRAJECTORY_TABLE[distanceApprox];
+		return LAUNCHER_TRAJECTORY(distanceApprox);
+		
+	}
+	
+	public double getUltraSoundDistance(){
+		double ultraApprox = Math.round(ultraSound.getAverageVoltage()*4);
+		return ultraApprox; 
+	}
+	
+	public double getPixyDistance(){
+		double pixyApprox = Math.round(cameraHelp.calcData());
+		return pixyApprox;
 	}
 	
 	@Override

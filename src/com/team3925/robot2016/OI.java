@@ -84,7 +84,7 @@ public final class OI {
 		shooterXbox = new Joystick(2);
 
 		collectBall = new CollectBall();
-		throwBallFar = new LaunchBall(launcher.getDistance());
+		throwBallFar = new LaunchBall(launcher.getAngle());
 //		throwBallNear = new LaunchBall(launcher.getDistance());
 		throwBallManual = new LaunchBall(45);
 //		throwBallLow = new ThrowBall(0, 1, 1);

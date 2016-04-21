@@ -13,12 +13,13 @@ public class LaunchBall extends Command implements SmartdashBoardLoggable {
 	public static int ANGLE_TOLERANCE = 5;
 	public static int AIMING_ANGLE;
 	public static int RESTING_POSITION = 30;
-
+	
 	private enum State {
 		WAIT_LET_GO_BALL, WAIT_AIM_AT_SETPOINT, WAIT_BALL_LEAVE, WAIT_AIM_AT_FINISH;
 	}
 	
 // TODO implement the encoder watcher class, it is not working very well
+	EncoderWatcher encoderWatcher;
 	Launcher launcher;
 	TimeoutAction timeout;
 	State state;
@@ -29,14 +30,22 @@ public class LaunchBall extends Command implements SmartdashBoardLoggable {
 		state = State.WAIT_LET_GO_BALL;
 		timeout = new TimeoutAction();
 		AIMING_ANGLE = aim_angle;
+		encoderWatcher = Robot.encoderWatcher;
 	}
 
 	@Override
 	protected void initialize() {
 		launcher.setArmSetpoint(AIMING_ANGLE);
-		state = State.WAIT_LET_GO_BALL;
-		launcher.setPuncherSolenoid(false);
-		timeout.config(3);
+		timeout.config(0.1);
+		encoderWatcher.run();
+		if(!encoderWatcher.isMoving()){
+			end();
+		}
+		if(timeout.isFinished()){
+			state = State.WAIT_LET_GO_BALL;
+			launcher.setPuncherSolenoid(false);
+			timeout.config(3);
+		}
 	}
 
 	@Override
