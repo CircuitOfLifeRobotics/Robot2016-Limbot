@@ -1,5 +1,7 @@
 package com.team3925.robot2016.subsystems.components;
 
+import com.team3925.robot2016.util.DriveTrainSignal;
+
 import edu.wpi.first.wpilibj.CANTalon;
 
 public class DriveSide {
@@ -11,9 +13,9 @@ public class DriveSide {
 		this.motorB = motorB;
 	}
 	
-	public void setSpeed(double speed) {
-		motorA.set(speed);
-		motorB.set(speed);
+	public void setSpeed(double input) {
+		motorA.set(input);
+		motorB.set(input);
 	}
 	
 	public double getSpeed() {

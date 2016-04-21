@@ -92,12 +92,12 @@ public class GyroDrive extends Command implements SmartdashBoardLoggable {
 	
 	@Override
 	protected void end() {
-		driveTrain.setMotorSpeeds(DriveTrainSignal.NEUTRAL);
+		driveTrain.setMotorSpeeds(0,0);
 	}
 
 	@Override
 	protected void interrupted() {
-		driveTrain.setMotorSpeeds(DriveTrainSignal.NEUTRAL);
+		driveTrain.setMotorSpeeds(0,0);
 	}
 
 	@Override

@@ -16,6 +16,7 @@ import com.team3925.robot2016.util.Loopable;
 import com.team3925.robot2016.util.MiscUtil;
 import com.team3925.robot2016.util.SmartdashBoardLoggable;
 import com.team3925.robot2016.util.TimeoutAction;
+import com.team3925.robot2016.util.hidhelpers.XboxHelper;
 
 import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -427,11 +428,11 @@ public final class Launcher extends Subsystem implements SmartdashBoardLoggable,
 	}
 	
 	public boolean getFwdLimitSwitch() {
-		return fwdLimitSwitch.get();
+		return RobotMap.launcherFwdLimitSwitch.get();
 	}
 	
 	public boolean getRevLimitSwitch() {
-		return revLimitSwitch.get();
+		return RobotMap.launcherRevLimitSwitch.get();
 	}
 	
 	@Override
@@ -499,8 +500,61 @@ public final class Launcher extends Subsystem implements SmartdashBoardLoggable,
 				setMotorNearSpeed(0);
 			}
 		}
+	
+		
+			
+		
 	}
 	
+	public boolean IsFarWorking(){
+		boolean isWork = false;
+		while(isWork = false){
+			setMotorFarSpeed(1);
+			if (XboxHelper.getShooterButton(1)){
+				setMotorFarSpeed(0);
+				isWork = true;
+			}
+		}
+		return isWork;
+	}
+	
+	public boolean IsNearWorking(){
+		boolean isWork = false;
+		while(isWork = false){
+			setMotorNearSpeed(1);
+			if (XboxHelper.getShooterButton(1)){
+				setMotorNearSpeed(0);
+				isWork = true;
+			}
+		}
+		return isWork;
+	}
+	public boolean IsAimWorking() {
+		boolean isAimWork = false;
+		while (isAimWork = false){
+			setArmSetpoint(45);
+			if (XboxHelper.getShooterButton(1)){
+				isAimWork = true;
+			}
+		}
+		return isAimWork;
+	}
+	public boolean IsLauncherPistonWorking(){
+		boolean isAimWork = false;
+		boolean isAimWork2 = false;
+		while (isAimWork = false){
+			robotmap.launcherPuncherSolenoid.set(Value.kForward);
+			if (XboxHelper.getShooterButton(1) && !isAimWork2){
+				RobotMap.launcherPuncherSolenoid.set(Value.kReverse);
+				isAimWork2 = true;
+			}
+			if (isAimWork2 && XboxHelper.getShooterButton(1)){
+				RobotMap.launcherPuncherSolenoid.set(Value.kOff);
+				isAimWork = true;
+			}
+		}
+		return isAimWork;
+	}
 	
 	
 }

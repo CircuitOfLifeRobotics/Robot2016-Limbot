@@ -10,6 +10,7 @@ import com.team3925.robot2016.util.DriveTrainSignal;
 import com.team3925.robot2016.util.Loopable;
 import com.team3925.robot2016.util.MiscUtil;
 import com.team3925.robot2016.util.SmartdashBoardLoggable;
+import com.team3925.robot2016.util.hidhelpers.XboxHelper;
 
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
@@ -37,9 +38,9 @@ public class DriveTrain extends Subsystem implements SmartdashBoardLoggable, Loo
     	sideRight = new DriveSide(RobotMap.driveTrainMotorRightA, RobotMap.driveTrainMotorRightB);
     }
     
-    public void setMotorSpeeds(DriveTrainSignal input) {
-    	sideLeft.setSpeed(MiscUtil.limit(input.left) * GLOBAL_MAX_DRIVETRAIN_PWR);
-    	sideRight.setSpeed(MiscUtil.limit(input.right) * GLOBAL_MAX_DRIVETRAIN_PWR);
+    public void setMotorSpeeds(double left, double right) {
+    	sideLeft.setSpeed(left);
+    	sideRight.setSpeed(right);
     }
     
     public void setHighGear(boolean highGear) {
@@ -124,7 +125,7 @@ public class DriveTrain extends Subsystem implements SmartdashBoardLoggable, Loo
 			}
 		}
 		
-		setMotorSpeeds(new DriveTrainSignal(leftMotorSpeed, rightMotorSpeed));
+		setMotorSpeeds(leftMotorSpeed, rightMotorSpeed);
 	}
     
 	@Override
@@ -146,8 +147,41 @@ public class DriveTrain extends Subsystem implements SmartdashBoardLoggable, Loo
     public void initDefaultCommand() {
     	setDefaultCommand(new ManualDrive());
     }
-    public double recordUltraSonic(){
+    public double getUltrasonicDistance(){
     	double voltage = RobotMap.launcherUltrasonic.getAverageVoltage() * 4;
     	return voltage;
+    }
+    public void backUp(double distance){
+    	double prerun = getUltrasonicDistance();
+    	double setpoint = prerun + distance;
+    	while (getUltrasonicDistance() != setpoint){
+    		setMotorSpeeds(-0.3, -0.3);
+    	}
+    	if (getUltrasonicDistance() == setpoint){
+    		setMotorSpeeds(0,0);
+    	}
+    }
+    public boolean IsLeftDriveWorking(){
+		boolean isWork = false;
+		while(isWork = false){
+			setMotorSpeeds(1, 0);
+			if (XboxHelper.getShooterButton(1)){
+				setMotorSpeeds(0, 0);
+				isWork = true;
+			}
+		}
+		return isWork;
+		
+	}
+    public boolean IsRightDriveWorking(){
+    	boolean isWork = false;
+		while(isWork = false){
+			setMotorSpeeds(0, 1);
+			if (XboxHelper.getShooterButton(1)){
+				setMotorSpeeds(0, 0);
+				isWork = true;
+			}
+		}
+		return isWork;
     }
 }

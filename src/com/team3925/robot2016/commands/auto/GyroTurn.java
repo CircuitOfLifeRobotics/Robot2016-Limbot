@@ -35,7 +35,7 @@ public class GyroTurn extends PIDCommand implements SmartdashBoardLoggable {
 	
 	@Override
 	protected void initialize() {
-		driveTrain.setMotorSpeeds(DriveTrainSignal.NEUTRAL);
+		driveTrain.setMotorSpeeds(0,0);
 		driveTrain.setHighGear(false);
 		
 		startAngle = convDegRange(navx.getFusedHeading());
@@ -82,14 +82,14 @@ public class GyroTurn extends PIDCommand implements SmartdashBoardLoggable {
 	
 	@Override
 	protected void end() {
-		driveTrain.setMotorSpeeds(DriveTrainSignal.NEUTRAL);
+		driveTrain.setMotorSpeeds(0,0);
 		isRunning = false;
 		driveTrain.setBrakeMode(true);
 	}
 	
 	@Override
 	protected void interrupted() {
-		driveTrain.setMotorSpeeds(DriveTrainSignal.NEUTRAL);
+		driveTrain.setMotorSpeeds(0,0);
 		isRunning = false;
 		driveTrain.setBrakeMode(true);
 	}

@@ -6,6 +6,7 @@ import static com.team3925.robot2016.Constants.DO_LOG_MOVEMENT_CONSTANTS;
 import static com.team3925.robot2016.Constants.DO_LOG_PDP_VALUES;
 
 import com.kauailabs.navx.frc.AHRS;
+import com.team3925.robot2016.commands.ComponentTesting;
 import com.team3925.robot2016.commands.LaunchBall;
 import com.team3925.robot2016.commands.auto.GyroTurn;
 import com.team3925.robot2016.subsystems.DriveTrain;
@@ -48,6 +49,7 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 	public static CheesyDriveHelper cdh;
 	private static TimeoutAction brakeBeforeMatchEnd = new TimeoutAction();
 	Launcher launcher = new Launcher(RobotMap.launcherMotorArm, RobotMap.launcherMotorFar, RobotMap.launcherMotorNear, RobotMap.launcherPuncherSolenoid, RobotMap.launcherFwdLimitSwitch, RobotMap.launcherRevLimitSwitch);
+	ComponentTesting componentTest = new ComponentTesting();
 	
 	
 	
@@ -137,7 +139,7 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 	 */
 	public void disabledInit(){
 		if (autoRoutine != null) { autoRoutine.cancel(); }
-		driveTrain.setMotorSpeeds(DriveTrainSignal.NEUTRAL);
+		driveTrain.setMotorSpeeds(0,0);
 //		launcher.setIntakeSpeeds(0);
 		
 		reset();
@@ -145,7 +147,7 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 	
 	public void disabledPeriodic() {
 		Scheduler.getInstance().run();
-		driveTrain.setMotorSpeeds(DriveTrainSignal.NEUTRAL);
+		driveTrain.setMotorSpeeds(0,0);
 //		launcher.setIntakeSpeeds(0);
 	}
 	
@@ -157,6 +159,7 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 		
 		//autoRoutine.start();
 		//launcherNew.init();
+		componentTest.start();
 	}
 	
 	/**
@@ -168,8 +171,9 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 		//updateSubsystems();
 		//logData();
 		
-		double value = driveTrain.recordUltraSonic();
-		SmartDashboard.putNumber("Ultrasonic Voltage", value);
+		//double value = driveTrain.getUltrasonicDistance();
+		//SmartDashboard.putNumber("Ultrasonic Voltage", value);
+		
 		
 	}
 

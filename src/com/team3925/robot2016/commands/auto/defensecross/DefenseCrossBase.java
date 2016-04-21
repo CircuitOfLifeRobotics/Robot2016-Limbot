@@ -44,7 +44,7 @@ public abstract class DefenseCrossBase extends Command implements SmartdashBoard
     // Called just before this Command runs the first time
     protected void initialize() {
     	state = State.START;
-    	driveTrain.setMotorSpeeds(DriveTrainSignal.NEUTRAL);
+    	driveTrain.setMotorSpeeds(0,0);
     	navx.resetDisplacement();
     	currentRoll = lastRoll = navx.getRoll();
     	deltaRoll = 0;
@@ -118,12 +118,12 @@ public abstract class DefenseCrossBase extends Command implements SmartdashBoard
 
     // Called once after isFinished returns true
     protected void end() {
-    	driveTrain.setMotorSpeeds(DriveTrainSignal.NEUTRAL);
+    	driveTrain.setMotorSpeeds(0,0);
     }
 
     // Called when another command which requires one or more of the same
     // subsystems is scheduled to run
     protected void interrupted() {
-    	driveTrain.setMotorSpeeds(DriveTrainSignal.NEUTRAL);
+    	driveTrain.setMotorSpeeds(0,0);
     }
 }
