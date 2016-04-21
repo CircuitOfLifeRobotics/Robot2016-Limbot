@@ -121,11 +121,11 @@ public final class Launcher extends Subsystem implements SmartdashBoardLoggable,
 			double error = getArmPosError();
 			
 			if (!getAimOnTarget()) {
-				final double MULTIPLIER = 0.5;
+				final double MULTIPLIER = 1;
 				
 				setMotorArmSpeed(Math.signum(error) * MULTIPLIER /* * Math.min(Math.abs(error/20),1)*/);
 				
-//				System.out.println(pid.calculate(getArmPosError()));
+				System.out.println(pid.calculate(getArmPosition()));
 				System.out.println("MotorArmSpiid " + Math.signum(error) * MULTIPLIER /** Math.min(Math.abs(error/10),1)*/);
 			} else {
 				setMotorArmSpeed(0);
