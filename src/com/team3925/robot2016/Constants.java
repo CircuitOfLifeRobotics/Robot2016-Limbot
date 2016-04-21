@@ -54,6 +54,8 @@ public class Constants {
     public static final double CAMERA_PIVOT_DIST = (18d / 12d);
     public static final double CAMERA_MID_OFFSET = (6.5d / 12d);
     public static final double MAX_BALL_EXIT_VELOCITY = 7.7;//meters / second
+    public static final double CAMERA_X_DEG_OFFSET_TOL = 1;
+    public static final double CAMERA_MAX_DATA_AGE = 50;
 	//carpet to pivot 7 in
     //cam to pivot 18 in
     
@@ -127,19 +129,19 @@ public class Constants {
 	public static final double DRIVETRAIN_RIGHT_KD = 0;
     
 	//Gyro turn constants
-	public static final double GYROTURN_P = 0.03;
-	public static final double GYROTURN_I = 0.0;
-	public static final double GYROTURN_D = 0.001;
+	public static final double GYROTURN_P = 0.04;
+	public static final double GYROTURN_I = 0.0000;
+	public static final double GYROTURN_D = 0.07;
 	
     public static final double DRIVETRAIN_ON_TARGET_ERROR = .05;
 	
     public static final double GYROTURN_POS_TOLERANCE = 1;
-    public static final double GYROTURN_RATE_TOLERANCE = 0.1;
 
     
     
     // AUTONOMOUS CONSTANTS
 	public static final double AUTONOMOUS_SHOOT_ANGLE = 45; // TODO TUNE
 	public static final double AUTONOMOUS_CROSS_DEFENSE_DRIVE_TIME = 2.5d;
+
     
 }

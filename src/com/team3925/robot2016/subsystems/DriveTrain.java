@@ -2,6 +2,7 @@ package com.team3925.robot2016.subsystems;
 
 import static com.team3925.robot2016.Constants.GLOBAL_MAX_DRIVETRAIN_PWR;
 
+import com.team3925.robot2016.Robot;
 import com.team3925.robot2016.RobotMap;
 import com.team3925.robot2016.commands.ManualDrive;
 import com.team3925.robot2016.subsystems.components.DriveSide;
@@ -75,10 +76,10 @@ public class DriveTrain extends Subsystem implements SmartdashBoardLoggable, Loo
      */
     public DriveTrainPose getPhysicalPose() {
     	// TODO: cached_pose is not updated ever
-//    	cached_pose.reset(encoderLeft.getDistance(), encoderRight.getDistance(),
-//    			encoderLeft.getRate(), encoderRight.getRate(),
-//    			navx.getFusedHeading(),
-//    			navx.getRate());
+    	cached_pose.reset(sideLeft.getA().getEncPosition(), sideLeft.getB().getEncPosition(),
+    			sideLeft.getA().getEncVelocity(), sideLeft.getB().getEncVelocity(),
+    			Robot.navx.getFusedHeading(),
+    			Robot.navx.getRate());
     	return cached_pose;
     }
     

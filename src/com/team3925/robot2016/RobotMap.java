@@ -1,12 +1,16 @@
 package com.team3925.robot2016;
 
 import static com.team3925.robot2016.Constants.*;
+
+import com.team3925.robot2016.util.PixyCmu5;
+
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.CANTalon.FeedbackDevice;
 import edu.wpi.first.wpilibj.CANTalon.TalonControlMode;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 
@@ -46,6 +50,7 @@ public class RobotMap {
 //    public static Solenoid redLedStrip;
     
     public static PowerDistributionPanel pdp;
+	public static PixyCmu5 pixyCam;
     
     
     public static void init() {
@@ -68,6 +73,7 @@ public class RobotMap {
         driveTrainMotorLeftA.changeControlMode(TalonControlMode.PercentVbus);
         driveTrainMotorLeftA.setVoltageRampRate(DRIVETRAIN_VOLTAGE_RAMP_RATE);
         driveTrainMotorLeftA.enableBrakeMode(false);
+        driveTrainMotorLeftA.configEncoderCodesPerRev(256);
         
         driveTrainMotorLeftB = new CANTalon(DRIVETRAIN_MOTOR_LEFT_B);
         LiveWindow.addActuator("DriveTrain", "MotorLeftB", driveTrainMotorLeftB);
@@ -85,6 +91,7 @@ public class RobotMap {
         driveTrainMotorRightA.changeControlMode(TalonControlMode.PercentVbus);
         driveTrainMotorRightA.setVoltageRampRate(DRIVETRAIN_VOLTAGE_RAMP_RATE);
         driveTrainMotorRightA.enableBrakeMode(false);
+        driveTrainMotorRightA.configEncoderCodesPerRev(256);
         
         driveTrainMotorRightB = new CANTalon(DRIVETRAIN_MOTOR_RIGHT_B);
         LiveWindow.addActuator("DriveTrain", "MotorRightB", driveTrainMotorRightB);
@@ -137,5 +144,11 @@ public class RobotMap {
         launcherMotorNear.setFeedbackDevice(FeedbackDevice.QuadEncoder);
         launcherMotorNear.changeControlMode(TalonControlMode.PercentVbus);
         
+        try {
+			pixyCam = new PixyCmu5(0xa8, 0.2);
+		}catch(Exception e) {
+			DriverStation.reportError("Error instantiating PixyCam!", true);
+			pixyCam = null;
+		}
     }
 }

@@ -18,6 +18,9 @@ public class AutoRoutineCenter extends CommandGroup {
     	
     	addSequential(new WaitCommand(2d)); // wait for arms to get to position
     	addSequential(initCrossCommand, Constants.AUTONOMOUS_CROSS_DEFENSE_DRIVE_TIME + 0.5 /* Buffer time */);
+    	addSequential(new GyroDrive(12));
+    	addSequential(new GyroTurn(-30));
+    	
     	
     	// logic for different positions goes here
     }

@@ -8,15 +8,16 @@ import com.team3925.robot2016.util.DriveTrainSignal;
 import com.team3925.robot2016.util.SmartdashBoardLoggable;
 
 import edu.wpi.first.wpilibj.command.PIDCommand;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class GyroTurn extends PIDCommand implements SmartdashBoardLoggable {
 	
 	DriveTrain driveTrain = Robot.driveTrain;
 	AHRS navx = Robot.navx;
-	private double startAngle, targetAngle, currentAngle, lastAngle, errorAngle, rotations, relativeSetpoint, deltaRotation;
+	private double startAngle, targetAngle, currentAngle, lastAngle, errorAngle, /*rotations, */relativeSetpoint, deltaRotation;
+	private int dir;
 	private boolean isRunning = true;
 	private double fwdOutput = 0;
-	private double timeFromStart = 0;//for oscilation of fwdOutput
 	
 	public GyroTurn() {
 		this(0, 0);
@@ -38,38 +39,38 @@ public class GyroTurn extends PIDCommand implements SmartdashBoardLoggable {
 		driveTrain.setMotorSpeeds(DriveTrainSignal.NEUTRAL);
 		driveTrain.setHighGear(false);
 		
-		startAngle = convDegRange(navx.getFusedHeading());
+		startAngle = navx.getFusedHeading();
 		targetAngle = startAngle + relativeSetpoint;
+		errorAngle = targetAngle-startAngle;
 		lastAngle = startAngle;
-		errorAngle = 0;
+		dir = (int)Math.signum(errorAngle);
+		
 		
 		setSetpoint(targetAngle);
 	}
 	
 	@Override
 	protected double returnPIDInput() {
-		return currentAngle + rotations*360;
+		return currentAngle/* + rotations*360*/;
 	}
 	
 	@Override
 	protected void usePIDOutput(double output) {
 		//when positive output, turn clockwise, left side fwd
-		driveTrain.arcadeDrive(fwdOutput, output, false);
+		driveTrain.arcadeDrive(fwdOutput, -output, false);
+		putNumberSD("TurnOutput", -output);
 	}
 	
 	@Override
 	protected void execute() {
-		currentAngle = convDegRange(navx.getFusedHeading());
-		if (Math.abs(currentAngle-lastAngle) > 180) {
-			rotations += currentAngle>lastAngle ? -1:1;
-		}
-		errorAngle = targetAngle - currentAngle - rotations*360;
-		
+		currentAngle = navx.getFusedHeading();
+		errorAngle = targetAngle - currentAngle/* - rotations*360*/;
+		putNumberSD("Rotations", errorAngle);
 		deltaRotation = currentAngle - lastAngle;
 		
-//		if (Math.abs(deltaRotation) < 0.001) {
-//			fwdOutput += 0.05;
-//		}
+		if (Math.abs(deltaRotation) > 180) {
+			
+		}
 		
 		lastAngle = currentAngle;
 		logData();
@@ -77,7 +78,7 @@ public class GyroTurn extends PIDCommand implements SmartdashBoardLoggable {
 	
 	@Override
 	protected boolean isFinished() {
-		return Math.abs(currentAngle-targetAngle) < Constants.GYROTURN_POS_TOLERANCE && Math.abs(deltaRotation) < 0.4;
+		return Math.abs(currentAngle-targetAngle) < Constants.GYROTURN_POS_TOLERANCE && Math.abs(deltaRotation) < 0.005;
 	}
 	
 	@Override
@@ -99,7 +100,7 @@ public class GyroTurn extends PIDCommand implements SmartdashBoardLoggable {
 		putNumberSD("CurrentAngle", currentAngle);
 		putNumberSD("TargetAngle", targetAngle);
 		putNumberSD("ErrorAngle", errorAngle);
-		putNumberSD("Rotations", rotations);
+//		putNumberSD("Rotations", rotations);
 		putBooleanSD("IsRunning", isRunning );
 		putNumberSD("DeltaRotations", deltaRotation);
 		putNumberSD("FwdOutput", fwdOutput);
@@ -113,10 +114,6 @@ public class GyroTurn extends PIDCommand implements SmartdashBoardLoggable {
 	public void setSetpointRelative(double relativeAngle) {
 		relativeSetpoint = relativeAngle;
 		initialize();
-	}
-	
-	private double convDegRange(double angle) {
-		return ((((angle-180)%360)+360)%360)-180;
 	}
 	
 }

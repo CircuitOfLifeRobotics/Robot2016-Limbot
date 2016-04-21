@@ -29,4 +29,12 @@ public class DriveSide {
 		motorB.enableBrakeMode(isOn);
 	}
 	
+	public CANTalon getA() {
+		return motorA;
+	}
+	
+	public CANTalon getB() {
+		return motorB;
+	}
+	
 }
