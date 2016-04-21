@@ -1,6 +1,6 @@
 package com.team3925.robot2016.subsystems;
 
-import static com.team3925.robot2016.Constants.GLOBAL_MAX_DRIVE_TRAIN_PWR;
+import static com.team3925.robot2016.Constants.GLOBAL_MAX_DRIVETRAIN_PWR;
 
 import com.team3925.robot2016.RobotMap;
 import com.team3925.robot2016.commands.ManualDrive;
@@ -36,8 +36,8 @@ public class DriveTrain extends Subsystem implements SmartdashBoardLoggable, Loo
     }
     
     public void setMotorSpeeds(DriveTrainSignal input) {
-    	sideLeft.setSpeed(MiscUtil.limit(input.left) * GLOBAL_MAX_DRIVE_TRAIN_PWR);
-    	sideRight.setSpeed(MiscUtil.limit(input.right) * GLOBAL_MAX_DRIVE_TRAIN_PWR);
+    	sideLeft.setSpeed(MiscUtil.limit(input.left) * GLOBAL_MAX_DRIVETRAIN_PWR);
+    	sideRight.setSpeed(MiscUtil.limit(input.right) * GLOBAL_MAX_DRIVETRAIN_PWR);
     }
     
     public void setHighGear(boolean highGear) {

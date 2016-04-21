@@ -6,10 +6,11 @@ import static com.team3925.robot2016.Constants.DO_LOG_MOVEMENT_CONSTANTS;
 import static com.team3925.robot2016.Constants.DO_LOG_PDP_VALUES;
 
 import com.kauailabs.navx.frc.AHRS;
+import com.team3925.robot2016.commands.LaunchBall;
 import com.team3925.robot2016.commands.auto.GyroTurn;
 import com.team3925.robot2016.subsystems.DriveTrain;
-import com.team3925.robot2016.subsystems.IntakeAssist;
 import com.team3925.robot2016.subsystems.Launcher;
+import com.team3925.robot2016.subsystems.Launcher.EncoderWatcher;
 import com.team3925.robot2016.util.DriveTrainSignal;
 import com.team3925.robot2016.util.SmartdashBoardLoggable;
 import com.team3925.robot2016.util.TimeoutAction;
@@ -39,8 +40,8 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 	//Subsystems
 	public static DriveTrain driveTrain;
 	public static Launcher launcher;
-	public static IntakeAssist intakeAssist;
-	
+	public static EncoderWatcher encoderWatcher;
+
 	//Other
 	public static AHRS navx = null;
 	public static PowerDistributionPanel pdp;
@@ -53,6 +54,7 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 //	private ManualDrive manualDrive;
 //	private ManualIntakeAssist manualIntakeAssist;
 	private GyroTurn visionGyroTurn = null;
+	private LaunchBall launchBall = null;
 	
 	//Variables
 	public static double deltaTime = 0;
@@ -63,6 +65,10 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 	private static double maxVel = 0;
 	private static double maxRotationVel = 0;
 	private static double maxRotationAccel = 0;
+	
+	//TODO: remove
+	private String tempManualState;
+	private boolean buttonWasDown;
 	
 	public Robot() {
 		try {
@@ -82,9 +88,8 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 		
 		//Creating Subsystems and Related Processes
 		driveTrain = new DriveTrain();
-		launcher = new Launcher();
-		intakeAssist = new IntakeAssist();
-//		prefs = Preferences.getInstance();
+		launcher = new Launcher(RobotMap.launcherMotorArm, RobotMap.launcherMotorFar, RobotMap.launcherMotorNear, RobotMap.launcherPuncherSolenoid, RobotMap.launcherFwdLimitSwitch, RobotMap.launcherRevLimitSwitch, RobotMap.launcherUltrasonic);
+		encoderWatcher = launcher.new EncoderWatcher(5,2);
 		pdp = RobotMap.pdp;
 		
 		// OI must be constructed after subsystems. If the OI creates Commands
@@ -99,6 +104,7 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 		
 		//Creating Commands
 		visionGyroTurn = new GyroTurn(0);
+		launchBall = new LaunchBall(launcher.getDistance());
 		
 		reset();
 	}
@@ -118,6 +124,10 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 		maxRotationVel = 0;
 		maxRotationAccel = 0; 
 //		launcher.resetPID();
+		
+		//TODO: remove
+		tempManualState = "intake";
+		buttonWasDown = false;
 	}
 	
 	/**
@@ -144,9 +154,8 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 		driveTrain.setHighGear(false);
 		reset();
 		
-		launcher.init();
-		
 		autoRoutine.start();
+		launcher.init();
 	}
 	
 	/**
@@ -184,23 +193,33 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 		
 		updateSubsystems();
 		
+//		if (oi.shooterXbox.getRawButton(XboxHelper.X)) {
+//			launcherNew.startZeroCommand();
+//		}
+		if (oi.shooterXbox.getRawButton(XboxHelper.A) && !launchBall.isRunning()) {
+			launchBall.start();
+		}
+		if (oi.getCommandCancel()) {
+			launchBall.cancel();
+		}
+				
 		
 		// Driver Vision Control
 		
-		if (oi.getVisionShoot_GyroTurnEnable()) {
-			if (!visionGyroTurn.isRunning()) {
-				if (Double.isNaN(launcher.getTurnAngle())) {
-					visionGyroTurn.setSetpointRelative(launcher.getTurnAngle());
-					visionGyroTurn.start();
-				} else {
-					DriverStation.reportWarning("Camera cannot detect object! Thou shall not runneth or beginneth a GyroDrive!", false);
-				}
-			}
-		} else {
-			if (visionGyroTurn.isRunning()) {
-				visionGyroTurn.cancel();
-			}
-		}
+//		if (oi.getVisionShoot_GyroTurnEnable()) {
+//			if (!visionGyroTurn.isRunning()) {
+//				if (Double.isNaN(launcher.getTurnAngle())) {
+//					visionGyroTurn.setSetpointRelative(launcher.getTurnAngle());
+//					visionGyroTurn.start();
+//				} else {
+//					DriverStation.reportWarning("Camera cannot detect object! Thou shall not runneth or beginneth a GyroDrive!", false);
+//				}
+//			}
+//		} else {
+//			if (visionGyroTurn.isRunning()) {
+//				visionGyroTurn.cancel();
+//			}
+//		}
 
 
 		if (brakeBeforeMatchEnd.isFinished()) {
@@ -215,17 +234,38 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 	 */
 	public void testPeriodic() {
 		LiveWindow.run();
+		
+		//TESTING MANUAL LAUNCHER TODO: remove
+//		boolean buttonDown = Robot.oi.shooterXbox.getRawButton(XboxHelper.A);
+//		if (buttonDown) {
+//			if (!buttonWasDown) tempManualState = tempManualState.equals("intake") ? "wheels": tempManualState.equals("wheels") ? "shooting" : "intake";
+//			buttonWasDown = true;
+//		} else
+//			buttonWasDown = false;
+//		if (tempManualState.equals("intake")) {
+//			launcherNew.setFlywheelFarSetpoint(0);
+//			launcherNew.setFlywheelNearSetpoint(0);
+//			launcherNew.setPuncherSolenoid(false);
+//		}else if (tempManualState.equals("wheels")) {
+//			launcherNew.setFlywheelFarSetpoint(-1);
+//			launcherNew.setFlywheelNearSetpoint(-1);
+//		}else if (tempManualState.equals("shooting")) {
+//			launcherNew.setPuncherSolenoid(true);
+//		}
+//		System.out.println("state = "+tempManualState);
+//		
+//		launcherNew.update();
 	}
 	
 	private void updateSubsystems() {
+		driveTrain.update();
 		launcher.update();
-		intakeAssist.update();
 	}
 	
 	@Override
 	public void logData() {
 //		driveTrain.logData();
-//		launcher.logData();
+		launcher.logData();
 //		intakeAssist.logData();
 		
 		double now = Timer.getFPGATimestamp();

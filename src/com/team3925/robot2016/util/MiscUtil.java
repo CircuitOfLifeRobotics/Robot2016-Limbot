@@ -1,6 +1,22 @@
 package com.team3925.robot2016.util;
 
 public class MiscUtil {
+
+	/**
+	 * A logical AND gate that is resizable at runtime
+	 * @param val1 first boolean
+	 * @param valn the other inputs
+	 * @return a logical AND of the input
+	 * @author Bryan
+	 */
+	public static boolean gateAND(boolean val1, boolean... valn) {
+		boolean tmpVal = val1;
+		for (int i = 0; i < valn.length; i++) {
+			tmpVal = tmpVal && valn[i];
+		}
+		return tmpVal;
+	}
+	
 	
 	/**
 	 * Limits an input to a value between 1 and -1

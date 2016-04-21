@@ -1,5 +1,7 @@
 package com.team3925.robot2016;
 
+import java.sql.Array;
+
 /**
  *	A class holding all the constants of the project
  */
@@ -7,28 +9,42 @@ public class Constants {
 	private Constants() {};
 	
 	// Loop time of the program
-	public static final double DELTA_TIME = 0.020; // 20 ms TODO Will be bigger due to GRIP
+	public static final double DELTA_TIME = 0.020; // 20 ms TODO Re-test
 	
-	public static final boolean DO_LOG_AHRS_VALUES = false;//Robot.prefs.getBoolean("Do Log AHRS Vals", false);
-	public static final boolean DO_LOG_PDP_VALUES = false;//Robot.prefs.getBoolean("Do Log PDP Vals", false);
+	public static final boolean DO_LOG_AHRS_VALUES = false;
+	public static final boolean DO_LOG_PDP_VALUES = false;
 	public static final boolean DO_LOG_MOVEMENT_CONSTANTS = false;
 	
 	public static final double AXIS_TOLERANCE = 0.05;
 	
 	
 	
-	//WORLD CONSTANTS
-	public static final double GRAVITY = 0;
+	// ELECTRICAL CONSTANTS
+	public static final int DRIVETRAIN_MOTOR_LEFT_A = 19;
+	public static final int DRIVETRAIN_MOTOR_LEFT_B = 18;
+	public static final int DRIVETRAIN_MOTOR_RIGHT_A = 17;
+	public static final int DRIVETRAIN_MOTOR_RIGHT_B = 16;
+	public static final int DRIVETRAIN_SOLENOID_FORWARD = 4;
+	public static final int DRIVETRAIN_SOLENOID_REVERSE = 5;
+	
+	public static final int LAUNCHER_MOTOR_NEAR = 14;
+	public static final int LAUNCHER_MOTOR_FAR = 12;
+	public static final int LAUNCHER_MOTOR_ARM = 13;
+	public static final int LAUNCHER_SOLENOID_PUNCHER_FORWARD = 2;
+	public static final int LAUNCHER_SOLENOID_PUNCHER_REVERSE = 3;
+    public static final int LAUNCHER_LIMIT_SWITCH_REVERSE = 1;
+	public static final int LAUNCHER_LIMIT_SWITCH_FORWARD = 0;
+	public static final int LAUNCHER_ULTRASONIC = 0;
+
+	
 	
 	
 	// MECHANICAL CONSTANTS
 	public static final double DRIVE_WHEEL_DIAMETER = 6.0; // inches (inflated)
-	public static final double LAUNCHER_WHEEL_CIRCUM = 12.5 / 12.0;//feet
 	
 	
     // CAMERA CONSTANTS
 	
-	public static final double PIXY_FOV = 76; //degrees
 	public static final String AXIS_CAMERA_IP = "192.168.0.90";
     public static final double CAMERA_AIMED_X = 159;
     public static final double CAMERA_FOV_DEG = 45.134;
@@ -52,52 +68,38 @@ public class Constants {
     
     
     
-    // INTAKE ASSIST CONSTANTS
-    public static final double INTAKE_ASSIST_UP_POSITION = 140;
-    public static final double INTAKE_ASSIST_P = 0.1;
-    public static final double INTAKE_ASSIST_I = 0;
-    public static final double INTAKE_ASSIST_D = 0;
-    
-    
     
 	// LAUNCHER CONSTANTS
-    public static final double LAUNCHER_THROWBALL_FAR_ANGLE = 62; //degrees
-    public static final double LAUNCHER_THROWBALL_NEAR_ANGLE = 53; //degrees
     
-    public static final double LAUNCHER_GLOBAL_MAX_POWER = 1;//Robot.prefs.getDouble("Max Shooter Pwr", 1);
-    public static final double LAUNCHER_AIM_MOTOR_SPEED_MULTIPLIED = 1;
-	public static final double LAUNCHER_MAX_INTAKE_SPEED = 25_000; //TODO get actual max speed
-	
-//	Launcher PID Constants
-	public static final double LAUNCHER_MAX_HEIGHT = 700; // in encoder ticks
-	public static final double LAUNCHER_MIN_HEIGHT = 50; // in encoder ticks
-	
-	public static final double LAUNCHER_AIM_TOLERANCE = 1.5;
-	public static final double LAUNCHER_AIM_SLOWDOWN = 40;
-	public static final double LAUNCHER_AIM_INCREMENT = 18;
-	public static final double LAUNCHER_INTAKE_INCREMENT = 1000;
-	//TODO: tune shooter pid
-	public static final double LAUNCHER_AIM_KP = /*400d/10_000d;*/   /*240d/10000d;*/    420d/10000d;
-	public static final double LAUNCHER_AIM_KI = /*16d/10_000d; */   /*8d/10000d;  */    16d/10000d;
-	public static final double LAUNCHER_AIM_KD = /*950d/10_000d;*/   /*250d/10000d;*/    950d/10000d;
-	public static final double LAUNCHER_AIM_KF = 0.0;
-	public static final double LAUNCHER_AIM_RAMP_RATE = 5;//ramp rate is maximum acceleration in voltage/second
-	public static final int LAUNCHER_AIM_IZONE = 0; // izone eliminates
-	
-	public static final double LAUNCHER_WHEELS_KP = 4e-7;
-	public static final double LAUNCHER_WHEELS_KI = 0.000000000;
-	public static final double LAUNCHER_WHEELS_KD = 0.00;
-	public static final double LAUNCHER_WHEELS_KF = -0.9;
-	public static final double LAUNCHER_WHEELS_RAMP_RATE = 1;//ramp rate is maximum acceleration in voltage/second
-	public static final int LAUNCHER_WHEELS_IZONE = 0; // izone eliminates
-	public static final double LAUNCHER_WHEELS_TOLERANCE = 50;
+	public static final double LAUNCHER_GLOBAL_POWER = 1d;
+    public static final double LAUNCHER_MAX_ARM_ANGLE = 90d; // in degrees
+    public static final double LAUNCHER_ENCODER_SCALE_FACTOR = -0.0032873376623377/*(-9d/3200d)*/;
+    public static final double LAUNCHER_ZERO_COMMAND_WAIT = 1; // entries
+    public static final double LAUNCHER_ENCODER_WATCHER_TOLERANCE = 3; //degrees TODO tune
+    public static final long LAUNCHER_ENCODER_WATCHER_PERIOD = 20; //ms
+    public static final int LAUNCHER_ENCODER_WATCHER_DATA_CACHE_SIZE = 4; // entries
+    
+    // Launcher Distance Regression Function
+    public static double LAUNCHER_TRAJECTORY(double distanceTo){
+    	double angleToTarget;
+    	angleToTarget = -.55*distanceTo + 12.95*distanceTo - 27;    	
+    	return angleToTarget;
+    }
+   
+    //TODO TUNE
+    public static final double LAUNCHER_PID_K_P = 0.5;
+    public static final double LAUNCHER_PID_K_I = 0;
+    public static final double LAUNCHER_PID_K_D = 0;
+    public static final double LAUNCHER_PID_VELOCITY_DELTA = 10;
+    public static final double LAUNCHER_ARM_TOLERANCE = 3d;
+    
 	
 	
 	
 //	DRIVETRAIN CONSTANTS
 	public static double kDriveSensitivity = 0.75;
-	public static final double GLOBAL_MAX_DRIVE_TRAIN_PWR = 0.8;//Robot.prefs.getDouble("Max DriveTrain Pwr", 1);
-	public static final double DRIVE_TRAIN_VOLTAGE_RAMP_RATE = 1;
+	public static final double GLOBAL_MAX_DRIVETRAIN_PWR = 0.8;
+	public static final double DRIVETRAIN_VOLTAGE_RAMP_RATE = 1;
 	public static final double DRIVETRAIN_BREAK_MODE_ENABLE = 0.25; // calculated from end of the match
 	
 //	Straight Gyro Drive PID Constants
@@ -152,7 +154,7 @@ public class Constants {
     
     
     // AUTONOMOUS CONSTANTS
-	public static final double AUTONOMOUS_SHOOT_ANGLE = LAUNCHER_THROWBALL_FAR_ANGLE;
+	public static final double AUTONOMOUS_SHOOT_ANGLE = 45; // TODO TUNE
 	public static final double AUTONOMOUS_CROSS_DEFENSE_DRIVE_TIME = 2.5d;
     
 }
