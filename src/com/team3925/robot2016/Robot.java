@@ -52,7 +52,6 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 //	private ManualDrive manualDrive;
 //	private ManualIntakeAssist manualIntakeAssist;
 	private GyroTurn visionGyroTurn = null;
-	private LaunchBall launchBall = null;
 	
 	//Variables
 	public static double deltaTime = 0;
@@ -101,7 +100,6 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 		
 		//Creating Commands
 		visionGyroTurn = new GyroTurn(0);
-		launchBall = new LaunchBall(60);
 		
 		reset();
 	}
@@ -193,12 +191,6 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 //		if (oi.shooterXbox.getRawButton(XboxHelper.X)) {
 //			launcherNew.startZeroCommand();
 //		}
-		if (oi.shooterXbox.getRawButton(XboxHelper.A) && !launchBall.isRunning()) {
-			launchBall.start();
-		}
-		if (oi.getCommandCancel()) {
-			launchBall.cancel();
-		}
 				
 		
 		// Driver Vision Control

@@ -84,11 +84,11 @@ public class Constants {
 
     
     //TODO TUNE
-    public static final double LAUNCHER_PID_K_P = 0.5;
+    public static final double LAUNCHER_PID_K_P = 0.05;
     public static final double LAUNCHER_PID_K_I = 0;
-    public static final double LAUNCHER_PID_K_D = 0;
+    public static final double LAUNCHER_PID_K_D = 0.05;
     public static final double LAUNCHER_PID_VELOCITY_TOLERANCE = 10;
-    public static final double LAUNCHER_ARM_TOLERANCE = 3d;
+    public static final double LAUNCHER_ARM_TOLERANCE = 2d;
     
 	
 	

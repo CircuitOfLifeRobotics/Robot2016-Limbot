@@ -2,6 +2,7 @@ package com.team3925.robot2016;
 
 import static com.team3925.robot2016.util.hidhelpers.XboxHelper.START;
 
+import com.team3925.robot2016.commands.LaunchBall;
 import com.team3925.robot2016.commands.auto.AutoRoutineCenter;
 import com.team3925.robot2016.commands.auto.defensecross.CrossDefault;
 import com.team3925.robot2016.util.hidhelpers.FlightStickHelper;
@@ -77,7 +78,7 @@ public final class OI {
 		shooterXbox = new Joystick(2);
 
 //		collectBall = new CollectBall();
-//		throwBallFar = new ThrowBall(Constants.LAUNCHER_THROWBALL_FAR_ANGLE, 1, 5);
+		throwBallFar = new LaunchBall(45);
 //		throwBallNear = new ThrowBall(Constants.LAUNCHER_THROWBALL_NEAR_ANGLE, 1, 5);
 //		throwBallLow = new ThrowBall(0, 1, 1);
 
