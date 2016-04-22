@@ -20,8 +20,6 @@ public class CollectBall extends Command {
 	public CollectBall() {
 		super("CollectBall");
 		
-		SmartDashboard.putNumber("Launcher_IntakeSpeedFar", -0.4);
-		SmartDashboard.putNumber("Launcher_IntakeSpeedNear", 1);
 		requires(launcher);
 		
 	}
@@ -29,7 +27,6 @@ public class CollectBall extends Command {
 	// Called just before this Command runs the first time
 	protected void initialize() {
 		state = State.INTAKE;
-		launcher.setArmSetpoint(0);
 		launcher.setArmSetpoint(0);
 		launcher.setPuncherSolenoid(false);
 		timeout = new TimeoutAction();
@@ -52,8 +49,8 @@ public class CollectBall extends Command {
 			state = State.INTAKE;
 			break;
 		}
-		launcher.setFlywheelFarSetpoint(SmartDashboard.getNumber("Launcher_IntakeSpeedFar"));
-		launcher.setFlywheelNearSetpoint(SmartDashboard.getNumber("Launcher_IntakeSpeedNear"));
+		launcher.setFlywheelFarSetpoint(-1);
+		launcher.setFlywheelNearSetpoint(1);
 	}
 
 	// Make this return true when this Command no longer needs to run execute()

@@ -33,7 +33,9 @@ public class LaunchBall extends Command implements SmartdashBoardLoggable {
 		state = State.WAIT_ARM_TO_MID;
 		maxTimeout.config(3);
 		minTimeout.config(0.1);
-		launcher.setPuncherSolenoid(true);
+		launcher.setPuncherSolenoid(false);
+		launcher.setFlywheelNearSetpoint(1);
+		launcher.setFlywheelFarSetpoint(0);
 	}
 
 	@Override
@@ -44,7 +46,7 @@ public class LaunchBall extends Command implements SmartdashBoardLoggable {
 			//TODO: add safety to check if launcher is stuck
 			if ((maxTimeout.isFinished() || launcher.getArmPosition()>30)&&minTimeout.isFinished()) {
 				launcher.setPuncherSolenoid(false);
-				launcher.setFlywheelNearSetpoint(0.25);
+				launcher.setFlywheelNearSetpoint(1);
 				state = State.WAIT_ARM_TO_UP;
 				maxTimeout.config(3);
 				minTimeout.config(0.5);
@@ -53,16 +55,19 @@ public class LaunchBall extends Command implements SmartdashBoardLoggable {
 		case WAIT_ARM_TO_UP:
 			if ((Math.abs(launcher.getArmPosition()-60)<5 || maxTimeout.isFinished())&&minTimeout.isFinished()) {
 				state = State.WAIT_AT_TOP;
-				launcher.setFlywheelFarSetpoint(-1);
 				launcher.setFlywheelNearSetpoint(-1);
-				minTimeout.config(1);
+				minTimeout.config(4);
+				maxTimeout.config(2);
 			}
 			break;
 		case WAIT_AT_TOP:
+			if (maxTimeout.isFinished()) {
+			launcher.setFlywheelFarSetpoint(-1);
+			}
 			if (minTimeout.isFinished()) {
 				state = State.WAIT_BALL_LEAVE;
 				launcher.setPuncherSolenoid(true);
-				minTimeout.config(0.5);
+				minTimeout.config(3);
 			}
 			break;
 		case WAIT_BALL_LEAVE:
