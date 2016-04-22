@@ -101,6 +101,8 @@ public final class CameraHelper extends TimerTask {
 		}catch(Exception e) {
 			DriverStation.reportError("Error calculating distance to target, frame cannot be null!", true);
 		}
+		
+		logData();
 	}
 	
 	private PixyFrame calcActiveFrame(List<PixyFrame> frames) {
@@ -152,17 +154,17 @@ public final class CameraHelper extends TimerTask {
 //		}
 		
 		//logs active frame
-		if (activeFrame != null) {
-			SmartDashboard.putNumber("activeFrame_Timestamp", activeFrame.timestamp);
-			SmartDashboard.putNumber("activeFrame_Width", activeFrame.width);
-			SmartDashboard.putNumber("activeFrame_Height", activeFrame.height);
-			SmartDashboard.putNumber("activeFrame_CenterX", activeFrame.xCenter);
-			SmartDashboard.putNumber("activeFrame_CenterY", activeFrame.yCenter);
-			SmartDashboard.putNumber("activeFrame_Angle", activeFrame.angle);
-			SmartDashboard.putNumber("activeFrame_Area", activeFrame.area);
+//		if (activeFrame != null) {
+//			SmartDashboard.putNumber("activeFrame_Timestamp", activeFrame.timestamp);
+//			SmartDashboard.putNumber("activeFrame_Width", activeFrame.width);
+//			SmartDashboard.putNumber("activeFrame_Height", activeFrame.height);
+//			SmartDashboard.putNumber("activeFrame_CenterX", activeFrame.xCenter);
+//			SmartDashboard.putNumber("activeFrame_CenterY", activeFrame.yCenter);
+//			SmartDashboard.putNumber("activeFrame_Angle", activeFrame.angle);
+//			SmartDashboard.putNumber("activeFrame_Area", activeFrame.area);
 			SmartDashboard.putNumber("activeFrame_xDegOffset", xDegOffset);
-			SmartDashboard.putNumber("activeFrame_CamToTarget", camToTarget);
-		}
+//			SmartDashboard.putNumber("activeFrame_CamToTarget", camToTarget);
+//		}
 	}
 
 	@Override

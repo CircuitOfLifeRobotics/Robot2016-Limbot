@@ -5,11 +5,14 @@ import static com.team3925.robot2016.Constants.DO_LOG_AHRS_VALUES;
 import static com.team3925.robot2016.Constants.DO_LOG_MOVEMENT_CONSTANTS;
 import static com.team3925.robot2016.Constants.DO_LOG_PDP_VALUES;
 
+import java.util.Timer;
+
 import com.kauailabs.navx.frc.AHRS;
 import com.team3925.robot2016.commands.LaunchBall;
 import com.team3925.robot2016.commands.auto.GyroTurn;
 import com.team3925.robot2016.subsystems.DriveTrain;
 import com.team3925.robot2016.subsystems.Launcher;
+import com.team3925.robot2016.util.CameraHelper;
 import com.team3925.robot2016.util.DriveTrainSignal;
 import com.team3925.robot2016.util.SmartdashBoardLoggable;
 import com.team3925.robot2016.util.TimeoutAction;
@@ -21,7 +24,6 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.SPI;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.CommandGroup;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
@@ -45,6 +47,8 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 	public static PowerDistributionPanel pdp;
 	public static OI oi;
 	public static CheesyDriveHelper cdh;
+	public static CameraHelper camHelper;
+	public static Timer timer;
 	private static TimeoutAction brakeBeforeMatchEnd = new TimeoutAction();
 	
 	//Commands
@@ -99,6 +103,10 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 		ThrustmasterHelper.config(oi.driverWheel);
 		cdh = new CheesyDriveHelper(driveTrain);
 		
+		camHelper = CameraHelper.getInstance();
+		timer = new Timer(true);
+		timer.scheduleAtFixedRate(camHelper, 0, 50);
+		
 		//Creating Commands
 		visionGyroTurn = new GyroTurn(0);
 		launchBall = new LaunchBall();
@@ -112,7 +120,7 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 	private void reset() {
 		driveTrain.setBrakeMode(false);
 		driveTrain.resetEncoders();
-		lastTimestamp = Timer.getFPGATimestamp();
+		lastTimestamp = edu.wpi.first.wpilibj.Timer.getFPGATimestamp();
 		lastRotationStamp = navx.getRate();
 		navx.reset();
 		navx.resetDisplacement();
@@ -265,7 +273,7 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 //		launcher.logData();
 //		intakeAssist.logData();
 		
-		double now = Timer.getFPGATimestamp();
+		double now = edu.wpi.first.wpilibj.Timer.getFPGATimestamp();
 		deltaTime = now - lastTimestamp;
 		lastTimestamp = now;
 		

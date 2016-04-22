@@ -195,7 +195,7 @@ public final class Launcher extends Subsystem implements SmartdashBoardLoggable,
 //			setArmSetpoint(SmartDashboard.getNumber(getFormattedName() + "MotorArmSetpointSETTER", 0));
 			
 			double error = getInternalSetpoint() - getArmPosition();
-			System.out.println("Diff = " + Math.abs(error));
+//			System.out.println("Diff = " + Math.abs(error));
 			
 			if (Math.abs(error) > Constants.LAUNCHER_ARM_TOLERANCE /* ADD VELOCITY CONDITION*/) {
 				final double K_P = 0.5; // P part of PID

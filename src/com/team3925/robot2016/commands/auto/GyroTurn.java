@@ -57,8 +57,8 @@ public class GyroTurn extends PIDCommand implements SmartdashBoardLoggable {
 	@Override
 	protected void usePIDOutput(double output) {
 		//when positive output, turn clockwise, left side fwd
-		driveTrain.arcadeDrive(fwdOutput, -output, false);
-		putNumberSD("TurnOutput", -output);
+		driveTrain.arcadeDrive(fwdOutput, output, false);
+		putNumberSD("TurnOutput", output);
 	}
 	
 	@Override

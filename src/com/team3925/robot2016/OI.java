@@ -82,6 +82,7 @@ public final class OI {
 		collectBall = new CollectBall();
 		throwBallFar = new LaunchBall();
 		aimHoriz = new AimHoriz();
+//		aimHoriz = new GyroTurn(20);
 		
 		startCollectBall = new JoystickButton(shooterXbox, XboxHelper.A);
 		startCollectBall.whenPressed(collectBall);

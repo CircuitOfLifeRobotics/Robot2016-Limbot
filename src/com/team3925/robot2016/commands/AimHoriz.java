@@ -17,17 +17,17 @@ public class AimHoriz extends Command implements SmartdashBoardLoggable {
 	
 	public void AimHoriz() {
 		doLoop = true;
-		iteration = 0;
 	}
 	
 	public void AimHoriz(boolean doLoop) {
 		this.doLoop = doLoop;
-		iteration = 0;
 	}
 	
 	@Override
 	protected void initialize() {
+		iteration = 0;
 		iteration++;
+		System.out.println("Iteration "+iteration);
 		hasStarted = false;
 		if (camHelper.dataAge<=Constants.CAMERA_MAX_DATA_AGE) {
 			gyroTurn = new GyroTurn(camHelper.xDegOffset);
@@ -43,12 +43,15 @@ public class AimHoriz extends Command implements SmartdashBoardLoggable {
 		if (!hasStarted) {
 			if (camHelper.dataAge<=Constants.CAMERA_MAX_DATA_AGE) {
 				gyroTurn = new GyroTurn(camHelper.xDegOffset);
+				putNumberSD("XdegOffset", camHelper.xDegOffset);
 				gyroTurn.start();
 				hasStarted = true;
 			}else {
 				DriverStation.reportError("Cannot begin gyro turn, camera data is too old!", false);
 			}
 		}
+		
+		logData();
 	}
 
 	@Override
