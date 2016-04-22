@@ -49,7 +49,7 @@ public class CollectBall extends Command {
 			state = State.INTAKE;
 			break;
 		}
-		launcher.setFlywheelFarSetpoint(-1);
+		launcher.setFlywheelFarSetpoint(-.3);
 		launcher.setFlywheelNearSetpoint(1);
 	}
 
