@@ -82,10 +82,10 @@ public class Constants {
     public static final double LAUNCHER_REDUCTION_ANGLE = 20;
     public static final double LAUNCHER_REDUCTION_MULTIPLIER = .3;
     
-	public static final double LAUNCHER_LAUNCH_BALL_MIDZONE_ANGLE = 30;
+	public static final double LAUNCHER_LAUNCH_BALL_MIDZONE_ANGLE = 35;
     
-    public static final double LAUNCHER_LAUNCHER_BALL_HIGH_ANGLE = 65;
-    public static final double LAUNCHER_LAUNCHER_BALL_LOW_ANGLE = 35;
+    public static final double LAUNCHER_LAUNCHER_BALL_HIGH_ANGLE = 53;
+    public static final double LAUNCHER_LAUNCHER_BALL_LOW_ANGLE = 40;
     
     public static final double LAUNCHER_COLLECT_BALL_FAR = -.3;
     public static final double LAUNCHER_COLLECT_BALL_NEAR = 1;
@@ -94,9 +94,9 @@ public class Constants {
 	public static final int LAUNCHER_RESTING_ANGLE = 30;
     
     //TODO TUNE
-    public static final double LAUNCHER_PID_K_P = 0.04;
-    public static final double LAUNCHER_PID_K_I = 0.0016;
-    public static final double LAUNCHER_PID_K_D = 0.005;
+    public static final double LAUNCHER_PID_K_P = 0.038;
+    public static final double LAUNCHER_PID_K_I = 0.001;
+    public static final double LAUNCHER_PID_K_D = 0.02;
     public static final double LAUNCHER_ARM_TOLERANCE = .5d;
     public static final double LAUNCHER_PID_VELOCITY_TOLERANCE = 100; //TODO Tune and reimplement
 	

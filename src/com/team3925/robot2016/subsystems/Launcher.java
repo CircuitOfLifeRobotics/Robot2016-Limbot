@@ -92,6 +92,7 @@ public final class Launcher extends Subsystem implements SmartdashBoardLoggable,
 
 		// TEST ANGLE SETPOINT
 		SmartDashboard.putNumber(getFormattedName() + "MotorArmSetpointSETTER", 0);
+		
 		putNumberSD("PID_P", Constants.LAUNCHER_PID_K_P);
 		putNumberSD("PID_I", Constants.LAUNCHER_PID_K_I);
 		putNumberSD("PID_D", Constants.LAUNCHER_PID_K_D);
@@ -241,6 +242,7 @@ public final class Launcher extends Subsystem implements SmartdashBoardLoggable,
 	
 	void setMotorArmSpeedRaw(double speed) {
 		double baseSpeed = MiscUtil.limit(speed) * LAUNCHER_GLOBAL_POWER;
+		putNumberSD("Motor_Setpoint", speed);
 		if (hasZeroed() && getArmPosition() < Constants.LAUNCHER_REDUCTION_ANGLE) {
 			motorArm.set(speed * Constants.LAUNCHER_REDUCTION_MULTIPLIER);
 //			System.out.println(speed * Constants.LAUNCHER_REDUCTION_MULTIPLIER);

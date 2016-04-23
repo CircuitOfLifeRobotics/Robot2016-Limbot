@@ -41,7 +41,7 @@ public class LaunchBall extends Command implements SmartdashBoardLoggable {
 		System.out.println("[" + Timer.getFPGATimestamp() + "] LauncherBall Angle Inputted: " + kAngle);
 
 		state = State.WAIT_ARM_TO_MID;
-		maxTimeout.config(1);
+		maxTimeout.config(.7);
 		// Move ball into launcher
 		launcher.setPuncherSolenoid(false);
 		launcher.setFlywheelNearSetpoint(0.5);
@@ -72,7 +72,7 @@ public class LaunchBall extends Command implements SmartdashBoardLoggable {
 				// Set to spinning direction
 				launcher.setFlywheelNearSetpoint(-1);
 				launcher.setFlywheelFarSetpoint(-1);
-				minTimeout.config(5);
+				minTimeout.config(4);
 			}
 			break;
 		case WAIT_AT_TOP:
