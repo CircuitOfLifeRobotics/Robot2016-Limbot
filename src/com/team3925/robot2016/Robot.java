@@ -9,6 +9,7 @@ import java.util.Timer;
 
 import com.kauailabs.navx.frc.AHRS;
 import com.team3925.robot2016.commands.LaunchBall;
+import com.team3925.robot2016.commands.LaunchUltrasonic;
 import com.team3925.robot2016.commands.auto.GyroTurn;
 import com.team3925.robot2016.subsystems.DriveTrain;
 import com.team3925.robot2016.subsystems.Launcher;
@@ -41,6 +42,7 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 	//Subsystems
 	public static DriveTrain driveTrain;
 	public static Launcher launcher;
+	public static LaunchUltrasonic launcherUltrasonic = new LaunchUltrasonic();
 	
 	//Other
 	public static AHRS navx = null;
@@ -154,13 +156,15 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 	}
 	
 	public void autonomousInit() {
-		autoRoutine = oi.setAutonomous();
+//		autoRoutine = oi.setAutonomous();
 		
-		driveTrain.setHighGear(false);
-		reset();
+//		driveTrain.setHighGear(false);
+//		reset();
 		
-		autoRoutine.start();
-		launcher.init();
+//		autoRoutine.start();
+//		launcher.init();
+		launcherUltrasonic.start();
+		
 	}
 	
 	/**
@@ -168,9 +172,9 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 	 */
 	public void autonomousPeriodic() {
 		Scheduler.getInstance().run();
-		
-		updateSubsystems();
-		logData();
+		SmartDashboard.putNumber("ULTRASONIC", launcher.getUltraSonic());
+//		updateSubsystems();
+//		logData();
 	}
 
 	public void teleopInit() {

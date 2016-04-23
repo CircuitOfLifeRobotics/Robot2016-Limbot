@@ -1,5 +1,7 @@
 package com.team3925.robot2016;
 
+import java.lang.reflect.Array;
+
 /**
  *	A class holding all the constants of the project
  */
@@ -65,6 +67,7 @@ public class Constants {
 //    public static final double CLIMBER_ACTIVE_TIME = 125d; // the 20 seconds at end of match
     public static final double CLIMBER_ACTIVE_TIME = 30; // calculated from end of match
 	public static final boolean DO_MANUAL_CLIMBER = true;
+	
     
     
     
@@ -79,6 +82,7 @@ public class Constants {
     public static final double LAUNCHER_ENCODER_WATCHER_TOLERANCE = 3; //degrees TODO tune
     public static final long LAUNCHER_ENCODER_WATCHER_PERIOD = 20; //ms
     public static final int LAUNCHER_ENCODER_WATCHER_DATA_CACHE_SIZE = 4; // entries
+    public static final double[] LauncherSetpoint = {26,29,39,43,45,47,48,49,50};
     
 	
 	

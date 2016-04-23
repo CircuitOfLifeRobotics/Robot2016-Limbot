@@ -10,6 +10,7 @@ import java.util.TimerTask;
 
 import com.team3925.robot2016.Constants;
 import com.team3925.robot2016.Robot;
+import com.team3925.robot2016.RobotMap;
 import com.team3925.robot2016.util.Loopable;
 import com.team3925.robot2016.util.MiscUtil;
 import com.team3925.robot2016.util.SmartdashBoardLoggable;
@@ -378,7 +379,7 @@ public final class Launcher extends Subsystem implements SmartdashBoardLoggable,
 			}
 			
 		} else {
-			DriverStation.reportWarning("LauncherNew has not zeroed! Arm motor speed not set!", false);
+//			DriverStation.reportWarning("LauncherNew has not zeroed! Arm motor speed not set!", false);
 		}
 	}
 	
@@ -394,7 +395,7 @@ public final class Launcher extends Subsystem implements SmartdashBoardLoggable,
 		if (Double.isFinite(speed)) {
 			motorFar.set(MiscUtil.limit(speed));
 		} else {
-			DriverStation.reportWarning("Could not set flywheel far speed to " + speed, false);
+//			DriverStation.reportWarning("Could not set flywheel far speed to " + speed, false);
 		}
 	}
 	
@@ -440,6 +441,12 @@ public final class Launcher extends Subsystem implements SmartdashBoardLoggable,
 	
 	@Override
 	protected void initDefaultCommand() {
+	}
+	
+	public double getUltraSonic(){
+		double voltage = RobotMap.launcherUltrasonic.getAverageVoltage();
+		double distance =  voltage * 4;
+		return Math.round(distance);
 	}
 
 }
