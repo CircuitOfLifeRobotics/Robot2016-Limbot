@@ -167,9 +167,6 @@ public final class Launcher extends Subsystem implements SmartdashBoardLoggable,
 	
 	@Override
 	public void update() {
-//		FULL
-//		/*
-			// If arm motor has not zeroed, start zero command
 			if (!hasZeroed()) {
 				startZeroCommand();
 				return;
@@ -177,17 +174,6 @@ public final class Launcher extends Subsystem implements SmartdashBoardLoggable,
 			
 			setMotorNearSpeed(motorNearSetpoint);
 			setMotorFarSpeed(motorFarSetpoint);
-//			*/
-			
-		
-//		TESTING ENCODER WATCHER
-			// NOT IMPLEMENTED
-			
-		
-//		setMotorNearSpeed(motorNearSetpoint);
-//		setMotorFarSpeed(motorFarSetpoint);
-		
-//		TEST_ANGLE_SETPOINT
 			
 			// testing getting input from SmartDashboard
 			//-16000 is shoot angle approximately
@@ -195,59 +181,12 @@ public final class Launcher extends Subsystem implements SmartdashBoardLoggable,
 //			setArmSetpoint(SmartDashboard.getNumber(getFormattedName() + "MotorArmSetpointSETTER", 0));
 			
 			double error = getInternalSetpoint() - getArmPosition();
-			System.out.println("Diff = " + Math.abs(error));
 			
 			if (Math.abs(error) > Constants.LAUNCHER_ARM_TOLERANCE /* ADD VELOCITY CONDITION*/) {
-				final double K_P = 0.5; // P part of PID
 				setMotorArmSpeed(/*Math.signum(error) * K_P*/ Math.signum(error) * Math.min(Math.abs(error/20),1));
 			}
 		}
 
-			
-			
-//		TESTING_ZERO_COMMAND
-//		/*
-
-//		if (hasZeroed()) {
-//			if (!timeoutAction2.isFinished()) {
-//				if (!timeoutAction1.isFinished()) {
-//					setMotorArmSpeed(.5d);
-//					putStringSD("CurrentDirection", "Positive");
-//				} else {
-//					setMotorArmSpeed(-.5d);
-//					putStringSD("CurrentDirection", "Negative");
-//				}
-//			} else {
-//				setMotorArmSpeed(0d);
-//				putStringSD("CurrentDirection", "None");
-//			}
-//		} else {
-//			putStringSD("CurrentDirection", "None");
-//		}
-//			*/
-			
-		
-//		TESTING_DIRECTIONS (done)
-		/*
-			if (!timeoutAction2.isFinished()) {
-				if (!timeoutAction1.isFinished()) {
-					setMotorArmSpeedRaw(0.3);
-					setMotorFarSpeed(0.5);
-					setMotorNearSpeed(0.5);
-					putStringSD("CurrentDirection", "Positive");
-				} else {
-					setMotorArmSpeedRaw(-0.3);
-					setMotorFarSpeed(-0.5);
-					setMotorNearSpeed(-0.5);
-					putStringSD("CurrentDirection", "Negative");
-				}
-			} else {
-				setMotorArmSpeedRaw(0);
-				setMotorFarSpeed(0);
-				setMotorNearSpeed(0);
-				putStringSD("CurrentDirection", "None");
-			}
-			*/
 		
 		logData();
 			

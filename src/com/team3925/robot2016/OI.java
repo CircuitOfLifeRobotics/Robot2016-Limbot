@@ -6,8 +6,6 @@ import com.team3925.robot2016.commands.AimHoriz;
 import com.team3925.robot2016.commands.CollectBall;
 import com.team3925.robot2016.commands.LaunchBall;
 import com.team3925.robot2016.commands.auto.AutoRoutineCenter;
-import com.team3925.robot2016.commands.auto.GyroDrive;
-import com.team3925.robot2016.commands.auto.GyroTurn;
 import com.team3925.robot2016.commands.auto.defensecross.CrossDefault;
 import com.team3925.robot2016.util.hidhelpers.FlightStickHelper;
 import com.team3925.robot2016.util.hidhelpers.ThrustmasterHelper;
@@ -58,15 +56,16 @@ public final class OI {
 	public Joystick driverWheel;
 	public Joystick shooterXbox;
 
-	public Button startCollectBall;
-	public Button startThrowBallFar;
-	public Button startThrowBallNear;
-	public Button startThrowBallLow;
-	public Button cancelCommands;
+	private Button startCollectBall;
+	private Button startThrowBallFar;
+	private Button startThrowBallNear;
+	private Button startHorizAim;
+	private Button cancelCommands;
 
-	public Command collectBall;
-	public Command throwBallFar;
-	public Command aimHoriz;
+	private Command collectBall;
+	private Command launcherBallHigh;
+	private Command launcherBallLow;
+	private Command aimHoriz;
 	
 	public SendableChooser autoChooser;
 	public SendableChooser throwBallTesting;
@@ -80,23 +79,28 @@ public final class OI {
 		shooterXbox = new Joystick(2);
 		
 		collectBall = new CollectBall();
-		throwBallFar = new LaunchBall();
+		launcherBallHigh = new LaunchBall(Constants.LAUNCHER_LAUNCHER_BALL_HIGH_ANGLE);
+		launcherBallLow = new LaunchBall(Constants.LAUNCHER_LAUNCHER_BALL_LOW_ANGLE);
 		aimHoriz = new AimHoriz();
 		
 		startCollectBall = new JoystickButton(shooterXbox, XboxHelper.A);
 		startCollectBall.whenPressed(collectBall);
 
 		startThrowBallFar = new JoystickButton(shooterXbox, XboxHelper.Y);
-		startThrowBallFar.whenPressed(throwBallFar);
-
+		startThrowBallFar.whenPressed(launcherBallHigh);
+	
 		startThrowBallNear = new JoystickButton(shooterXbox, XboxHelper.X);
-		startThrowBallNear.whenPressed(aimHoriz);
+		startThrowBallNear.whenPressed(launcherBallLow);
+
+		startHorizAim = new JoystickButton(shooterXbox, XboxHelper.B);
+		startHorizAim.whenPressed(aimHoriz);
 		
-//		startThrowBallLow = new JoystickButton(shooterXbox, XboxHelper.B);
+		
 		
 		cancelCommands = new JoystickButton(shooterXbox, XboxHelper.START);
 		cancelCommands.cancelWhenPressed(collectBall);
-		cancelCommands.cancelWhenPressed(throwBallFar);
+		cancelCommands.cancelWhenPressed(launcherBallHigh);
+		cancelCommands.cancelWhenPressed(launcherBallLow);
 		cancelCommands.cancelWhenPressed(aimHoriz);
 
 		positionChooser = new SendableChooser();
@@ -140,6 +144,7 @@ public final class OI {
 
 	}
 	
+	
 
 	public CommandGroup setAutonomous() {
 		// return new RobotPosition(((RobotPosition)positionChooser.getSelected()).getFieldPosition(), ((RobotPosition)obstacleChooser.getSelected()).getObstacle());
@@ -178,6 +183,10 @@ public final class OI {
 
 	// ROBOT BEHAVIOR
 
+	public boolean getCollectBall_Continue() {
+		return XboxHelper.getShooterButton(XboxHelper.TRIGGER_RT);
+	}
+	
 	public double getManualDrive_ForwardValue() {
 		return -FlightStickHelper.getAxis(FlightStickHelper.AXIS_Y);
 	}
@@ -220,14 +229,6 @@ public final class OI {
 
 	public double getCandyCanes_Set() {
 		return -XboxHelper.getShooterAxis(XboxHelper.AXIS_LEFT_Y);
-	}
-	
-	public boolean getIntakeAssist_ArmValue_Up() {
-		return XboxHelper.getShooterButton(XboxHelper.TRIGGER_RT);
-	}
-	
-	public boolean getIntakeAssist_ArmValue_Down() {
-		return XboxHelper.getShooterButton(XboxHelper.TRIGGER_LT);
 	}
 	
 	public boolean getManualArms_GetArmValue() {

@@ -101,7 +101,7 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 		
 		//Creating Commands
 		visionGyroTurn = new GyroTurn(0);
-		launchBall = new LaunchBall();
+		launchBall = new LaunchBall(Constants.LAUNCHER_LAUNCHER_BALL_HIGH_ANGLE);
 		
 		reset();
 	}

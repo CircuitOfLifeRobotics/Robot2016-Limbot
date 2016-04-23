@@ -80,6 +80,8 @@ public class Constants {
     public static final long LAUNCHER_ENCODER_WATCHER_PERIOD = 20; //ms
     public static final int LAUNCHER_ENCODER_WATCHER_DATA_CACHE_SIZE = 4; // entries
     
+    public static final double LAUNCHER_LAUNCHER_BALL_HIGH_ANGLE = 55;
+    public static final double LAUNCHER_LAUNCHER_BALL_LOW_ANGLE = 30;
 	
 	
 	

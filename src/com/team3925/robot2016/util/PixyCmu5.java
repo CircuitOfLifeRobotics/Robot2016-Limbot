@@ -106,7 +106,7 @@ public class PixyCmu5 implements PIDSource
     /**********************************************************
 	 *  Debug variables
 	 **********************************************************/
-    private static boolean flg_debug = true;
+    private static boolean flg_debug = false;
     
 	/**
 	 * PixyTask is the private scheduler within PixyCMU5 that 
