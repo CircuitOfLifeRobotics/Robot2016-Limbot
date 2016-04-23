@@ -74,14 +74,31 @@ public class Constants {
 	public static final double LAUNCHER_GLOBAL_POWER = 1d;
     public static final double LAUNCHER_MAX_ARM_ANGLE = 90d; // in degrees
     public static final double LAUNCHER_ENCODER_SCALE_FACTOR = -0.0032873376623377/*(-9d/3200d)*/;
-    public static final double LAUNCHER_ARM_TOLERANCE = 3d;
     public static final double LAUNCHER_ZERO_COMMAND_WAIT = 1; // entries
     public static final double LAUNCHER_ENCODER_WATCHER_TOLERANCE = 3; //degrees TODO tune
     public static final long LAUNCHER_ENCODER_WATCHER_PERIOD = 20; //ms
     public static final int LAUNCHER_ENCODER_WATCHER_DATA_CACHE_SIZE = 4; // entries
     
-    public static final double LAUNCHER_LAUNCHER_BALL_HIGH_ANGLE = 55;
+    public static final double LAUNCHER_REDUCTION_ANGLE = 20;
+    public static final double LAUNCHER_REDUCTION_MULTIPLIER = .3;
+    
+	public static final double LAUNCHER_LAUNCH_BALL_MIDZONE_ANGLE = 30;
+    
+    public static final double LAUNCHER_LAUNCHER_BALL_HIGH_ANGLE = 65;
     public static final double LAUNCHER_LAUNCHER_BALL_LOW_ANGLE = 35;
+    
+    public static final double LAUNCHER_COLLECT_BALL_FAR = -.3;
+    public static final double LAUNCHER_COLLECT_BALL_NEAR = 1;
+    
+	public static final double LAUNCHER_SETPOINT_REACH_WAIT = 3;
+	public static final int LAUNCHER_RESTING_ANGLE = 30;
+    
+    //TODO TUNE
+    public static final double LAUNCHER_PID_K_P = 0.04;
+    public static final double LAUNCHER_PID_K_I = 0.0016;
+    public static final double LAUNCHER_PID_K_D = 0.005;
+    public static final double LAUNCHER_ARM_TOLERANCE = .5d;
+    public static final double LAUNCHER_PID_VELOCITY_TOLERANCE = 100; //TODO Tune and reimplement
 	
 	
 	

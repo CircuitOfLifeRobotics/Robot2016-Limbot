@@ -40,4 +40,20 @@ public interface SmartdashBoardLoggable {
 		SmartDashboard.putNumber(getFormattedName() + "HeadingVelocity", pose.getHeadingVelocity());
 	}
 	
+	default double getNumberSD(String key, double defaultValue) {
+		return SmartDashboard.getNumber(key, defaultValue);
+	}
+	
+	default boolean getBooleanSD(String key, boolean defaultValue) {
+		return SmartDashboard.getBoolean(key, defaultValue);
+	}
+	
+	default String getStringSD(String key, String defaultValue) {
+		return SmartDashboard.getString(key, defaultValue);
+	}
+	
+	default Sendable getData(String key) {
+		return SmartDashboard.getData(key);
+	}
+	
 }
