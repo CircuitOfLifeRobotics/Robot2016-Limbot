@@ -445,7 +445,7 @@ public final class Launcher extends Subsystem implements SmartdashBoardLoggable,
 	
 	public double getUltraSonic(){
 		double voltage = RobotMap.launcherUltrasonic.getAverageVoltage();
-		double distance =  voltage * 4;
+		double distance =  (voltage * 4);
 		return Math.round(distance);
 	}
 
