@@ -1,5 +1,6 @@
 package com.team3925.robot2016.commands;
 
+import com.team3925.robot2016.Constants;
 import com.team3925.robot2016.Robot;
 import com.team3925.robot2016.subsystems.Launcher;
 import com.team3925.robot2016.util.SmartdashBoardLoggable;
@@ -11,6 +12,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class LaunchBall extends Command implements SmartdashBoardLoggable {
 	
+	public static final int LAUNCHER_LAUNCHER_BALL_MIDZONE_ANGLE = 30;
+
 	private enum State {
 		WAIT_ARM_TO_MID, WAIT_ARM_TO_UP, WAIT_AT_TOP, WAIT_BALL_LEAVE, WAIT_ARM_TO_DOWN;
 	}
@@ -38,8 +41,9 @@ public class LaunchBall extends Command implements SmartdashBoardLoggable {
 		state = State.WAIT_ARM_TO_MID;
 		maxTimeout.config(3);
 		minTimeout.config(0.1);
+		// Move arm into launcher
 		launcher.setPuncherSolenoid(false);
-		launcher.setFlywheelNearSetpoint(1);
+		launcher.setFlywheelNearSetpoint(.5);
 		launcher.setFlywheelFarSetpoint(0);
 	}
 
@@ -49,9 +53,9 @@ public class LaunchBall extends Command implements SmartdashBoardLoggable {
 		switch (state) {
 		case WAIT_ARM_TO_MID:
 			//TODO: add safety to check if launcher is stuck
-			if ((maxTimeout.isFinished() || launcher.getArmPosition()>30)&&minTimeout.isFinished()) {
+			if ((maxTimeout.isFinished() || launcher.getArmPosition()>LAUNCHER_LAUNCHER_BALL_MIDZONE_ANGLE) && minTimeout.isFinished()) {
 				launcher.setPuncherSolenoid(false);
-				launcher.setFlywheelNearSetpoint(1);
+				launcher.setFlywheelNearSetpoint(0);
 				state = State.WAIT_ARM_TO_UP;
 				System.out.println("[" + Timer.getFPGATimestamp() + "] Moving on to WAIT_ARM_TO_UP");
 				maxTimeout.config(3);
@@ -59,7 +63,7 @@ public class LaunchBall extends Command implements SmartdashBoardLoggable {
 			}
 			break;
 		case WAIT_ARM_TO_UP:
-			if ((Math.abs(launcher.getArmPosition()-60)<5 || maxTimeout.isFinished())&&minTimeout.isFinished()) {
+			if ((Math.abs(launcher.getArmPosition()-ANGLE)<Constants.LAUNCHER_ARM_TOLERANCE || maxTimeout.isFinished()) && minTimeout.isFinished()) {
 				state = State.WAIT_AT_TOP;
 				System.out.println("[" + Timer.getFPGATimestamp() + "] Moving on to WAIT_AT_TOP");
 				launcher.setFlywheelNearSetpoint(-1);
@@ -84,11 +88,11 @@ public class LaunchBall extends Command implements SmartdashBoardLoggable {
 				System.out.println("[" + Timer.getFPGATimestamp() + "] Final State Condition Satisfied");
 				launcher.setFlywheelFarSetpoint(0);
 				launcher.setFlywheelNearSetpoint(0);
-				launcher.setArmSetpoint(30);
+				launcher.setArmSetpoint(LAUNCHER_LAUNCHER_BALL_MIDZONE_ANGLE);
 			}
 			break;
 		case WAIT_ARM_TO_DOWN:
-			if ((maxTimeout.isFinished() || Math.abs(launcher.getArmPosition()-30)<5)&&minTimeout.isFinished()) {
+			if ((maxTimeout.isFinished() || Math.abs(launcher.getArmPosition()-LAUNCHER_LAUNCHER_BALL_MIDZONE_ANGLE)<5) && minTimeout.isFinished()) {
 				System.out.println("[" + Timer.getFPGATimestamp() + "] Unknown Condition Satisfied");
 				end();
 			}
@@ -112,7 +116,7 @@ public class LaunchBall extends Command implements SmartdashBoardLoggable {
 	protected void interrupted() {
 		launcher.setFlywheelFarSetpoint(0);
 		launcher.setFlywheelNearSetpoint(0);
-		launcher.setArmSetpoint(30);
+		launcher.setArmSetpoint(LAUNCHER_LAUNCHER_BALL_MIDZONE_ANGLE);
 		launcher.setPuncherSolenoid(false);
 	}
 
