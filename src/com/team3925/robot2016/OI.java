@@ -92,10 +92,8 @@ public final class OI {
 		startThrowBallNear = new JoystickButton(shooterXbox, XboxHelper.X);
 		startThrowBallNear.whenPressed(launcherBallLow);
 
-		startHorizAim = new JoystickButton(shooterXbox, XboxHelper.B);
-		startHorizAim.whenPressed(aimHoriz);
-		
-		
+//		startHorizAim = new JoystickButton(shooterXbox, XboxHelper.B);
+//		startHorizAim.whenPressed(aimHoriz);
 		
 		cancelCommands = new JoystickButton(shooterXbox, XboxHelper.START);
 		cancelCommands.cancelWhenPressed(collectBall);

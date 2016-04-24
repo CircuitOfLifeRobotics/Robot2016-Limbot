@@ -85,10 +85,10 @@ public class Constants {
 
 	public static final double LAUNCHER_LAUNCH_BALL_MIDZONE_ANGLE = 35;
 
-	public static final double LAUNCHER_LAUNCHER_BALL_HIGH_ANGLE = 53;
+	public static final double LAUNCHER_LAUNCHER_BALL_HIGH_ANGLE = 63;
 	public static final double LAUNCHER_LAUNCHER_BALL_LOW_ANGLE = 40;
 
-	public static final double LAUNCHER_COLLECT_BALL_FAR = -.3;
+	public static final double LAUNCHER_COLLECT_BALL_FAR = -0.75;
 	public static final double LAUNCHER_COLLECT_BALL_NEAR = 1;
 
 	public static final double LAUNCHER_SETPOINT_REACH_WAIT = 3;

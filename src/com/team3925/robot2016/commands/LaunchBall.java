@@ -61,7 +61,7 @@ public class LaunchBall extends Command implements SmartdashBoardLoggable {
 				launcher.setFlywheelFarSetpoint(0);
 				state = State.WAIT_ARM_TO_UP;
 				System.out.println("[" + Timer.getFPGATimestamp() + "] Moving on to WAIT_ARM_TO_UP");
-				maxTimeout.config(3);
+				maxTimeout.config(0.5);
 				minTimeout.config(0.5);
 			}
 			break;

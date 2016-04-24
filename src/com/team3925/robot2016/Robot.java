@@ -17,6 +17,7 @@ import com.team3925.robot2016.util.hidhelpers.FlightStickHelper;
 import com.team3925.robot2016.util.hidhelpers.ThrustmasterHelper;
 import com.team3925.robot2016.util.hidhelpers.XboxHelper;
 
+import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
@@ -102,6 +103,15 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 		//Creating Commands
 		visionGyroTurn = new GyroTurn(0);
 		launchBall = new LaunchBall(Constants.LAUNCHER_COLLECT_BALL_FAR);
+		
+		//Initializing Camera
+		try{
+			CameraServer server = CameraServer.getInstance();
+			server.setQuality(50);
+			server.startAutomaticCapture("cam0");
+		}catch (Exception e){
+			DriverStation.reportError("Could not find the Camera!!", true);
+		}
 		
 		reset();
 	}
