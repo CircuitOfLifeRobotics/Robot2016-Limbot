@@ -87,10 +87,10 @@ public class CheesySpeedController implements SpeedController {
         }
     }
 
-	@Override
+//	@Override
 	public void stopMotor() {
         for (SpeedController controller : m_controllers) {
-            controller.stopMotor();
+//            controller.stopMotor();
         }
 	}
 }

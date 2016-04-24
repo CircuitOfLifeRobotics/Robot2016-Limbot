@@ -14,6 +14,8 @@ public class Constants {
 	public static final boolean DO_LOG_MOVEMENT_CONSTANTS = false;
 
 	public static final double AXIS_TOLERANCE = 0.05;
+	
+	public static final double LAUNCHER_INCREMENTAL_TUNE_VALUE = 0.5; //How much the micro tune levers on the Xbox controller change the final setpoint of the launcher
 
 
 
@@ -33,7 +35,12 @@ public class Constants {
 	public static final int LAUNCHER_LIMIT_SWITCH_REVERSE = 1;
 	public static final int LAUNCHER_LIMIT_SWITCH_FORWARD = 0;
 	public static final int LAUNCHER_ULTRASONIC = 0;
-
+	
+	public static final int CLIMBER_MOTOR = 0; //TODO: find ports
+	public static final int CLIMBER_RAISE_SOLENOID_A = 0;
+	public static final int CLIMBER_RAISE_SOLENOID_B = 0;
+	public static final int CLIMBER_SHOOT_SOLENOID_A = 0;
+	public static final int CLIMBER_SHOOT_SOLENOID_B = 0;
 
 
 

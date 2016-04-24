@@ -40,6 +40,10 @@ public class RobotMap {
     public static CANTalon intakeAssistArmRight;
     public static CANTalon intakeAssistWheels;
     
+    public static DoubleSolenoid climberRaiseSolenoid;
+    public static DoubleSolenoid climberShootSolenoid;
+    public static CANTalon climberMotor;
+    
     
     public static DoubleSolenoid plexiArmsSolenoid;
     
@@ -150,5 +154,15 @@ public class RobotMap {
 			DriverStation.reportError("Error instantiating PixyCam!", true);
 			pixyCam = null;
 		}
+        
+        //CLIMBER:
+        climberArmsMotor = new CANTalon(Constants.CLIMBER_MOTOR);
+        LiveWindow.addActuator("Climber", "Motor", climberArmsMotor);
+        climberArmsMotor.changeControlMode(TalonControlMode.PercentVbus);
+        
+        climberShootSolenoid = new DoubleSolenoid(Constants.CLIMBER_SHOOT_SOLENOID_A, Constants.CLIMBER_SHOOT_SOLENOID_B);
+        LiveWindow.addActuator("Climber", "ShootSolenoid", climberShootSolenoid);
+        
+        climberRaiseSolenoid = new DoubleSolenoid(Constants.CLIMBER_RAISE_SOLENOID_A, Constants.CLIMBER_RAISE_SOLENOID_B);
     }
 }

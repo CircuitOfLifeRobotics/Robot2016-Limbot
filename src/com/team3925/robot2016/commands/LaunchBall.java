@@ -1,6 +1,7 @@
 package com.team3925.robot2016.commands;
 
 import com.team3925.robot2016.Constants;
+import com.team3925.robot2016.OI;
 import com.team3925.robot2016.Robot;
 import com.team3925.robot2016.subsystems.Launcher;
 import com.team3925.robot2016.util.SmartdashBoardLoggable;
@@ -11,6 +12,8 @@ import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class LaunchBall extends Command implements SmartdashBoardLoggable {
+	
+	OI oi = new OI();
 
 	private enum State {
 		WAIT_ARM_TO_MID, WAIT_ARM_TO_UP, WAIT_AT_TOP, WAIT_BALL_LEAVE, WAIT_ARM_TO_DOWN;
@@ -96,6 +99,7 @@ public class LaunchBall extends Command implements SmartdashBoardLoggable {
 		}
 
 		logData();
+		oi.microTune();
 	}
 
 	@Override
@@ -109,7 +113,7 @@ public class LaunchBall extends Command implements SmartdashBoardLoggable {
 
 		launcher.setFlywheelFarSetpoint(0);
 		launcher.setFlywheelNearSetpoint(0);
-		launcher.setArmSetpoint(Constants.LAUNCHER_LAUNCH_BALL_MIDZONE_ANGLE);
+		launcher.setArmSetpoint(Constants.LAUNCHER_RESTING_ANGLE);
 		launcher.setPuncherSolenoid(false);
 	}
 
@@ -127,9 +131,6 @@ public class LaunchBall extends Command implements SmartdashBoardLoggable {
 	@Override
 	public String getFormattedName() {
 		return "LaunchBallTest_";
-	}
-	public void Raise(){
-		
 	}
 
 }

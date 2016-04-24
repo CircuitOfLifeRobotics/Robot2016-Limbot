@@ -4,9 +4,11 @@ import static com.team3925.robot2016.util.hidhelpers.XboxHelper.START;
 
 import com.team3925.robot2016.commands.AimHoriz;
 import com.team3925.robot2016.commands.CollectBall;
+import com.team3925.robot2016.commands.DropCode;
 import com.team3925.robot2016.commands.LaunchBall;
 import com.team3925.robot2016.commands.auto.AutoRoutineCenter;
 import com.team3925.robot2016.commands.auto.defensecross.CrossDefault;
+import com.team3925.robot2016.subsystems.ZeroLauncher;
 import com.team3925.robot2016.util.hidhelpers.FlightStickHelper;
 import com.team3925.robot2016.util.hidhelpers.ThrustmasterHelper;
 import com.team3925.robot2016.util.hidhelpers.XboxHelper;
@@ -61,16 +63,22 @@ public final class OI {
 	private Button startThrowBallNear;
 	private Button startHorizAim;
 	private Button cancelCommands;
+	private Button startDropLauncher;
 
 	private Command collectBall;
 	private Command launcherBallHigh;
 	private Command launcherBallLow;
 	private Command aimHoriz;
+	private Command dropLauncher;
+	private Command zeroCommand;
 	
 	public SendableChooser autoChooser;
 	public SendableChooser throwBallTesting;
 
 	public SendableChooser positionChooser;
+	
+	double finalHighSetpoint = Constants.LAUNCHER_LAUNCHER_BALL_HIGH_ANGLE;
+	double finalLowSetpoint = Constants.LAUNCHER_LAUNCHER_BALL_LOW_ANGLE;
 
 	public OI() {
 
@@ -79,9 +87,13 @@ public final class OI {
 		shooterXbox = new Joystick(2);
 		
 		collectBall = new CollectBall();
-		launcherBallHigh = new LaunchBall(Constants.LAUNCHER_LAUNCHER_BALL_HIGH_ANGLE);
-		launcherBallLow = new LaunchBall(Constants.LAUNCHER_LAUNCHER_BALL_LOW_ANGLE);
+		launcherBallHigh = new LaunchBall(finalHighSetpoint);	//Constants.LAUNCHER_LAUNCHER_BALL_HIGH_ANGLE
+		launcherBallLow = new LaunchBall(finalLowSetpoint); //Constants.LAUNCHER_LAUNCHER_BALL_LOW_ANGLE
 		aimHoriz = new AimHoriz();
+		dropLauncher = new DropCode();
+		zeroCommand = new ZeroLauncher();
+		
+		
 		
 		startCollectBall = new JoystickButton(shooterXbox, XboxHelper.A);
 		startCollectBall.whenPressed(collectBall);
@@ -91,11 +103,15 @@ public final class OI {
 	
 		startThrowBallNear = new JoystickButton(shooterXbox, XboxHelper.X);
 		startThrowBallNear.whenPressed(launcherBallLow);
+		
+		
 
-		startHorizAim = new JoystickButton(shooterXbox, XboxHelper.B);
-		startHorizAim.whenPressed(aimHoriz);
+		// No vision code 
+//		startHorizAim = new JoystickButton(shooterXbox, XboxHelper.B);
+//		startHorizAim.whenPressed(aimHoriz);		
 		
-		
+		startDropLauncher = new JoystickButton(driverFlightstick, FlightStickHelper.TRIGGER);
+		startDropLauncher.whileHeld(dropLauncher);
 		
 		cancelCommands = new JoystickButton(shooterXbox, XboxHelper.START);
 		cancelCommands.cancelWhenPressed(collectBall);
@@ -144,7 +160,6 @@ public final class OI {
 
 	}
 	
-	
 
 	public CommandGroup setAutonomous() {
 		// return new RobotPosition(((RobotPosition)positionChooser.getSelected()).getFieldPosition(), ((RobotPosition)obstacleChooser.getSelected()).getObstacle());
@@ -176,6 +191,11 @@ public final class OI {
 		// janky.addSequential(new GyroTurn(-45));
 		
 		// return janky;
+		
+		//    /\
+		//    ||
+		//    ||
+		//   wtf?
 
 	}
 	
@@ -238,6 +258,26 @@ public final class OI {
 
 	public boolean getCommandCancel() {
 		return XboxHelper.getShooterButton(START);
+	}
+	public void microTune(){
+		
+		//High:
+		if (XboxHelper.getShooterAxis(XboxHelper.AXIS_TRIGGER_RIGHT) > 0.5 && XboxHelper.getShooterButton(XboxHelper.Y)){		//if the y button and the right trigger are held down raise the value
+			finalHighSetpoint = Constants.LAUNCHER_LAUNCHER_BALL_HIGH_ANGLE + Constants.LAUNCHER_INCREMENTAL_TUNE_VALUE;
+		}
+		if (XboxHelper.getShooterAxis(XboxHelper.AXIS_TRIGGER_LEFT) > 0.5 && XboxHelper.getShooterButton(4)){		//if the y button and left trigger are held down lower the value
+			finalHighSetpoint = Constants.LAUNCHER_LAUNCHER_BALL_HIGH_ANGLE - Constants.LAUNCHER_INCREMENTAL_TUNE_VALUE;
+		}
+		//Low:
+		if (XboxHelper.getShooterAxis(XboxHelper.AXIS_TRIGGER_RIGHT) > 0.5 && XboxHelper.getShooterButton(XboxHelper.AXIS_TRIGGER_RIGHT)){		//if the x button and the right trigger are held down raise the value
+			finalLowSetpoint = Constants.LAUNCHER_LAUNCHER_BALL_LOW_ANGLE + Constants.LAUNCHER_INCREMENTAL_TUNE_VALUE;
+		}
+		if (XboxHelper.getShooterAxis(XboxHelper.AXIS_TRIGGER_LEFT) > 0.5 && XboxHelper.getShooterButton(XboxHelper.AXIS_TRIGGER_RIGHT)){		//if the x button and the left trigger are held down lower the value
+			finalHighSetpoint = Constants.LAUNCHER_LAUNCHER_BALL_LOW_ANGLE - Constants.LAUNCHER_INCREMENTAL_TUNE_VALUE;
+		}
+		if (XboxHelper.getShooterAxis(XboxHelper.AXIS_TRIGGER_LEFT) > 0.5 && XboxHelper.getShooterAxis(XboxHelper.AXIS_TRIGGER_RIGHT) > 0.5){
+			zeroCommand.start();
+		}
 	}
 
 }

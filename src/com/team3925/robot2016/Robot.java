@@ -179,7 +179,6 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 		
 		// should be handled by default commands
 //		manualDrive.start();
-//		manualIntakeAssist.start();
 		
 		launcher.init();
 		launchUltrasonic.start();

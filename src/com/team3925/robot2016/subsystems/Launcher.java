@@ -358,17 +358,6 @@ public final class Launcher extends Subsystem implements SmartdashBoardLoggable,
 		return Math.round(distance);
 	}
 	
-	boolean JustPressed = false;
-	public void instadrop(){
-		if (FlightStickHelper.getButton(1)){
-			setArmSetpoint(0);
-			JustPressed = true;
-		}else if (JustPressed){
-			setArmSetpoint(Constants.LAUNCHER_RESTING_ANGLE);
-			JustPressed = false;
-		}
-	}
-	
 	public void plateUp(){
 		if (XboxHelper.getShooterButton(5)){
 			setPuncherSolenoid(true);
