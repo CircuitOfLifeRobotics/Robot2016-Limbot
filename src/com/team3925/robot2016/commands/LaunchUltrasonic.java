@@ -19,7 +19,16 @@ public class LaunchUltrasonic extends Command {
 	@Override
 	protected void execute() {
 		int distance = (int) launcher.getUltraSonic();
-		SmartDashboard.putNumber("Final Setpoint", Constants.LAUNCHER_SETPOINTS[distance]);
+		SmartDashboard.putNumber("distance", distance);
+		double setpointSize = Constants.LAUNCHER_SETPOINTS.length;
+		if (distance < setpointSize && distance > 0){
+			double setpoint = Constants.LAUNCHER_SETPOINTS[distance];
+			SmartDashboard.putNumber("Final Setpoint", setpoint);
+		}else{
+			//DriverStation.reportError("UltraSonic out of range", false);
+		}
+		
+		
 	}
 
 	@Override

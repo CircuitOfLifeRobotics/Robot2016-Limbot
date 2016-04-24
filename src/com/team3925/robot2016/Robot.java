@@ -7,6 +7,7 @@ import static com.team3925.robot2016.Constants.DO_LOG_PDP_VALUES;
 
 import com.kauailabs.navx.frc.AHRS;
 import com.team3925.robot2016.commands.LaunchBall;
+import com.team3925.robot2016.commands.LaunchUltrasonic;
 import com.team3925.robot2016.commands.auto.GyroTurn;
 import com.team3925.robot2016.subsystems.DriveTrain;
 import com.team3925.robot2016.subsystems.Launcher;
@@ -39,6 +40,7 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 	//Subsystems
 	public static DriveTrain driveTrain;
 	public static Launcher launcher;
+	public static LaunchUltrasonic launchUltrasonic = new LaunchUltrasonic();
 	
 	//Other
 	public static AHRS navx = null;
@@ -180,6 +182,7 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 //		manualIntakeAssist.start();
 		
 		launcher.init();
+		launchUltrasonic.start();
 	}
 
 	/**
@@ -187,7 +190,6 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 	 */
 	public void teleopPeriodic() {
 		Scheduler.getInstance().run();
-		
 		updateSubsystems();
 		
 //		if (oi.shooterXbox.getRawButton(XboxHelper.X)) {
@@ -224,6 +226,7 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 		}
 		
 		logData();
+		//launcher.instadrop();
 	}
 	
 	/**
@@ -252,6 +255,7 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 //		System.out.println("state = "+tempManualState);
 //		
 //		launcherNew.update();
+		
 	}
 	
 	private void updateSubsystems() {

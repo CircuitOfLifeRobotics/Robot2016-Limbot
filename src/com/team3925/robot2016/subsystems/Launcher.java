@@ -4,21 +4,28 @@ import static com.team3925.robot2016.Constants.LAUNCHER_ENCODER_SCALE_FACTOR;
 import static com.team3925.robot2016.Constants.LAUNCHER_GLOBAL_POWER;
 import static com.team3925.robot2016.Constants.LAUNCHER_MAX_ARM_ANGLE;
 
+import java.io.ObjectInputStream;
 import java.util.Timer;
 
 import com.team3925.robot2016.Constants;
+import com.team3925.robot2016.OI;
+import com.team3925.robot2016.Robot;
 import com.team3925.robot2016.RobotMap;
+import com.team3925.robot2016.commands.LaunchBall;
 import com.team3925.robot2016.util.InputWatcher;
 import com.team3925.robot2016.util.Loopable;
 import com.team3925.robot2016.util.MiscUtil;
 import com.team3925.robot2016.util.SmartdashBoardLoggable;
 import com.team3925.robot2016.util.SynchronousPID;
 import com.team3925.robot2016.util.TimeoutAction;
+import com.team3925.robot2016.util.hidhelpers.FlightStickHelper;
+import com.team3925.robot2016.util.hidhelpers.XboxHelper;
 
 import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
+import edu.wpi.first.wpilibj.buttons.Trigger;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -34,6 +41,7 @@ public final class Launcher extends Subsystem implements SmartdashBoardLoggable,
 	
 	private final DigitalInput fwdLimitSwitch;
 	private final DigitalInput revLimitSwitch;
+	OI oi = new Robot().oi;
 	
 	// TODO implement after testing basics
 	private final SynchronousPID pid = new SynchronousPID(Constants.LAUNCHER_PID_K_P, Constants.LAUNCHER_PID_K_I, Constants.LAUNCHER_PID_K_D);
@@ -267,7 +275,7 @@ public final class Launcher extends Subsystem implements SmartdashBoardLoggable,
 			}
 			
 		} else {
-			DriverStation.reportWarning("LauncherNew has not zeroed! Arm motor speed not set!", false);
+//			DriverStation.reportWarning("LauncherNew has not zeroed! Arm motor speed not set!", false);
 		}
 	}
 	
@@ -283,7 +291,7 @@ public final class Launcher extends Subsystem implements SmartdashBoardLoggable,
 		if (Double.isFinite(speed)) {
 			motorFar.set(MiscUtil.limit(speed));
 		} else {
-			DriverStation.reportWarning("Could not set flywheel far speed to " + speed, false);
+//			DriverStation.reportWarning("Could not set flywheel far speed to " + speed, false);
 		}
 	}
 	
@@ -348,6 +356,25 @@ public final class Launcher extends Subsystem implements SmartdashBoardLoggable,
 		double voltage = RobotMap.launcherUltrasonic.getAverageVoltage();
 		double distance =  (voltage * 4);
 		return Math.round(distance);
+	}
+	
+	boolean JustPressed = false;
+	public void instadrop(){
+		if (FlightStickHelper.getButton(1)){
+			setArmSetpoint(0);
+			JustPressed = true;
+		}else if (JustPressed){
+			setArmSetpoint(Constants.LAUNCHER_RESTING_ANGLE);
+			JustPressed = false;
+		}
+	}
+	
+	public void plateUp(){
+		if (XboxHelper.getShooterButton(5)){
+			setPuncherSolenoid(true);
+		}else{
+			setPuncherSolenoid(false);
+		}
 	}
 
 }

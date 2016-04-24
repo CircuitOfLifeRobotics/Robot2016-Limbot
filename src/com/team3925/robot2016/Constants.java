@@ -85,14 +85,16 @@ public class Constants {
 
 	public static final double LAUNCHER_LAUNCH_BALL_MIDZONE_ANGLE = 35;
 
-	public static final double LAUNCHER_LAUNCHER_BALL_HIGH_ANGLE = 53;
-	public static final double LAUNCHER_LAUNCHER_BALL_LOW_ANGLE = 40;
+	public static final double LAUNCHER_LAUNCHER_BALL_HIGH_ANGLE = 60;	//53
+	public static final double LAUNCHER_LAUNCHER_BALL_LOW_ANGLE = 40;	//40
 
-	public static final double LAUNCHER_COLLECT_BALL_FAR = -.3;
+	public static final double LAUNCHER_COLLECT_BALL_FAR = -.4;
 	public static final double LAUNCHER_COLLECT_BALL_NEAR = 1;
 
-	public static final double LAUNCHER_SETPOINT_REACH_WAIT = 3;
-	public static final int LAUNCHER_RESTING_ANGLE = 30;
+	public static final double LAUNCHER_SETPOINT_REACH_WAIT = 2;
+	public static final int LAUNCHER_RESTING_ANGLE = 40;
+	
+	public static final double LAUNCHER_SPIN_UP_TIME = 2;
 
 	//TODO TUNE
 	public static final double LAUNCHER_PID_K_P = 0.038;

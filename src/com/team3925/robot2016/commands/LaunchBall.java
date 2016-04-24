@@ -72,7 +72,7 @@ public class LaunchBall extends Command implements SmartdashBoardLoggable {
 				// Set to spinning direction
 				launcher.setFlywheelNearSetpoint(-1);
 				launcher.setFlywheelFarSetpoint(-1);
-				minTimeout.config(4);
+				minTimeout.config(Constants.LAUNCHER_SPIN_UP_TIME);
 			}
 			break;
 		case WAIT_AT_TOP:
@@ -127,6 +127,9 @@ public class LaunchBall extends Command implements SmartdashBoardLoggable {
 	@Override
 	public String getFormattedName() {
 		return "LaunchBallTest_";
+	}
+	public void Raise(){
+		
 	}
 
 }

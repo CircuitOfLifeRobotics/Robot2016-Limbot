@@ -240,5 +240,4 @@ public final class OI {
 		return XboxHelper.getShooterButton(START);
 	}
 
-
 }

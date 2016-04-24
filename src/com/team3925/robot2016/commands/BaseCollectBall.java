@@ -40,6 +40,7 @@ public class BaseCollectBall extends Command {
 		System.out.println("[" + Timer.getFPGATimestamp() + "] BaseCollectPlate Finished");
 		launcher.setFlywheelFarSetpoint(0);
 		launcher.setFlywheelNearSetpoint(0);
+		launcher.setArmSetpoint(Constants.LAUNCHER_RESTING_ANGLE);
 	}
 
 	// Called when another command which requires one or more of the same
