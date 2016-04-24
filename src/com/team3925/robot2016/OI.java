@@ -6,11 +6,14 @@ import com.team3925.robot2016.commands.AimHoriz;
 import com.team3925.robot2016.commands.CollectBall;
 import com.team3925.robot2016.commands.LaunchBall;
 import com.team3925.robot2016.commands.auto.AutoRoutineCenter;
+import com.team3925.robot2016.commands.auto.AutoRoutineCourtyard;
+import com.team3925.robot2016.commands.auto.AutoRoutineDoNothing;
 import com.team3925.robot2016.commands.auto.defensecross.CrossDefault;
 import com.team3925.robot2016.util.hidhelpers.FlightStickHelper;
 import com.team3925.robot2016.util.hidhelpers.ThrustmasterHelper;
 import com.team3925.robot2016.util.hidhelpers.XboxHelper;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.Button;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
@@ -79,8 +82,8 @@ public final class OI {
 		shooterXbox = new Joystick(2);
 		
 		collectBall = new CollectBall();
-		launcherBallHigh = new LaunchBall(Constants.LAUNCHER_LAUNCHER_BALL_HIGH_ANGLE);
-		launcherBallLow = new LaunchBall(Constants.LAUNCHER_LAUNCHER_BALL_LOW_ANGLE);
+		launcherBallHigh = new LaunchBall(Constants.LAUNCHER_LAUNCH_BALL_HIGH_ANGLE);
+		launcherBallLow = new LaunchBall(Constants.LAUNCHER_LAUNCH_BALL_LOW_ANGLE);
 		aimHoriz = new AimHoriz();
 		
 		startCollectBall = new JoystickButton(shooterXbox, XboxHelper.A);
@@ -112,9 +115,9 @@ public final class OI {
 		autoChooser = new SendableChooser();
 
 //		autoChooser.addDefault("DO NOTHING", new AutoRoutineDoNothing());
-		autoChooser.addDefault("Cross-ArmsUP", new AutoRoutineCenter(new CrossDefault(), 0));
-		autoChooser.addObject("Cross-ArmsDOWN", new AutoRoutineCenter(new CrossDefault(), 0));
-//		autoChooser.addObject("Courtyard Freebie Shot", new AutoRoutineCourtyard(Constants.AUTONOMOUS_SHOOT_ANGLE));
+		autoChooser.addDefault("Cross-Default", new AutoRoutineCenter(new CrossDefault(), 0));
+		autoChooser.addObject("Courtyard Freebie Shot", new AutoRoutineCourtyard(Constants.AUTONOMOUS_SHOOT_ANGLE));
+		autoChooser.addObject("Do Nothing", new AutoRoutineDoNothing());
 //
 //				autoChooser.addObject("Portcullis", new CrossDefault());
 //		//		autoChooser.addObject("Chival De Frise", new CrossLowBar());
@@ -144,31 +147,26 @@ public final class OI {
 	
 	
 
-	public CommandGroup setAutonomous() {
-		// return new RobotPosition(((RobotPosition)positionChooser.getSelected()).getFieldPosition(), ((RobotPosition)obstacleChooser.getSelected()).getObstacle());
+	public CommandGroup getAutonomous() {
+		Object selected = autoChooser.getSelected();
 		
-//		Object selected = autoChooser.getSelected();
-//		SendableChooser selected = ((SendableChooser) SmartDashboard.getData("Autonomous Chooser")).getSelected();
-//		SmartDashboard.putString("AutoSelected", selected.toString());
-//		return (CommandGroup) selected;
+//		return new AutoRoutineCenter(new CrossDefault(), 0);
 		
-		return new AutoRoutineCenter(new CrossDefault(), 0);
+		if (selected instanceof AutoRoutineDoNothing) {
+			return (CommandGroup) selected;
+			
+		} else if (selected instanceof AutoRoutineCourtyard) {
+			return (CommandGroup) selected;
+
+		} else if (selected instanceof AutoRoutineCenter) {
+//			return new AutoRoutineCenter((DefenseCrossBase) selected, 0 /*(int) positionChooser.getSelected()*/);
+			return (CommandGroup) selected;
+		} else {
+			DriverStation.reportError("Defaulted in autonomous selection!", false);
+			return new AutoRoutineDoNothing();
+		}
 		
-//		if (selected instanceof AutoRoutineDoNothing) {
-//			return (CommandGroup) selected;
-//
-//		} else if (selected instanceof AutoRoutineCourtyard) {
-//			return (CommandGroup) selected;
-//
-//		} else if (selected instanceof DefenseCrossBase) {
-//			return new AutoRoutineCenter((DefenseCrossBase) selected, (int) positionChooser.getSelected());
-//
-//		} else {
-//			DriverStation.reportError("Defaulted in autonomous selection!", false);
-//			return new AutoRoutineDoNothing();
-//		}
-		
-		// CommandGroup janky = new CommandGroup();
+			
 		// janky.addSequential(new  CrossDefault(), 6);
 		// janky.addSequential(new GyroTurn(45));
 		// janky.addSequential(new GyroTurn(-45));

@@ -15,7 +15,8 @@ import edu.wpi.first.wpilibj.command.WaitCommand;
 public class AutoRoutineCenter extends CommandGroup {
 
     public AutoRoutineCenter(DefenseCrossBase initCrossCommand, int robotPos) {
-    	
+    	super("AutoRoutine-Center");
+
     	addSequential(new WaitCommand(2d)); // wait for arms to get to position
     	addSequential(initCrossCommand, Constants.AUTONOMOUS_CROSS_DEFENSE_DRIVE_TIME + 0.5 /* Buffer time */);
     	addSequential(new GyroDrive(12));

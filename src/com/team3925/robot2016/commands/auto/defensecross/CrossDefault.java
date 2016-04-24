@@ -1,5 +1,6 @@
 package com.team3925.robot2016.commands.auto.defensecross;
 
+import com.team3925.robot2016.util.MiscUtil;
 import com.team3925.robot2016.util.SmartdashBoardLoggable;
 
 public class CrossDefault extends DefenseCrossBase implements SmartdashBoardLoggable {
@@ -11,6 +12,7 @@ public class CrossDefault extends DefenseCrossBase implements SmartdashBoardLogg
 	@Override
 	protected void initialize() {
 		super.initialize();
+		System.out.println(MiscUtil.formattedNameToNormalName(getFormattedName()));
 	}
 	
 	@Override

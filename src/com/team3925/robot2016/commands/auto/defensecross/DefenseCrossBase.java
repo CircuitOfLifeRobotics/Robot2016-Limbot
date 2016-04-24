@@ -50,6 +50,7 @@ public abstract class DefenseCrossBase extends Command implements SmartdashBoard
     	deltaRoll = 0;
     	
     	if (runGyroDrive) {
+    		System.out.println("Starting Gyro Drive");
 			gyroDrive.start();
 		}
     }
@@ -118,12 +119,13 @@ public abstract class DefenseCrossBase extends Command implements SmartdashBoard
 
     // Called once after isFinished returns true
     protected void end() {
+    	System.out.println("DefenseCrossBase.end()");
     	driveTrain.setMotorSpeeds(DriveTrainSignal.NEUTRAL);
     }
 
     // Called when another command which requires one or more of the same
     // subsystems is scheduled to run
     protected void interrupted() {
-    	driveTrain.setMotorSpeeds(DriveTrainSignal.NEUTRAL);
+    	end();
     }
 }

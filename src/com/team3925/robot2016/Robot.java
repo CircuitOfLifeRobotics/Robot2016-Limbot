@@ -135,6 +135,7 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 		//TODO: remove
 		tempManualState = "intake";
 		buttonWasDown = false;
+
 	}
 	
 	/**
@@ -156,7 +157,8 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 	}
 	
 	public void autonomousInit() {
-		autoRoutine = oi.setAutonomous();
+		autoRoutine = oi.getAutonomous();
+		System.out.println("Auto Routine Selected: " + autoRoutine.getName());	
 		
 		driveTrain.setHighGear(false);
 		reset();
@@ -200,37 +202,10 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 		
 		updateSubsystems();
 		
-//		if (oi.shooterXbox.getRawButton(XboxHelper.X)) {
-//			launcherNew.startZeroCommand();
-//		}
-//		if (oi.shooterXbox.getRawButton(XboxHelper.A) && !launchBall.isRunning()) {
-//			launchBall.start();
-//		}
-//		if (oi.getCommandCancel()) {
-//			launchBall.cancel();
-//		}
-				
-		
-		// Driver Vision Control
-		
-//		if (oi.getVisionShoot_GyroTurnEnable()) {
-//			if (!visionGyroTurn.isRunning()) {
-//				if (Double.isNaN(launcher.getTurnAngle())) {
-//					visionGyroTurn.setSetpointRelative(launcher.getTurnAngle());
-//					visionGyroTurn.start();
-//				} else {
-//					DriverStation.reportWarning("Camera cannot detect object! Thou shall not runneth or beginneth a GyroDrive!", false);
-//				}
-//			}
-//		} else {
-//			if (visionGyroTurn.isRunning()) {
-//				visionGyroTurn.cancel();
-//			}
-//		}
-
 
 		if (brakeBeforeMatchEnd.isFinished()) {
-			driveTrain.setBrakeMode(true);
+//			driveTrain.setBrakeMode(true);
+			// This breaks things. Wut.
 		}
 		
 		logData();
@@ -241,27 +216,6 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 	 */
 	public void testPeriodic() {
 		LiveWindow.run();
-		
-		//TESTING MANUAL LAUNCHER TODO: remove
-//		boolean buttonDown = Robot.oi.shooterXbox.getRawButton(XboxHelper.A);
-//		if (buttonDown) {
-//			if (!buttonWasDown) tempManualState = tempManualState.equals("intake") ? "wheels": tempManualState.equals("wheels") ? "shooting" : "intake";
-//			buttonWasDown = true;
-//		} else
-//			buttonWasDown = false;
-//		if (tempManualState.equals("intake")) {
-//			launcherNew.setFlywheelFarSetpoint(0);
-//			launcherNew.setFlywheelNearSetpoint(0);
-//			launcherNew.setPuncherSolenoid(false);
-//		}else if (tempManualState.equals("wheels")) {
-//			launcherNew.setFlywheelFarSetpoint(-1);
-//			launcherNew.setFlywheelNearSetpoint(-1);
-//		}else if (tempManualState.equals("shooting")) {
-//			launcherNew.setPuncherSolenoid(true);
-//		}
-//		System.out.println("state = "+tempManualState);
-//		
-//		launcherNew.update();
 	}
 	
 	private void updateSubsystems() {
