@@ -59,13 +59,13 @@ public final class OI {
 	private Button startCollectBall;
 	private Button startThrowBallFar;
 	private Button startThrowBallNear;
-	private Button startHorizAim;
+	private Button startThrowBallMid;
 	private Button cancelCommands;
 
 	private Command collectBall;
 	private Command launcherBallHigh;
 	private Command launcherBallLow;
-	private Command aimHoriz;
+	private Command launcherBallMid;
 	
 	public SendableChooser autoChooser;
 	public SendableChooser throwBallTesting;
@@ -81,17 +81,20 @@ public final class OI {
 		collectBall = new CollectBall();
 		launcherBallHigh = new LaunchBall(Constants.LAUNCHER_LAUNCHER_BALL_HIGH_ANGLE);
 		launcherBallLow = new LaunchBall(Constants.LAUNCHER_LAUNCHER_BALL_LOW_ANGLE);
-		aimHoriz = new AimHoriz();
+		launcherBallMid = new LaunchBall(Constants.LAUNCHER_LAUNCH_BALL_MIDZONE_ANGLE);
 		
 		startCollectBall = new JoystickButton(shooterXbox, XboxHelper.A);
 		startCollectBall.whenPressed(collectBall);
-
+		
 		startThrowBallFar = new JoystickButton(shooterXbox, XboxHelper.Y);
 		startThrowBallFar.whenPressed(launcherBallHigh);
-	
+		
 		startThrowBallNear = new JoystickButton(shooterXbox, XboxHelper.X);
 		startThrowBallNear.whenPressed(launcherBallLow);
-
+		
+		startThrowBallMid = new JoystickButton(shooterXbox, XboxHelper.B);
+		startThrowBallMid.whenPressed(launcherBallMid);;
+		
 //		startHorizAim = new JoystickButton(shooterXbox, XboxHelper.B);
 //		startHorizAim.whenPressed(aimHoriz);
 		
@@ -99,7 +102,6 @@ public final class OI {
 		cancelCommands.cancelWhenPressed(collectBall);
 		cancelCommands.cancelWhenPressed(launcherBallHigh);
 		cancelCommands.cancelWhenPressed(launcherBallLow);
-		cancelCommands.cancelWhenPressed(aimHoriz);
 
 		positionChooser = new SendableChooser();
 		positionChooser.addDefault("1 - Far Right", new Integer(0));
