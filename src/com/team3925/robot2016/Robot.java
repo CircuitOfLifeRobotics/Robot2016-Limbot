@@ -7,7 +7,9 @@ import static com.team3925.robot2016.Constants.DO_LOG_PDP_VALUES;
 
 import com.kauailabs.navx.frc.AHRS;
 import com.team3925.robot2016.commands.LaunchBall;
+import com.team3925.robot2016.commands.ManualArms;
 import com.team3925.robot2016.commands.auto.GyroTurn;
+import com.team3925.robot2016.subsystems.Arms;
 import com.team3925.robot2016.subsystems.DriveTrain;
 import com.team3925.robot2016.subsystems.Launcher;
 import com.team3925.robot2016.util.DriveTrainSignal;
@@ -40,6 +42,7 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 	//Subsystems
 	public static DriveTrain driveTrain;
 	public static Launcher launcher;
+	public static Arms arms;
 	
 	//Other
 	public static AHRS navx = null;
@@ -54,6 +57,8 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 //	private ManualIntakeAssist manualIntakeAssist;
 	private GyroTurn visionGyroTurn = null;
 	private LaunchBall launchBall = null;
+	
+	private ManualArms manualArms;
 	
 	//Variables
 	public static double deltaTime = 0;
@@ -87,8 +92,11 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 		
 		//Creating Subsystems and Related Processes
 		driveTrain = new DriveTrain();
+		arms = new Arms(RobotMap.leftArm, RobotMap.rightArm);
 		launcher = new Launcher(RobotMap.launcherMotorArm, RobotMap.launcherMotorFar, RobotMap.launcherMotorNear, RobotMap.launcherPuncherSolenoid, RobotMap.launcherFwdLimitSwitch, RobotMap.launcherRevLimitSwitch);
 		pdp = RobotMap.pdp;
+		manualArms = new ManualArms();
+		
 		
 		// OI must be constructed after subsystems. If the OI creates Commands
 		//(which it very likely will), subsystems are not guaranteed to be
@@ -188,7 +196,7 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 		// should be handled by default commands
 //		manualDrive.start();
 //		manualIntakeAssist.start();
-		
+		manualArms.start();
 		launcher.init();
 	}
 

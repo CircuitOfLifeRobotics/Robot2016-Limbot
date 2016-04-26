@@ -100,6 +100,14 @@ public class Constants {
 	public static final double LAUNCHER_PID_K_D = 0.02;
 	public static final double LAUNCHER_ARM_TOLERANCE = .5d;
 	public static final double LAUNCHER_PID_VELOCITY_TOLERANCE = 100; //TODO Tune and reimplement
+	
+	
+	//ARMS CONSTANTS:
+	public static final int LEFT_ARM_A = 0;
+	public static final int LEFT_ARM_B = 0;
+	
+	public static final int RIGHT_ARM_A = 0;
+	public static final int RIGHT_ARM_B = 0;
 
 
 

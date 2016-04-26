@@ -46,6 +46,9 @@ public class RobotMap {
     public static CANTalon climberArmsMotor;
     public static DoubleSolenoid climberSolenoid;
     
+    public static DoubleSolenoid leftArm;
+    public static DoubleSolenoid rightArm;
+    
 //    public static Solenoid blueLedStrip;
 //    public static Solenoid redLedStrip;
     
@@ -143,6 +146,9 @@ public class RobotMap {
         LiveWindow.addActuator("Launcher", "MotorNear", launcherMotorNear);
         launcherMotorNear.setFeedbackDevice(FeedbackDevice.QuadEncoder);
         launcherMotorNear.changeControlMode(TalonControlMode.PercentVbus);
+        
+        leftArm = new DoubleSolenoid(Constants.LEFT_ARM_A, Constants.LEFT_ARM_B);
+        rightArm = new DoubleSolenoid(Constants.RIGHT_ARM_A, Constants.RIGHT_ARM_B);
         
         try {
 			pixyCam = new PixyCmu5(0xa8, 0.2);

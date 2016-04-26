@@ -239,6 +239,9 @@ public final class OI {
 	public boolean getCommandCancel() {
 		return XboxHelper.getShooterButton(START);
 	}
+	public boolean getArmsDownButton(){
+		return FlightStickHelper.getButton(2);
+	}
 
 
 }
