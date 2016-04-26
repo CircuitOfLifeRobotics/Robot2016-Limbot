@@ -2,9 +2,9 @@ package com.team3925.robot2016;
 
 import static com.team3925.robot2016.util.hidhelpers.XboxHelper.START;
 
-import com.team3925.robot2016.commands.AimHoriz;
 import com.team3925.robot2016.commands.CollectBall;
 import com.team3925.robot2016.commands.LaunchBall;
+import com.team3925.robot2016.commands.SetArmSetpointTemporary;
 import com.team3925.robot2016.commands.auto.AutoRoutineCenter;
 import com.team3925.robot2016.commands.auto.defensecross.CrossDefault;
 import com.team3925.robot2016.util.hidhelpers.FlightStickHelper;
@@ -59,13 +59,15 @@ public final class OI {
 	private Button startCollectBall;
 	private Button startThrowBallFar;
 	private Button startThrowBallNear;
-	private Button startHorizAim;
+	private Button startThrowBallSide;
 	private Button cancelCommands;
+	private Button startDropAngle;
 
 	private Command collectBall;
 	private Command launcherBallHigh;
 	private Command launcherBallLow;
-	private Command aimHoriz;
+	private Command launcherBallSide;
+	private Command launcherDropAngle;
 	
 	public SendableChooser autoChooser;
 	public SendableChooser throwBallTesting;
@@ -81,7 +83,8 @@ public final class OI {
 		collectBall = new CollectBall();
 		launcherBallHigh = new LaunchBall(Constants.LAUNCHER_LAUNCHER_BALL_HIGH_ANGLE);
 		launcherBallLow = new LaunchBall(Constants.LAUNCHER_LAUNCHER_BALL_LOW_ANGLE);
-		aimHoriz = new AimHoriz();
+		launcherBallSide = new LaunchBall(Constants.LAUNCHER_LAUNCHER_BALL_SIDE_ANGLE);
+		launcherDropAngle = new SetArmSetpointTemporary(Constants.LAUNCHER_LAUNCH_BALL_MIDZONE_ANGLE);
 		
 		startCollectBall = new JoystickButton(shooterXbox, XboxHelper.A);
 		startCollectBall.whenPressed(collectBall);
@@ -92,14 +95,18 @@ public final class OI {
 		startThrowBallNear = new JoystickButton(shooterXbox, XboxHelper.X);
 		startThrowBallNear.whenPressed(launcherBallLow);
 
-//		startHorizAim = new JoystickButton(shooterXbox, XboxHelper.B);
-//		startHorizAim.whenPressed(aimHoriz);
+		startThrowBallSide = new JoystickButton(shooterXbox, XboxHelper.B);
+		startThrowBallSide.whenPressed(launcherBallSide);
+		
+		startDropAngle = new JoystickButton(driverFlightstick, FlightStickHelper.TRIGGER);
+		startDropAngle.whileHeld(launcherDropAngle);        	
 		
 		cancelCommands = new JoystickButton(shooterXbox, XboxHelper.START);
 		cancelCommands.cancelWhenPressed(collectBall);
 		cancelCommands.cancelWhenPressed(launcherBallHigh);
 		cancelCommands.cancelWhenPressed(launcherBallLow);
-		cancelCommands.cancelWhenPressed(aimHoriz);
+		cancelCommands.cancelWhenPressed(launcherBallSide);
+		cancelCommands.cancelWhenPressed(launcherDropAngle);
 
 		positionChooser = new SendableChooser();
 		positionChooser.addDefault("1 - Far Right", new Integer(0));

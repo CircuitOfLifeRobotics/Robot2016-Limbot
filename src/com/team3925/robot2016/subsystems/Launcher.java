@@ -311,7 +311,7 @@ public final class Launcher extends Subsystem implements SmartdashBoardLoggable,
 				/* && Math.abs(getArmVelocity()) < Constants.LAUNCHER_PID_VELOCITY_TOLERANCE*/;
 	}
 	
-	private double getArmSetpoint() {
+	public double getArmSetpoint() {
 		return armSetpoint;
 	}
 	
