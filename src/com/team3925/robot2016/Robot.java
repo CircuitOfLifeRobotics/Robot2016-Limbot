@@ -10,6 +10,7 @@ import com.team3925.robot2016.commands.LaunchBall;
 import com.team3925.robot2016.commands.auto.GyroTurn;
 import com.team3925.robot2016.subsystems.DriveTrain;
 import com.team3925.robot2016.subsystems.Launcher;
+import com.team3925.robot2016.subsystems.PlexiArms;
 import com.team3925.robot2016.util.DriveTrainSignal;
 import com.team3925.robot2016.util.SmartdashBoardLoggable;
 import com.team3925.robot2016.util.TimeoutAction;
@@ -40,6 +41,7 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 	//Subsystems
 	public static DriveTrain driveTrain;
 	public static Launcher launcher;
+	public static PlexiArms plexiArms;
 	
 	//Other
 	public static AHRS navx = null;
@@ -88,6 +90,7 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 		//Creating Subsystems and Related Processes
 		driveTrain = new DriveTrain();
 		launcher = new Launcher(RobotMap.launcherMotorArm, RobotMap.launcherMotorFar, RobotMap.launcherMotorNear, RobotMap.launcherPuncherSolenoid, RobotMap.launcherFwdLimitSwitch, RobotMap.launcherRevLimitSwitch);
+//		plexiArms = new PlexiArms(RobotMap.plexiArmsSolenoidLeft, RobotMap.plexiArmsSolenoidRight);
 		pdp = RobotMap.pdp;
 		
 		// OI must be constructed after subsystems. If the OI creates Commands

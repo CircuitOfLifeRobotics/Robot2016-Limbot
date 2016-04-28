@@ -192,6 +192,10 @@ public final class OI {
 		return XboxHelper.getShooterButton(XboxHelper.TRIGGER_RT);
 	}
 	
+	public boolean getPlexiArms_Control() {
+		return FlightStickHelper.getButton(FlightStickHelper.TOP_DOWN);
+	}
+	
 	public double getManualDrive_ForwardValue() {
 		return -FlightStickHelper.getAxis(FlightStickHelper.AXIS_Y);
 	}
