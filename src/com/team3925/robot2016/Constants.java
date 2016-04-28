@@ -88,10 +88,10 @@ public class Constants {
 	public static final double LAUNCHER_REDUCTION_ANGLE = 20;
 	public static final double LAUNCHER_REDUCTION_MULTIPLIER = .3;
 
-	public static final double LAUNCHER_LAUNCH_BALL_MIDZONE_ANGLE = 35;
+	public static final double LAUNCHER_LAUNCH_BALL_MIDZONE_ANGLE = 43;
 
-	public static final double LAUNCHER_LAUNCHER_BALL_HIGH_ANGLE = 63;
-	public static final double LAUNCHER_LAUNCHER_BALL_LOW_ANGLE = 43;
+	public static final double LAUNCHER_LAUNCHER_BALL_HIGH_ANGLE = 85;
+	public static final double LAUNCHER_LAUNCHER_BALL_LOW_ANGLE = 53;
 	public static final double LAUNCHER_LAUNCHER_BALL_SIDE_ANGLE = 50;
 
 	public static final double LAUNCHER_COLLECT_BALL_FAR = -0.5;
@@ -102,7 +102,7 @@ public class Constants {
 
 	//TODO TUNE
 	public static final double LAUNCHER_PID_K_P = 0.038;
-	public static final double LAUNCHER_PID_K_I = 0.0015;
+	public static final double LAUNCHER_PID_K_I = 0.003; //0.0015 old val
 	public static final double LAUNCHER_PID_K_D = 0.02;
 	public static final double LAUNCHER_ARM_TOLERANCE = .5d;
 	public static final double LAUNCHER_PID_VELOCITY_TOLERANCE = 100; //TODO Tune and reimplement
@@ -167,7 +167,13 @@ public class Constants {
 
 	// AUTONOMOUS CONSTANTS
 	public static final double AUTONOMOUS_SHOOT_ANGLE = 45; // TODO TUNE
-	public static final double AUTONOMOUS_CROSS_DEFENSE_DRIVE_TIME = 2.5d;
+	public static final double AUTONOMOUS_CROSS_DEFENSE_DRIVE_TIME = 3d;
+	public static final double AUTONOMOUS_WAIT_FOR_DOWN = 5d;
+	public static final double AUTONOMOUS_QUICK_DRIVE_TIME = 0.5;
+	
+	
+	public static final double COMMAND_RESET_ANGLE = LAUNCHER_MAX_ARM_ANGLE;
+	
 
 
 }

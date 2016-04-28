@@ -6,21 +6,22 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Command;
 
 public class PickUpShootPlate extends Command {
+	private boolean isUp;
 	
-	public PickUpShootPlate() {
+	public PickUpShootPlate(boolean isUp) {
 		super("CollectBall");
-		
+		this.isUp = isUp;
 		requires(Robot.launcher);
 	}
 
 	// Called just before this Command runs the first time
 	protected void initialize() {
-		System.out.println("[" + Timer.getFPGATimestamp() + "] PickupPlate started");
+		System.out.println("[" + Timer.getFPGATimestamp() + "] PickupPlate (" + isUp + " started");
 	}
 
 	// Called repeatedly when this Command is scheduled to run
 	protected void execute() {
-		Robot.launcher.setPuncherSolenoid(true);
+		Robot.launcher.setPuncherSolenoid(isUp);
 	}
 
 	// Make this return true when this Command no longer needs to run execute()

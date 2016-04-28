@@ -16,5 +16,7 @@ public class DriveTrainSignal {
 	 * A DriveTrainSignal with motor speeds of 0.0
 	 */
 	public static DriveTrainSignal NEUTRAL = new DriveTrainSignal(0.0, 0.0);
+	public static DriveTrainSignal FULL_FORWARD = new DriveTrainSignal(1d, 1d);
+	public static DriveTrainSignal FULL_BACKWARD = new DriveTrainSignal(-1d, -1d);
 	
 }

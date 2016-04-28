@@ -145,10 +145,10 @@ public final class Launcher extends Subsystem implements SmartdashBoardLoggable,
 		putBooleanSD("HasZeroed", hasZeroed());
 		putBooleanSD("EncoderWatcher", getArmEncoderMoving());
 		putBooleanSD("ZeroCommandRunning", (zeroCommand == null) ? false : zeroCommand.isRunning());
-		pid.setPID(
-				SmartDashboard.getNumber(getFormattedName() + "PID_P", Constants.LAUNCHER_PID_K_P),
-				SmartDashboard.getNumber(getFormattedName() + "PID_I", Constants.LAUNCHER_PID_K_I),
-				SmartDashboard.getNumber(getFormattedName() + "PID_D", Constants.LAUNCHER_PID_K_D));
+//		pid.setPID(
+//				SmartDashboard.getNumber(getFormattedName() + "PID_P", Constants.LAUNCHER_PID_K_P),
+//				SmartDashboard.getNumber(getFormattedName() + "PID_I", Constants.LAUNCHER_PID_K_I),
+//				SmartDashboard.getNumber(getFormattedName() + "PID_D", Constants.LAUNCHER_PID_K_D));
 
 		putNumberSD("MotorNearSetpoint", motorNearSetpoint);
 		putNumberSD("MotorFarSetpoint", motorFarSetpoint);
@@ -157,6 +157,9 @@ public final class Launcher extends Subsystem implements SmartdashBoardLoggable,
 		
 		putBooleanSD("FwdLimitSwitch", getFwdLimitSwitch());
 		putBooleanSD("RevLimitSwitch", getRevLimitSwitch());
+		
+		putNumberSD("MotorNear_VoltageOutput", motorNear.getOutputVoltage());
+		putNumberSD("MotorNear_VoltageBus", motorNear.getBusVoltage());
 		
 	}
 	

@@ -11,7 +11,7 @@ public class CollectBall extends CommandGroup {
 		addSequential(new ZeroLauncher());
 		addSequential(new BaseCollectBall());
 		addSequential(new WaitCommand(Constants.LAUNCHER_COLLECT_BALL_WAIT));
-		addSequential(new PickUpShootPlate(), .1);
+		addSequential(new PickUpShootPlate(true), .1);
 		addSequential(new SetArmSetpoint(Constants.LAUNCHER_LAUNCH_BALL_MIDZONE_ANGLE));
 	}
 

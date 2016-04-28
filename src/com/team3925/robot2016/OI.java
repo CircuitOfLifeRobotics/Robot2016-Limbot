@@ -4,9 +4,14 @@ import static com.team3925.robot2016.util.hidhelpers.XboxHelper.START;
 
 import com.team3925.robot2016.commands.CollectBall;
 import com.team3925.robot2016.commands.LaunchBall;
+import com.team3925.robot2016.commands.LowGoal;
+import com.team3925.robot2016.commands.ResetArms;
 import com.team3925.robot2016.commands.SetArmSetpointTemporary;
 import com.team3925.robot2016.commands.auto.AutoRoutineCenter;
+import com.team3925.robot2016.commands.auto.GyroDrive;
+import com.team3925.robot2016.commands.auto.QuickDrive;
 import com.team3925.robot2016.commands.auto.defensecross.CrossDefault;
+import com.team3925.robot2016.util.DriveTrainSignal;
 import com.team3925.robot2016.util.hidhelpers.FlightStickHelper;
 import com.team3925.robot2016.util.hidhelpers.ThrustmasterHelper;
 import com.team3925.robot2016.util.hidhelpers.XboxHelper;
@@ -16,6 +21,7 @@ import edu.wpi.first.wpilibj.buttons.Button;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.CommandGroup;
+import edu.wpi.first.wpilibj.command.WaitCommand;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -62,12 +68,17 @@ public final class OI {
 	private Button startThrowBallSide;
 	private Button cancelCommands;
 	private Button startDropAngle;
+	private Button startResetArms;
+	private Button startLowGoal;
+	
 
 	private Command collectBall;
 	private Command launcherBallHigh;
 	private Command launcherBallLow;
 	private Command launcherBallSide;
 	private Command launcherDropAngle;
+	private Command resetArms;
+	private Command lowGoal;
 	
 	public SendableChooser autoChooser;
 	public SendableChooser throwBallTesting;
@@ -85,21 +96,56 @@ public final class OI {
 		launcherBallLow = new LaunchBall(Constants.LAUNCHER_LAUNCHER_BALL_LOW_ANGLE);
 		launcherBallSide = new LaunchBall(Constants.LAUNCHER_LAUNCHER_BALL_SIDE_ANGLE);
 		launcherDropAngle = new SetArmSetpointTemporary(Constants.LAUNCHER_LAUNCH_BALL_MIDZONE_ANGLE);
+		resetArms = new ResetArms();
+		lowGoal = new LowGoal();
+		
+		
+		// TODO: MAKE THIS SETUP NOT BRITTLE, DELICATE, FRAGILE, AND ALL OTHER SYNONYMS
 		
 		startCollectBall = new JoystickButton(shooterXbox, XboxHelper.A);
 		startCollectBall.whenPressed(collectBall);
+		startCollectBall.cancelWhenPressed(launcherBallHigh);
+		startCollectBall.cancelWhenPressed(launcherBallLow);
+		startCollectBall.cancelWhenPressed(launcherBallSide);
+		startCollectBall.cancelWhenPressed(launcherDropAngle);
+		startCollectBall.cancelWhenPressed(lowGoal);
 
+		
 		startThrowBallFar = new JoystickButton(shooterXbox, XboxHelper.Y);
 		startThrowBallFar.whenPressed(launcherBallHigh);
-	
+		startThrowBallFar.cancelWhenPressed(collectBall);
+		startThrowBallFar.cancelWhenPressed(launcherBallLow);
+		startThrowBallFar.cancelWhenPressed(launcherBallSide);
+		startThrowBallFar.cancelWhenPressed(launcherDropAngle);
+		startThrowBallFar.cancelWhenPressed(lowGoal);
+		
+		
 		startThrowBallNear = new JoystickButton(shooterXbox, XboxHelper.X);
 		startThrowBallNear.whenPressed(launcherBallLow);
-
+		startThrowBallNear.cancelWhenPressed(collectBall);
+		startThrowBallNear.cancelWhenPressed(launcherBallHigh);
+		startThrowBallNear.cancelWhenPressed(launcherBallSide);
+		startThrowBallNear.cancelWhenPressed(launcherDropAngle);
+		startThrowBallNear.cancelWhenPressed(lowGoal);
+		
+		
 		startThrowBallSide = new JoystickButton(shooterXbox, XboxHelper.B);
 		startThrowBallSide.whenPressed(launcherBallSide);
+		startThrowBallSide.cancelWhenPressed(collectBall);
+		startThrowBallSide.cancelWhenPressed(launcherBallHigh);
+		startThrowBallSide.cancelWhenPressed(launcherBallLow);
+		startThrowBallSide.cancelWhenPressed(launcherDropAngle);
+		startThrowBallSide.cancelWhenPressed(lowGoal);
+		
 		
 		startDropAngle = new JoystickButton(driverFlightstick, FlightStickHelper.TRIGGER);
 		startDropAngle.whileHeld(launcherDropAngle);        	
+		startDropAngle.cancelWhenPressed(collectBall);
+		startDropAngle.cancelWhenPressed(launcherBallHigh);
+		startDropAngle.cancelWhenPressed(launcherBallLow);
+		startDropAngle.cancelWhenPressed(launcherBallSide);
+		startDropAngle.cancelWhenPressed(lowGoal);
+		
 		
 		cancelCommands = new JoystickButton(shooterXbox, XboxHelper.START);
 		cancelCommands.cancelWhenPressed(collectBall);
@@ -107,7 +153,30 @@ public final class OI {
 		cancelCommands.cancelWhenPressed(launcherBallLow);
 		cancelCommands.cancelWhenPressed(launcherBallSide);
 		cancelCommands.cancelWhenPressed(launcherDropAngle);
+		cancelCommands.cancelWhenPressed(resetArms);
+		cancelCommands.cancelWhenPressed(lowGoal);
+		
+		
+		startLowGoal = new JoystickButton(shooterXbox, XboxHelper.BUMPER_LT);
+		startLowGoal.whenPressed(lowGoal);
+		startLowGoal.cancelWhenPressed(collectBall);
+		startLowGoal.cancelWhenPressed(launcherBallHigh);
+		startLowGoal.cancelWhenPressed(launcherBallLow);
+		startLowGoal.cancelWhenPressed(launcherBallSide);
+		startLowGoal.cancelWhenPressed(launcherDropAngle);
 
+		
+		startResetArms = new JoystickButton(driverFlightstick, FlightStickHelper.BOTTOM_RIGHT_DOWN);
+		startResetArms.whenPressed(resetArms);
+		startResetArms.cancelWhenPressed(collectBall);
+		startResetArms.cancelWhenPressed(launcherBallHigh);
+		startResetArms.cancelWhenPressed(launcherBallLow);
+		startResetArms.cancelWhenPressed(launcherBallSide);
+		startResetArms.cancelWhenPressed(launcherDropAngle);
+		startResetArms.cancelWhenPressed(lowGoal);
+		
+		
+		
 		positionChooser = new SendableChooser();
 		positionChooser.addDefault("1 - Far Right", new Integer(0));
 		positionChooser.addObject("2 - Near Right", new Integer(1));
@@ -151,7 +220,7 @@ public final class OI {
 	
 	
 
-	public CommandGroup setAutonomous() {
+	public CommandGroup getAutonomous() {
 		// return new RobotPosition(((RobotPosition)positionChooser.getSelected()).getFieldPosition(), ((RobotPosition)obstacleChooser.getSelected()).getObstacle());
 		
 //		Object selected = autoChooser.getSelected();
@@ -159,7 +228,7 @@ public final class OI {
 //		SmartDashboard.putString("AutoSelected", selected.toString());
 //		return (CommandGroup) selected;
 		
-		return new AutoRoutineCenter(new CrossDefault(), 0);
+//		return new AutoRoutineCenter(new CrossDefault(), 0);
 		
 //		if (selected instanceof AutoRoutineDoNothing) {
 //			return (CommandGroup) selected;
@@ -175,12 +244,14 @@ public final class OI {
 //			return new AutoRoutineDoNothing();
 //		}
 		
-		// CommandGroup janky = new CommandGroup();
-		// janky.addSequential(new  CrossDefault(), 6);
-		// janky.addSequential(new GyroTurn(45));
-		// janky.addSequential(new GyroTurn(-45));
+		 CommandGroup janky = new CommandGroup();
+		janky.addSequential(new QuickDrive(Constants.AUTONOMOUS_QUICK_DRIVE_TIME, DriveTrainSignal.FULL_FORWARD));
 		
-		// return janky;
+		janky.addSequential(new WaitCommand(Constants.AUTONOMOUS_WAIT_FOR_DOWN));
+//		janky.addSequential(new GyroDrive(0, true, Constants.AUTONOMOUS_CROSS_DEFENSE_DRIVE_TIME, 0.4d));
+		janky.addSequential(new QuickDrive(Constants.AUTONOMOUS_CROSS_DEFENSE_DRIVE_TIME, DriveTrainSignal.FULL_FORWARD));
+		
+		 return janky;
 
 	}
 	
@@ -189,7 +260,7 @@ public final class OI {
 	// ROBOT BEHAVIOR
 
 	public boolean getCollectBall_Continue() {
-		return XboxHelper.getShooterButton(XboxHelper.TRIGGER_RT);
+		return XboxHelper.getShooterButton(XboxHelper.BUMPER_RT);
 	}
 	
 	public boolean getPlexiArms_Control() {
@@ -209,7 +280,7 @@ public final class OI {
 	}
 
 	public boolean getManualDrive_HighGearToggle() {
-		return FlightStickHelper.getButton(FlightStickHelper.TOP_UP); //TODO Get driver preference
+		return (!FlightStickHelper.getButton(FlightStickHelper.TOP_UP)); //TODO Get driver preference
 	}
 
 	public boolean getManualDrive_QuickTurn() {
@@ -229,7 +300,7 @@ public final class OI {
 	 * Prevents <code>ThrowBall</code> from launching ball until released
 	 */
 	public boolean getThrowBall_LaunchBallOverride() {
-		return !XboxHelper.getShooterButton(XboxHelper.TRIGGER_LT);
+		return !XboxHelper.getShooterButton(XboxHelper.BUMPER_LT);
 	}
 
 	public double getManualArms_ClimberValue() {

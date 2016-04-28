@@ -137,13 +137,15 @@ public class RobotMap {
         
         launcherMotorFar = new CANTalon(LAUNCHER_MOTOR_FAR);
         LiveWindow.addActuator("Launcher", "MotorFar", launcherMotorFar);
-        launcherMotorFar.setFeedbackDevice(FeedbackDevice.QuadEncoder);
+//        launcherMotorFar.setFeedbackDevice(FeedbackDevice.QuadEncoder);
         launcherMotorFar.changeControlMode(TalonControlMode.PercentVbus);
+        launcherMotorFar.setInverted(false);
         
         launcherMotorNear = new CANTalon(LAUNCHER_MOTOR_NEAR);
         LiveWindow.addActuator("Launcher", "MotorNear", launcherMotorNear);
-        launcherMotorNear.setFeedbackDevice(FeedbackDevice.QuadEncoder);
+//        launcherMotorNear.setFeedbackDevice(FeedbackDevice.QuadEncoder);
         launcherMotorNear.changeControlMode(TalonControlMode.PercentVbus);
+        launcherMotorNear.setInverted(true);
         
         
         

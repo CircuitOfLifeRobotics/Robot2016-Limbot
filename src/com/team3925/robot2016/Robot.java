@@ -148,7 +148,6 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 	public void disabledInit(){
 		if (autoRoutine != null) { autoRoutine.cancel(); }
 		driveTrain.setMotorSpeeds(DriveTrainSignal.NEUTRAL);
-//		launcher.setIntakeSpeeds(0);
 		
 		reset();
 	}
@@ -156,11 +155,10 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 	public void disabledPeriodic() {
 		Scheduler.getInstance().run();
 		driveTrain.setMotorSpeeds(DriveTrainSignal.NEUTRAL);
-//		launcher.setIntakeSpeeds(0);
 	}
 	
 	public void autonomousInit() {
-		autoRoutine = oi.setAutonomous();
+		autoRoutine = oi.getAutonomous();
 		
 		driveTrain.setHighGear(false);
 		reset();
