@@ -95,7 +95,7 @@ public class Constants {
 	public static final double LAUNCHER_LAUNCHER_BALL_SIDE_ANGLE = 50;
 
 	public static final double LAUNCHER_COLLECT_BALL_FAR = -0.5;
-	public static final double LAUNCHER_COLLECT_BALL_NEAR = 0.5;
+	public static final double LAUNCHER_COLLECT_BALL_NEAR = 1;
 
 	public static final double LAUNCHER_SETPOINT_REACH_WAIT = 3;
 	public static final int LAUNCHER_RESTING_ANGLE = 30;
@@ -167,8 +167,8 @@ public class Constants {
 
 	// AUTONOMOUS CONSTANTS
 	public static final double AUTONOMOUS_SHOOT_ANGLE = 45; // TODO TUNE
-	public static final double AUTONOMOUS_CROSS_DEFENSE_DRIVE_TIME = 3d;
-	public static final double AUTONOMOUS_WAIT_FOR_DOWN = 5d;
+	public static final double AUTONOMOUS_CROSS_DEFENSE_DRIVE_TIME = 4d;
+	public static final double AUTONOMOUS_WAIT_FOR_DOWN = 0.5d;
 	public static final double AUTONOMOUS_QUICK_DRIVE_TIME = 0.5;
 	
 	

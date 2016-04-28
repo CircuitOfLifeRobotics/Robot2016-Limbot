@@ -5,11 +5,11 @@ import com.team3925.robot2016.Robot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Command;
 
-public class SetFlywheelSpingSpeeds extends Command {
+public class SetFlywheelSpeeds extends Command {
 	private double far, near;
 	
-	public SetFlywheelSpingSpeeds(double far, double near) {
-		super("SetFlywheelSpeeds [near = " + near + " far = " + far + "]", 0.1);
+	public SetFlywheelSpeeds(double far, double near) {
+		super("SetFlywheelSpeeds [near = " + near + " far = " + far + "]", 0.01);
 		this.far = far;
 		this.near = near;
 	}
@@ -27,7 +27,7 @@ public class SetFlywheelSpingSpeeds extends Command {
 
 	@Override
 	protected boolean isFinished() {
-		return false;
+		return isTimedOut();
 	}
 
 	@Override

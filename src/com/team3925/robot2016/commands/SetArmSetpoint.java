@@ -9,31 +9,34 @@ public class SetArmSetpoint extends Command {
 	private double angle;
 	
 	public SetArmSetpoint(double angle) {
-		super("SetArmSetpoint-" + angle, 0.1);
+		super("SetArmSetpoint-" + angle, 0.01);
 		this.angle = angle;
 	}
 	
 	@Override
 	protected void initialize() {
 		System.out.println("[" + Timer.getFPGATimestamp() + "] Setting Arm Setpoint To " + angle);
-	}
-
-	@Override
-	protected void execute() {
 		Robot.launcher.setArmSetpoint(angle);
 	}
 
 	@Override
+	protected void execute() {
+		System.out.println("Is Timed Out: " + isTimedOut());
+	}
+
+	@Override
 	protected boolean isFinished() {
-		return false;
+		return isTimedOut();
 	}
 
 	@Override
 	protected void end() {
+		System.out.println("[" + Timer.getFPGATimestamp() + "] FINISHED Setting Arm Setpoint to " + angle);
 	}
 
 	@Override
 	protected void interrupted() {
+		end();
 	}
 
 }

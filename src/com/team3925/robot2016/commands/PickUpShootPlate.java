@@ -9,14 +9,14 @@ public class PickUpShootPlate extends Command {
 	private boolean isUp;
 	
 	public PickUpShootPlate(boolean isUp) {
-		super("CollectBall");
+		super("CollectBall", 0.01);
 		this.isUp = isUp;
 		requires(Robot.launcher);
 	}
 
 	// Called just before this Command runs the first time
 	protected void initialize() {
-		System.out.println("[" + Timer.getFPGATimestamp() + "] PickupPlate (" + isUp + " started");
+		System.out.println("[" + Timer.getFPGATimestamp() + "] PickupPlate (" + isUp + ") started");
 	}
 
 	// Called repeatedly when this Command is scheduled to run
@@ -26,7 +26,7 @@ public class PickUpShootPlate extends Command {
 
 	// Make this return true when this Command no longer needs to run execute()
 	protected boolean isFinished() {
-		return false;
+		return isTimedOut();
 	}
 
 	// Called once after isFinished returns true

@@ -5,6 +5,7 @@ import static com.team3925.robot2016.util.hidhelpers.XboxHelper.START;
 import com.team3925.robot2016.commands.CollectBall;
 import com.team3925.robot2016.commands.LaunchBall;
 import com.team3925.robot2016.commands.LowGoal;
+import com.team3925.robot2016.commands.PlexiMove;
 import com.team3925.robot2016.commands.ResetArms;
 import com.team3925.robot2016.commands.SetArmSetpointTemporary;
 import com.team3925.robot2016.commands.auto.AutoRoutineCenter;
@@ -239,19 +240,21 @@ public final class OI {
 //		} else if (selected instanceof DefenseCrossBase) {
 //			return new AutoRoutineCenter((DefenseCrossBase) selected, (int) positionChooser.getSelected());
 //
-//		} else {
-//			DriverStation.reportError("Defaulted in autonomous selection!", false);
-//			return new AutoRoutineDoNothing();
-//		}
+		//		} else {
+		//			DriverStation.reportError("Defaulted in autonomous selection!", false);
+		//			return new AutoRoutineDoNothing();
+		//		}
+
+		CommandGroup janky = new CommandGroup();
 		
-		 CommandGroup janky = new CommandGroup();
-		janky.addSequential(new QuickDrive(Constants.AUTONOMOUS_QUICK_DRIVE_TIME, DriveTrainSignal.FULL_FORWARD));
+		janky.addParallel(new PlexiMove(true));
 		
-		janky.addSequential(new WaitCommand(Constants.AUTONOMOUS_WAIT_FOR_DOWN));
-//		janky.addSequential(new GyroDrive(0, true, Constants.AUTONOMOUS_CROSS_DEFENSE_DRIVE_TIME, 0.4d));
+//		janky.addSequential(new QuickDrive(Constants.AUTONOMOUS_QUICK_DRIVE_TIME, DriveTrainSignal.FULL_FORWARD));
+//		janky.addSequential(new WaitCommand(Constants.AUTONOMOUS_WAIT_FOR_DOWN));
+		//		janky.addSequential(new GyroDrive(0, true, Constants.AUTONOMOUS_CROSS_DEFENSE_DRIVE_TIME, 0.4d));
 		janky.addSequential(new QuickDrive(Constants.AUTONOMOUS_CROSS_DEFENSE_DRIVE_TIME, DriveTrainSignal.FULL_FORWARD));
-		
-		 return janky;
+
+		return janky;
 
 	}
 	
