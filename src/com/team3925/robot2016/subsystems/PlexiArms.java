@@ -10,22 +10,18 @@ import edu.wpi.first.wpilibj.command.Subsystem;
 public class PlexiArms extends Subsystem implements SmartdashBoardLoggable {
 	
 	private final DoubleSolenoid left;
-	private final DoubleSolenoid right;
 	
-	public PlexiArms(DoubleSolenoid left, DoubleSolenoid right) {
+	public PlexiArms(DoubleSolenoid left) {
 		this.left = left;
-		this.right = right;
 	}
 	
 	public void setSolenoids(boolean isUp) {
 		left.set(isUp ? Value.kForward : Value.kReverse);
-		right.set(isUp ? Value.kForward : Value.kReverse);
 	}
 	
 	@Override
 	public void logData() {
 		putDataSD("SolenoidLeft", left);
-		putDataSD("SolenoidRight", right);
 	}
 	
 	@Override
@@ -35,7 +31,7 @@ public class PlexiArms extends Subsystem implements SmartdashBoardLoggable {
 	
 	@Override
 	protected void initDefaultCommand() {
-//		setDefaultCommand(new PlexiArmsManual());
+		setDefaultCommand(new PlexiArmsManual());
 	}
 
 }

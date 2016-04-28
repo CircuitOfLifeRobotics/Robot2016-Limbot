@@ -41,8 +41,8 @@ public class RobotMap {
     public static CANTalon intakeAssistWheels;
     
     
-    public static DoubleSolenoid plexiArmsSolenoidLeft;
-    public static DoubleSolenoid plexiArmsSolenoidRight;
+    public static DoubleSolenoid plexiArmsSolenoid;
+
     
     public static CANTalon climberArmsMotor;
     public static DoubleSolenoid climberSolenoid;
@@ -147,11 +147,8 @@ public class RobotMap {
         
         
         
-        plexiArmsSolenoidLeft = new DoubleSolenoid(PLEXIARMS_SOLENOID_LEFT_A, PLEXIARMS_SOLENOID_LEFT_B);
-        LiveWindow.addActuator("PlexiArms", "SolenoidLeft", plexiArmsSolenoidLeft);
-        
-        plexiArmsSolenoidRight = new DoubleSolenoid(PLEXIARMS_SOLENOID_RIGHT_A, PLEXIARMS_SOLENOID_RIGHT_B);
-        LiveWindow.addActuator("PlexiArms", "SolenoidRight", plexiArmsSolenoidRight);
+        plexiArmsSolenoid = new DoubleSolenoid(PLEXIARMS_SOLENOID_LEFT_A, PLEXIARMS_SOLENOID_LEFT_B);
+        LiveWindow.addActuator("PlexiArms", "Solenoid", plexiArmsSolenoid);
         
         
         try {

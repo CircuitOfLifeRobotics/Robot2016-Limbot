@@ -150,8 +150,6 @@ public final class Launcher extends Subsystem implements SmartdashBoardLoggable,
 				SmartDashboard.getNumber(getFormattedName() + "PID_I", Constants.LAUNCHER_PID_K_I),
 				SmartDashboard.getNumber(getFormattedName() + "PID_D", Constants.LAUNCHER_PID_K_D));
 
-		putNumberSD("MotorNearSpeed", motorNear.getSpeed());
-		putNumberSD("MotorFarSpeed", motorFar.getSpeed());
 		putNumberSD("MotorNearSetpoint", motorNearSetpoint);
 		putNumberSD("MotorFarSetpoint", motorFarSetpoint);
 		

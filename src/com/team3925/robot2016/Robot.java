@@ -49,6 +49,7 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 	public static OI oi;
 	public static CheesyDriveHelper cdh;
 	private static TimeoutAction brakeBeforeMatchEnd = new TimeoutAction();
+	private static CameraServer server;
 	
 	//Commands
 	private CommandGroup autoRoutine;
@@ -90,7 +91,7 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 		//Creating Subsystems and Related Processes
 		driveTrain = new DriveTrain();
 		launcher = new Launcher(RobotMap.launcherMotorArm, RobotMap.launcherMotorFar, RobotMap.launcherMotorNear, RobotMap.launcherPuncherSolenoid, RobotMap.launcherFwdLimitSwitch, RobotMap.launcherRevLimitSwitch);
-//		plexiArms = new PlexiArms(RobotMap.plexiArmsSolenoidLeft, RobotMap.plexiArmsSolenoidRight);
+		plexiArms = new PlexiArms(RobotMap.plexiArmsSolenoid);
 		pdp = RobotMap.pdp;
 		
 		// OI must be constructed after subsystems. If the OI creates Commands
@@ -109,9 +110,9 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 		
 		//Initializing Camera
 		try{
-			CameraServer server = CameraServer.getInstance();
+			server = CameraServer.getInstance();
 			server.setQuality(50);
-			server.startAutomaticCapture("cam0");
+			server.startAutomaticCapture("cam1");
 		}catch (Exception e){
 			DriverStation.reportError("Could not find the Camera!!", true);
 		}
@@ -274,7 +275,7 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 	
 	@Override
 	public void logData() {
-//		driveTrain.logData();
+		driveTrain.logData();
 //		launcher.logData();
 //		intakeAssist.logData();
 		

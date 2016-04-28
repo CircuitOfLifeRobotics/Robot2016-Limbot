@@ -35,9 +35,7 @@ public class Constants {
 	public static final int LAUNCHER_ULTRASONIC = 0;
 
 	public static final int PLEXIARMS_SOLENOID_LEFT_A = 0;
-	public static final int PLEXIARMS_SOLENOID_LEFT_B = 0;
-	public static final int PLEXIARMS_SOLENOID_RIGHT_A = 0;
-	public static final int PLEXIARMS_SOLENOID_RIGHT_B = 0;
+	public static final int PLEXIARMS_SOLENOID_LEFT_B = 1;
 
 	
 

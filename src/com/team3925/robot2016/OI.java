@@ -209,7 +209,7 @@ public final class OI {
 	}
 
 	public boolean getManualDrive_HighGearToggle() {
-		return false; //TODO Figure out what to do with this
+		return FlightStickHelper.getButton(FlightStickHelper.TOP_UP); //TODO Get driver preference
 	}
 
 	public boolean getManualDrive_QuickTurn() {

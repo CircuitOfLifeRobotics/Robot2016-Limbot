@@ -137,6 +137,8 @@ public class DriveTrain extends Subsystem implements SmartdashBoardLoggable, Loo
 		putNumberSD("MotorLeft_Speed", sideLeft.getSpeed());
 		putNumberSD("MotorRight_Speed", sideRight.getSpeed());
 		
+		putBooleanSD("HighGear", isHighGear());
+		
 		putDriveTrainPoseSD(getPhysicalPose());
 		
 		putStringSD("Controller", (controller == null) ? "None" : MiscUtil.formattedNameToNormalName(controller.getFormattedName()));

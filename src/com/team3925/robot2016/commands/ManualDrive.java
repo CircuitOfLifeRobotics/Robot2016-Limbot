@@ -21,6 +21,7 @@ public class ManualDrive extends Command {
 
 	// Called repeatedly when this Command is scheduled to run
 	protected void execute() {
+		driveTrain.setHighGear(oi.getManualDrive_HighGearToggle());
 		Robot.cdh.cheesyDrive(
 				oi.getManualDrive_ForwardValue(),
 				oi.getManualDrive_RotateValue(),
