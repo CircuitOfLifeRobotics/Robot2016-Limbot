@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj.command.WaitUntilCommand;
 
 public class ResetArms extends CommandGroup {
 	public ResetArms() {
+		super("ResetArmPositions");
 		addParallel(new PlexiMove(true));
 		addParallel(new SetArmSetpoint(Constants.COMMAND_RESET_ANGLE));
 		// Run forever

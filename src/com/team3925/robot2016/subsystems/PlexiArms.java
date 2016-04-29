@@ -9,19 +9,19 @@ import edu.wpi.first.wpilibj.command.Subsystem;
 
 public class PlexiArms extends Subsystem implements SmartdashBoardLoggable {
 	
-	private final DoubleSolenoid left;
+	private final DoubleSolenoid solenoid;
 	
-	public PlexiArms(DoubleSolenoid left) {
-		this.left = left;
+	public PlexiArms(DoubleSolenoid solenoid) {
+		this.solenoid = solenoid;
 	}
 	
 	public void setSolenoids(boolean isUp) {
-		left.set(isUp ? Value.kForward : Value.kReverse);
+		solenoid.set(isUp ? Value.kForward : Value.kReverse);
 	}
 	
 	@Override
 	public void logData() {
-		putDataSD("SolenoidLeft", left);
+		putBooleanSD("IsUp", solenoid.get() == Value.kForward);
 	}
 	
 	@Override

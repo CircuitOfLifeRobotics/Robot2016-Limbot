@@ -1,5 +1,8 @@
 package com.team3925.robot2016.commands.auto;
 
+import com.team3925.robot2016.Constants;
+import com.team3925.robot2016.commands.LaunchBall;
+
 import edu.wpi.first.wpilibj.command.CommandGroup;
 import edu.wpi.first.wpilibj.command.WaitCommand;
 
@@ -9,8 +12,9 @@ import edu.wpi.first.wpilibj.command.WaitCommand;
 public class AutoRoutineCourtyard extends CommandGroup {
 
     public AutoRoutineCourtyard(double angle) {
-    	addSequential(new WaitCommand(2));
+    	super("AutoRoutineCourtyard");
     	
-//    	addSequential(new ThrowBall(Constants.AUTONOMOUS_SHOOT_ANGLE, 1));
+    	addSequential(new WaitCommand(3)); // wait for zero command
+    	addSequential(new LaunchBall(Constants.AUTONOMOUS_SHOOT_ANGLE));
     } 
 }

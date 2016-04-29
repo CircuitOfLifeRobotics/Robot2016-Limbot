@@ -87,7 +87,7 @@ public class DriveTrain extends Subsystem implements SmartdashBoardLoggable, Loo
 		double leftMotorSpeed;
 		double rightMotorSpeed;
 
-		moveValue = MiscUtil.limit(moveValue);
+		moveValue = -MiscUtil.limit(moveValue);
 		rotateValue = MiscUtil.limit(rotateValue);
 
 		if (squaredInputs) {

@@ -88,7 +88,7 @@ public class Constants {
 	public static final double LAUNCHER_REDUCTION_ANGLE = 20;
 	public static final double LAUNCHER_REDUCTION_MULTIPLIER = .3;
 
-	public static final double LAUNCHER_LAUNCH_BALL_MIDZONE_ANGLE = 43;
+	public static final double LAUNCHER_LAUNCH_BALL_MIDZONE_ANGLE = 53;
 
 	public static final double LAUNCHER_LAUNCHER_BALL_HIGH_ANGLE = 85;
 	public static final double LAUNCHER_LAUNCHER_BALL_LOW_ANGLE = 53;
@@ -163,16 +163,23 @@ public class Constants {
 
 	public static final double GYROTURN_POS_TOLERANCE = 1;
 
-
-
-	// AUTONOMOUS CONSTANTS
-	public static final double AUTONOMOUS_SHOOT_ANGLE = 45; // TODO TUNE
-	public static final double AUTONOMOUS_CROSS_DEFENSE_DRIVE_TIME = 4d;
-	public static final double AUTONOMOUS_WAIT_FOR_DOWN = 0.5d;
-	public static final double AUTONOMOUS_QUICK_DRIVE_TIME = 0.5;
 	
 	
 	public static final double COMMAND_RESET_ANGLE = LAUNCHER_MAX_ARM_ANGLE;
+
+
+	
+	// AUTONOMOUS CONSTANTS
+	public static final String AUTONOMOUS_CHOOSER_NAME = "Autonomous Routine Chooser";
+	public static final String AUTONOMOUS_POSITION_CHOOSER_NAME = "Position Chooser";
+	
+	public static final double AUTONOMOUS_SHOOT_ANGLE = 45; // TODO TUNE
+	public static final double AUTONOMOUS_CROSS_DEFENSE_DRIVE_TIME = 2.5d;
+	public static final double AUTONOMOUS_WAIT_FOR_DOWN = 0.5d;
+	
+	public static final double AUTONOMOUS_DEFENSECROSS_CHEVAL_DRIVE_TIME = 0.5;
+	public static final double AUTONOMOUS_DEFENSECROSS_CHEVAL_DRIVE_TIME_2 = 1.5;
+	public static final double AUTONOMOUS_DEFENSECROSS_CHEVAL_WAIT_TIME = 1.5;
 	
 
 

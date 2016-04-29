@@ -83,23 +83,12 @@ public final class Launcher extends Subsystem implements SmartdashBoardLoggable,
 		encoderWatcherTimer.scheduleAtFixedRate(encoderWatcher, 0, Constants.LAUNCHER_ENCODER_WATCHER_PERIOD);
 	}
 	
-	public void init() {
+	public void init(boolean doZeroCoomand) {
 		resetSetpoints();
 		
 		zeroCommand = new ZeroLauncher();
 		setHasZeroed(false);
-		startZeroCommand();
-
-
-		// TEST ANGLE SETPOINT
-		SmartDashboard.putNumber(getFormattedName() + "MotorArmSetpointSETTER", 0);
-		
-		putNumberSD("PID_P", Constants.LAUNCHER_PID_K_P);
-		putNumberSD("PID_I", Constants.LAUNCHER_PID_K_I);
-		putNumberSD("PID_D", Constants.LAUNCHER_PID_K_D);
-		
-		timeoutAction1.config(10d);
-		timeoutAction2.config(20d);
+		if (doZeroCoomand) { startZeroCommand(); }
 
 		System.out.println("Launcher.init() called");
 	}

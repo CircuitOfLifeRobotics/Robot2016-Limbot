@@ -9,6 +9,7 @@ public class AutoRoutineDoNothing extends CommandGroup {
 
 
 	public AutoRoutineDoNothing() {
+		super("AutoRoutineDoNothing");
 		
 		// Commands don't go here.
 		

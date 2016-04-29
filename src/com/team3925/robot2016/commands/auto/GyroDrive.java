@@ -35,6 +35,13 @@ public class GyroDrive extends Command implements SmartdashBoardLoggable {
 	}
 	
 	/**
+	 * Creates a gyrodrive that uses given timeout with 100% power
+	 */
+	public GyroDrive(double timeout, boolean thisBooleanDoesNothing) {
+		this(Double.NaN, true, timeout, 1);
+	}
+	
+	/**
 	 * @param distance distance to travel in inches
 	 * @param disableEncPos override distance and travel until stopped
 	 * @param timeout if encPos disabled, time to drive until command stops.
@@ -42,6 +49,7 @@ public class GyroDrive extends Command implements SmartdashBoardLoggable {
 	 * @param forwardPower power from -1 to 1 to pass to arcade drive
 	 */
 	public GyroDrive(double distance, boolean disableEncPos, double timeout, double forwardPower) {
+		super("GyroDrive");
 		requires(driveTrain);
 		this.distance = disableEncPos ? Double.NaN : distance;
 		this.timeout = disableEncPos ? timeout : -1;
@@ -70,7 +78,7 @@ public class GyroDrive extends Command implements SmartdashBoardLoggable {
 		pidLoop.calculate(currentAngle + rotations*360);
 		
 		// normally negative for drive power | pid loop input was positive on comp robot
-//		driveTrain.arcadeDrive(-forwardPower, -pidLoop.get(), false);
+		driveTrain.arcadeDrive(-forwardPower, pidLoop.get(), false);
 		
 		// logic for slowing down or stopping here
 		
@@ -106,6 +114,7 @@ public class GyroDrive extends Command implements SmartdashBoardLoggable {
 		putNumberSD("CurrentAngle", currentAngle);
 		putNumberSD("AverageEncDistance", getAverageDriveTrainEncoders());
 		putNumberSD("Timeout", timeout);
+		System.out.println("Im runnin");
 	}
 
 	@Override

@@ -159,12 +159,12 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 	
 	public void autonomousInit() {
 		autoRoutine = oi.getAutonomous();
+		System.out.println("Autonomous Routine Selected: " + autoRoutine.getName());
 		
-		driveTrain.setHighGear(false);
 		reset();
 		
 		autoRoutine.start();
-		launcher.init();
+		launcher.init(false);
 	}
 	
 	/**
@@ -191,7 +191,7 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 //		manualDrive.start();
 //		manualIntakeAssist.start();
 		
-		launcher.init();
+		launcher.init(true);
 	}
 
 	/**
@@ -201,34 +201,6 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 		Scheduler.getInstance().run();
 		
 		updateSubsystems();
-		
-//		if (oi.shooterXbox.getRawButton(XboxHelper.X)) {
-//			launcherNew.startZeroCommand();
-//		}
-//		if (oi.shooterXbox.getRawButton(XboxHelper.A) && !launchBall.isRunning()) {
-//			launchBall.start();
-//		}
-//		if (oi.getCommandCancel()) {
-//			launchBall.cancel();
-//		}
-				
-		
-		// Driver Vision Control
-		
-//		if (oi.getVisionShoot_GyroTurnEnable()) {
-//			if (!visionGyroTurn.isRunning()) {
-//				if (Double.isNaN(launcher.getTurnAngle())) {
-//					visionGyroTurn.setSetpointRelative(launcher.getTurnAngle());
-//					visionGyroTurn.start();
-//				} else {
-//					DriverStation.reportWarning("Camera cannot detect object! Thou shall not runneth or beginneth a GyroDrive!", false);
-//				}
-//			}
-//		} else {
-//			if (visionGyroTurn.isRunning()) {
-//				visionGyroTurn.cancel();
-//			}
-//		}
 
 
 		if (brakeBeforeMatchEnd.isFinished()) {
@@ -243,27 +215,6 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 	 */
 	public void testPeriodic() {
 		LiveWindow.run();
-		
-		//TESTING MANUAL LAUNCHER TODO: remove
-//		boolean buttonDown = Robot.oi.shooterXbox.getRawButton(XboxHelper.A);
-//		if (buttonDown) {
-//			if (!buttonWasDown) tempManualState = tempManualState.equals("intake") ? "wheels": tempManualState.equals("wheels") ? "shooting" : "intake";
-//			buttonWasDown = true;
-//		} else
-//			buttonWasDown = false;
-//		if (tempManualState.equals("intake")) {
-//			launcherNew.setFlywheelFarSetpoint(0);
-//			launcherNew.setFlywheelNearSetpoint(0);
-//			launcherNew.setPuncherSolenoid(false);
-//		}else if (tempManualState.equals("wheels")) {
-//			launcherNew.setFlywheelFarSetpoint(-1);
-//			launcherNew.setFlywheelNearSetpoint(-1);
-//		}else if (tempManualState.equals("shooting")) {
-//			launcherNew.setPuncherSolenoid(true);
-//		}
-//		System.out.println("state = "+tempManualState);
-//		
-//		launcherNew.update();
 	}
 	
 	private void updateSubsystems() {
@@ -275,7 +226,7 @@ public class Robot extends IterativeRobot implements SmartdashBoardLoggable {
 	public void logData() {
 		driveTrain.logData();
 //		launcher.logData();
-//		intakeAssist.logData();
+		plexiArms.logData();
 		
 		double now = Timer.getFPGATimestamp();
 		deltaTime = now - lastTimestamp;
