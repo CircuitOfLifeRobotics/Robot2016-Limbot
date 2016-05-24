@@ -76,7 +76,7 @@ public class Constants {
 
 	public static final double LAUNCHER_GLOBAL_POWER = 1d;
 	public static final double LAUNCHER_MAX_ARM_ANGLE = 90d; // in degrees
-	public static final double LAUNCHER_ENCODER_SCALE_FACTOR = -0.0032873376623377/*(-9d/3200d)*/;
+	public static final double LAUNCHER_ENCODER_SCALE_FACTOR = -0.0032873376623377 * (45/52.6) /*(-9d/3200d)*/;
 	public static final double LAUNCHER_ZERO_COMMAND_WAIT = 1; // entries
 	public static final double LAUNCHER_ENCODER_WATCHER_TOLERANCE = 3; //degrees TODO tune
 	public static final long LAUNCHER_ENCODER_WATCHER_PERIOD = 20; //ms
@@ -94,7 +94,7 @@ public class Constants {
 	public static final double LAUNCHER_LAUNCHER_BALL_LOW_ANGLE = 53;
 	public static final double LAUNCHER_LAUNCHER_BALL_SIDE_ANGLE = 50;
 
-	public static final double LAUNCHER_COLLECT_BALL_FAR = -0.5;
+	public static final double LAUNCHER_COLLECT_BALL_FAR = -0.35;
 	public static final double LAUNCHER_COLLECT_BALL_NEAR = 1;
 
 	public static final double LAUNCHER_SETPOINT_REACH_WAIT = 3;

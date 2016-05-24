@@ -8,6 +8,7 @@ import java.util.Timer;
 
 import com.team3925.robot2016.Constants;
 import com.team3925.robot2016.RobotMap;
+import com.team3925.robot2016.commands.JankyLauncher;
 import com.team3925.robot2016.util.InputWatcher;
 import com.team3925.robot2016.util.Loopable;
 import com.team3925.robot2016.util.MiscUtil;
@@ -106,6 +107,7 @@ public final class Launcher extends Subsystem implements SmartdashBoardLoggable,
 				
 				if (!getAimOnTarget()) {
 					setMotorArmSpeed(pid.calculate(getArmPosition()));
+//					System.out.println("RUNNING LAUNCHER PID SETTER: " + pid.get());
 //					System.out.println("PID Get: " + pid.get());
 //					System.out.println("PID Error: " + pid.getError());
 //					System.out.println("PID : " + pid.getSetpoint());
@@ -241,7 +243,8 @@ public final class Launcher extends Subsystem implements SmartdashBoardLoggable,
 		motorArm.set(baseSpeed);
 	}
 	
-	private void setMotorArmSpeed(double speed) {
+	// This is only made public for emergency control
+	public void setMotorArmSpeed(double speed) {
 		if (hasZeroed) {
 			boolean cantRunMotorDown = (getArmPosition() <= 0 || getFwdLimitSwitch()) && speed < 0;
 			boolean cantRunMotorUp = getArmPosition() >= LAUNCHER_MAX_ARM_ANGLE && speed > 0;
@@ -332,6 +335,7 @@ public final class Launcher extends Subsystem implements SmartdashBoardLoggable,
 	
 	@Override
 	protected void initDefaultCommand() {
+//		setDefaultCommand(new JankyLauncher());
 	}
 	
 	public double getUltraSonic(){

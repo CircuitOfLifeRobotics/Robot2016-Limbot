@@ -5,23 +5,25 @@ import static com.team3925.robot2016.util.hidhelpers.XboxHelper.START;
 import com.team3925.robot2016.commands.CollectBall;
 import com.team3925.robot2016.commands.LaunchBall;
 import com.team3925.robot2016.commands.LowGoal;
+import com.team3925.robot2016.commands.PlexiMove;
 import com.team3925.robot2016.commands.ResetArms;
 import com.team3925.robot2016.commands.SetArmSetpointTemporary;
-import com.team3925.robot2016.commands.auto.AutoRoutineCenter;
 import com.team3925.robot2016.commands.auto.AutoRoutineCourtyard;
 import com.team3925.robot2016.commands.auto.AutoRoutineDoNothing;
-import com.team3925.robot2016.commands.auto.defensecross.AutoRoutineCrossDefault;
-import com.team3925.robot2016.commands.auto.defensecross.DefenseCrossCommandGroup;
+import com.team3925.robot2016.commands.auto.GyroDrive;
+import com.team3925.robot2016.commands.auto.QuickDrive;
+import com.team3925.robot2016.subsystems.ZeroLauncher;
+import com.team3925.robot2016.util.DriveTrainSignal;
 import com.team3925.robot2016.util.hidhelpers.FlightStickHelper;
 import com.team3925.robot2016.util.hidhelpers.ThrustmasterHelper;
 import com.team3925.robot2016.util.hidhelpers.XboxHelper;
 
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.Button;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.CommandGroup;
+import edu.wpi.first.wpilibj.command.WaitCommand;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -191,8 +193,8 @@ public final class OI {
 
 		autoChooser.addDefault("DO NOTHING", new AutoRoutineDoNothing());
 		autoChooser.addObject("Courtyard Freebie Shot", new AutoRoutineCourtyard(Constants.AUTONOMOUS_SHOOT_ANGLE));
-		autoChooser.addObject("DefenseCross-ArmsUP", new AutoRoutineCrossDefault(true));
-		autoChooser.addObject("DefenseCross-ArmsDOWN", new AutoRoutineCrossDefault(false));
+//		autoChooser.addObject("DefenseCross-ArmsUP", new AutoRoutineCrossDefault(true));
+//		autoChooser.addObject("DefenseCross-ArmsDOWN", new AutoRoutineCrossDefault(false));
 
 		
 		SmartDashboard.putData(Constants.AUTONOMOUS_POSITION_CHOOSER_NAME, positionChooser);
@@ -203,7 +205,7 @@ public final class OI {
 	
 
 	public CommandGroup getAutonomous() {
-		//*
+		/*
 		Object selected = autoChooser.getSelected();
 		
 		if (selected instanceof AutoRoutineDoNothing) {
@@ -224,13 +226,12 @@ public final class OI {
 		//*/
 		
 		// BACKUP AUTO
-		/*
+		//*
 		CommandGroup janky = new CommandGroup();
 		
 		janky.addParallel(new PlexiMove(true));
-		janky.addSequential(new QuickDrive(Constants.AUTONOMOUS_QUICK_DRIVE_TIME, DriveTrainSignal.FULL_FORWARD));
-		janky.addSequential(new WaitCommand(Constants.AUTONOMOUS_WAIT_FOR_DOWN));
-		janky.addSequential(new GyroDrive(0, true, Constants.AUTONOMOUS_CROSS_DEFENSE_DRIVE_TIME, 0.4d));
+//		janky.addParallel(new ZeroLauncher());
+//		janky.addSequential(new GyroDrive(0, true, Constants.AUTONOMOUS_CROSS_DEFENSE_DRIVE_TIME, 0.4d));
 		janky.addSequential(new QuickDrive(Constants.AUTONOMOUS_CROSS_DEFENSE_DRIVE_TIME, DriveTrainSignal.FULL_FORWARD));
 
 		return janky;
@@ -241,6 +242,17 @@ public final class OI {
 	
 
 	// ROBOT BEHAVIOR
+	public boolean getJankyFire(){
+		return XboxHelper.getShooterButton(XboxHelper.B);
+	}
+	
+	public double getJankyLauncherUp(){
+		return XboxHelper.getShooterAxis(XboxHelper.AXIS_TRIGGER_LEFT);
+	}
+	
+	public double getJankyLauncherDown(){
+		return XboxHelper.getShooterAxis(XboxHelper.AXIS_TRIGGER_RIGHT);
+	}
 
 	public boolean getCollectBall_Continue() {
 		return XboxHelper.getShooterButton(XboxHelper.BUMPER_RT);
